@@ -4,6 +4,7 @@ import { getBrowserSupabase } from '~/lib/supabase/browser'
 import { useSession } from '~/features/auth/session'
 import { useAuthGate } from '~/features/auth/useAuthGate'
 import type { AddSpotParsed } from './schema'
+import { uploadSpotImages } from './photos'
 
 // TODO(db-access): RLS policies must be in place so users can only insert locations
 // where created_by = auth.uid(). The created_by field is set server-side by Supabase
@@ -16,7 +17,7 @@ export function useCreateSpot() {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: async (values: AddSpotParsed) => {
+    mutationFn: async ({ values, files }: { values: AddSpotParsed; files: File[] }) => {
       if (!userId) throw new Error('Not authenticated')
 
       const supabase = getBrowserSupabase()
@@ -64,6 +65,11 @@ export function useCreateSpot() {
         if (eqErr) throw eqErr
       }
 
+      // 4. Upload photos
+      if (files.length > 0) {
+        await uploadSpotImages(newId, files, userId)
+      }
+
       return newId
     },
     onSuccess: (newId: string) => {
@@ -73,7 +79,8 @@ export function useCreateSpot() {
   })
 
   return {
-    create: (values: AddSpotParsed) => gate(() => mutation.mutate(values)),
+    create: (values: AddSpotParsed, files: File[]) =>
+      gate(() => mutation.mutate({ values, files })),
     pending: mutation.isPending,
   }
 }

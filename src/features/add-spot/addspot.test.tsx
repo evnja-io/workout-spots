@@ -328,7 +328,7 @@ function CreateButton() {
       data-testid="create-btn"
       data-session-status={status}
       disabled={pending}
-      onClick={() => create(addSpotSchema.parse(validInput))}
+      onClick={() => create(addSpotSchema.parse(validInput), [])}
     >
       Create
     </button>

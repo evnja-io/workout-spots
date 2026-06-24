@@ -1,13 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import { Switch } from '~/components/ui/Switch'
+import { PhotoPicker } from '../PhotoPicker'
 import type { AddSpotInput } from '../schema'
 
 interface BasicsStepProps {
   values: AddSpotInput
   onChange: (patch: Partial<AddSpotInput>) => void
+  files: File[]
+  onFilesChange: (files: File[]) => void
 }
 
-export function BasicsStep({ values, onChange }: BasicsStepProps) {
+export function BasicsStep({ values, onChange, files, onFilesChange }: BasicsStepProps) {
   const { t } = useTranslation()
 
   return (
@@ -48,7 +51,7 @@ export function BasicsStep({ values, onChange }: BasicsStepProps) {
         />
       </div>
 
-      {/* TODO(Task 22): PhotoPicker seam — insert <PhotoPicker> here */}
+      <PhotoPicker files={files} onChange={onFilesChange} />
     </div>
   )
 }

@@ -42,6 +42,7 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
   const { t } = useTranslation()
   const [step, setStep] = useState(0)
   const [values, setValues] = useState<AddSpotInput>(EMPTY)
+  const [files, setFiles] = useState<File[]>([])
   const { create, pending } = useCreateSpot()
   const mapStyle = getPrefs().mapStyle
 
@@ -55,6 +56,7 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
     setTimeout(() => {
       setStep(0)
       setValues(EMPTY)
+      setFiles([])
     }, 300)
   }
 
@@ -73,7 +75,7 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
   function handlePublish() {
     const parsed = addSpotSchema.safeParse(values)
     if (!parsed.success) return
-    create(parsed.data)
+    create(parsed.data, files)
   }
 
   const stepTitles = [
@@ -101,7 +103,9 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
         {step === 0 && (
           <LocationStep values={values} onChange={patch} mapStyle={mapStyle} />
         )}
-        {step === 1 && <BasicsStep values={values} onChange={patch} />}
+        {step === 1 && (
+          <BasicsStep values={values} onChange={patch} files={files} onFilesChange={setFiles} />
+        )}
         {step === 2 && (
           <Suspense fallback={<span>{t('addSpot.loading')}</span>}>
             <TaxonomyStep values={values} onChange={patch} />
