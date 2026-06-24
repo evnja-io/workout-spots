@@ -25,6 +25,12 @@
     "title": "Saved spots",
     "empty": "You haven't saved any spots yet."
   },
+  "review": {
+    "ratingLabel": "Your rating",
+    "placeholder": "Share your experience (optional)…",
+    "submit": "Post review",
+    "noReviews": "No reviews yet."
+  },
   "discover": {
     "title": "Discover",
     "searchPlaceholder": "Search by name, city or address…",

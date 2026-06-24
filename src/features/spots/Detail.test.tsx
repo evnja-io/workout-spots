@@ -14,6 +14,10 @@ vi.mock('~/features/likes/useSaveSpot', () => ({
   useSaveSpot: () => ({ liked: false, toggle: vi.fn(), pending: false }),
 }))
 
+vi.mock('~/features/reviews/mutations', () => ({
+  useSubmitReview: () => ({ submit: vi.fn(), pending: false }),
+}))
+
 const mockSpot: SpotDetail = {
   id: 'spot-bercy',
   name: 'Bercy',

@@ -30,6 +30,12 @@
     "title": "Spots enregistrés",
     "empty": "Vous n'avez pas encore enregistré de spots."
   },
+  "review": {
+    "ratingLabel": "Votre note",
+    "placeholder": "Partagez votre expérience (optionnel)…",
+    "submit": "Publier l'avis",
+    "noReviews": "Aucun avis pour le moment."
+  },
   "discover": {
     "title": "Découvrir",
     "searchPlaceholder": "Rechercher par nom, ville ou adresse…",

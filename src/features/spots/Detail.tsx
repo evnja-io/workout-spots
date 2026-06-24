@@ -6,6 +6,8 @@ import { Icon } from '~/components/ui/Icon'
 import { Button } from '~/components/ui/Button'
 import { resolveLabel } from '~/features/taxonomy/queries'
 import { useSaveSpot } from '~/features/likes/useSaveSpot'
+import { ReviewList } from '~/features/reviews/ReviewList'
+import { ReviewForm } from '~/features/reviews/ReviewForm'
 
 export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => void }) {
   const { t } = useTranslation()
@@ -123,20 +125,8 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
         )}
 
         <div className="section-title">{t('detail.reviews')}</div>
-        <div className="comments">
-          {spot.comments.map((c) => (
-            <div key={c.id} className="comment">
-              <div className="comment-head">
-                <div className="comment-avatar">{c.user.charAt(0).toUpperCase()}</div>
-                <div className="comment-meta">
-                  <strong>{c.user}</strong>
-                  {c.date && <span> · {c.date}</span>}
-                </div>
-              </div>
-              <p className="comment-body">{c.text}</p>
-            </div>
-          ))}
-        </div>
+        <ReviewList comments={spot.comments} />
+        <ReviewForm spotId={spot.id} />
 
         <div className="detail-actions">
           <a
