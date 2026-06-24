@@ -6,8 +6,13 @@ import { Detail } from '~/features/spots/Detail'
 export const Route = createFileRoute('/spots/$spotId')({
   loader: async ({ context, params }) => {
     const spotId = (params as { spotId: string }).spotId
-    const data = await context.queryClient.ensureQueryData(spotDetailQueryOptions(spotId))
-    if (!data) throw notFound()
+    try {
+      const data = await context.queryClient.ensureQueryData(spotDetailQueryOptions(spotId))
+      if (!data) throw notFound()
+    } catch (e) {
+      if (e && typeof e === 'object' && 'isNotFound' in e) throw e
+      throw notFound()
+    }
   },
   notFoundComponent: SpotNotFound,
   component: SpotDetailPage,
