@@ -9,6 +9,8 @@ import { spotsQueryOptions } from '~/features/spots/queries'
 import { equipmentsQueryOptions, disciplinesQueryOptions } from '~/features/taxonomy/queries'
 import { getPrefs } from '~/features/settings/prefs'
 import { SettingsPanel } from '~/features/settings/SettingsPanel'
+import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
+import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
 
 export const Route = createFileRoute('/spots')({
@@ -22,7 +24,9 @@ export const Route = createFileRoute('/spots')({
 })
 
 function SpotsLayout() {
+  const { t } = useTranslation()
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [addSpotOpen, setAddSpotOpen] = useState(false)
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
   const { data: spots } = useSuspenseQuery(spotsQueryOptions())
   const navigate = useNavigate()
@@ -52,6 +56,25 @@ function SpotsLayout() {
           onChange={setMapStyle}
           theme="light"
         />
+        {/* Add-spot button — rendered inside map-topbar area via the MapView wrapper */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '14px',
+            right: '14px',
+            zIndex: 3,
+            pointerEvents: 'auto',
+          }}
+        >
+          <button
+            type="button"
+            className="add-spot-btn"
+            data-testid="add-spot-btn"
+            onClick={() => setAddSpotOpen(true)}
+          >
+            + {t('discover.addSpot')}
+          </button>
+        </div>
       </div>
       <SettingsPanel
         open={settingsOpen}
@@ -59,6 +82,7 @@ function SpotsLayout() {
         mapStyle={mapStyle}
         onMapStyleChange={setMapStyle}
       />
+      <AddSpotWizard open={addSpotOpen} onClose={() => setAddSpotOpen(false)} />
       <Outlet />
     </div>
   )
