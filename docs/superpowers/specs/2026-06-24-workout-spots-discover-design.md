@@ -32,6 +32,7 @@ Build the **"Discover"** experience of Workout Spots as a production web app: a 
 | Forms | TanStack Form + Zod (add-spot wizard, review form) |
 | Long lists | TanStack Virtual (virtualized spot list) |
 | Backend SDK | Supabase JS v2 — server client (loaders/SSR) + browser client (auth + mutations) |
+| Styling | **Tailwind CSS v4** (`@tailwindcss/vite`, CSS-first `@theme`); design tokens mapped to runtime CSS variables so light/dark + accent palettes stay swappable; bespoke styles (animations, scrollbars, map pins) in a small `@layer` |
 | Types | `supabase gen types typescript` → typed DB client; **no `any`** (lint-enforced) |
 | Map | Mapbox GL JS v3 + `@types/mapbox-gl`; Mapbox Geocoding API for autocomplete + reverse geocode |
 | i18n | react-i18next (en + fr), SSR-safe; locale via cookie + `?lang`; taxonomy via `*_locale_key` |

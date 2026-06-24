@@ -12,6 +12,7 @@
 
 - **TypeScript strict; zero `any`.** ESLint rule `@typescript-eslint/no-explicit-any: error` must pass. Prefer `unknown` + narrowing.
 - **React 19**, **TanStack Start** latest stable, **TanStack Query v5**, **TanStack Router** (file-based), **Vite 7+**, **Vitest 3+**.
+- **Styling: Tailwind CSS v4** (CSS-first config via `@tailwindcss/vite` + `@import "tailwindcss"` + `@theme`). Build component markup with Tailwind utility classes. Design tokens (accent palette, surfaces, radii, shadows) are defined in `@theme inline` mapped to runtime CSS variables (`--accent`, `--surface`, …) so the existing light/dark `data-theme` switch and the four runtime accent palettes keep working. Only genuinely bespoke styles that don't map to utilities (keyframe animations, custom scrollbars, Mapbox pin/marker styling, image-gradient placeholders) live in a small `@layer` block in `global.css`. No other CSS frameworks.
 - **No secrets in client bundles.** Anything beyond the Supabase URL + anon key and the public Mapbox token must run in a `createServerFn` handler.
 - **Loaders run on server AND client** — never read `process.env` server-secrets directly in a loader; wrap in `createServerFn`.
 - **Every task is TDD:** failing test → run (fail) → minimal impl → run (pass) → commit.
@@ -88,9 +89,10 @@ Run:
 ```bash
 npm init -y
 npm i react@^19 react-dom@^19 @tanstack/react-start @tanstack/react-router @tanstack/react-query
+npm i tailwindcss @tailwindcss/vite
 npm i -D typescript @types/react @types/react-dom vite @vitejs/plugin-react vite-tsconfig-paths
 ```
-If any TanStack Start install detail differs from current docs, consult context7 (`/websites/tanstack_start_framework_react`, query "build from scratch vite config") and follow it.
+If any TanStack Start or Tailwind v4 install detail differs from current docs, consult context7 (`/websites/tanstack_start_framework_react`, query "build from scratch vite config"; and resolve `Tailwind CSS` → query "v4 @tailwindcss/vite plugin setup and @theme") and follow it. Keep the produced config shape below.
 
 - [ ] **Step 2: Write `tsconfig.json` (strict)**
 
@@ -123,12 +125,19 @@ import { defineConfig } from 'vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   server: { port: 3000 },
-  plugins: [tsconfigPaths(), tanstackStart(), viteReact()],
+  plugins: [tsconfigPaths(), tailwindcss(), tanstackStart(), viteReact()],
 })
 ```
+
+Create `src/styles/global.css` with the Tailwind entrypoint (theme tokens are added in Task 4):
+```css
+@import 'tailwindcss';
+```
+Import it in `__root.tsx`: `import '~/styles/global.css'`. Add `@tailwindcss/vite` and the css plugin to `vitest.config.ts` is unnecessary (Task 3 sets `css: false`).
 
 - [ ] **Step 4: Write router + root + routes**
 
@@ -474,9 +483,49 @@ export function applyAccent(key: AccentKey, theme: Theme): void {
 }
 ```
 
-- [ ] **Step 4: Port CSS**
+- [ ] **Step 4: Define Tailwind theme tokens + base layer**
 
-Copy the prototype `styles.css` verbatim into `src/styles/global.css` (it is the approved visual language). Import it in `__root.tsx`: `import '~/styles/global.css'`.
+Extend `src/styles/global.css` (created in Task 1) so the design tokens are Tailwind-addressable while staying runtime-swappable. `applyTheme`/`applyAccent` set `--accent`, `--accent-2`, `--accent-soft`, `--accent-softer`, `--accent-fg` at runtime; the base `:root` / `[data-theme="dark"]` blocks define the surface/text/border/shadow/radius variables (ported verbatim from the prototype `styles.css` `:root` and `[data-theme="dark"]`). Map them into Tailwind via `@theme inline` so utilities like `bg-accent`, `text-accent-fg`, `bg-surface`, `border-border`, `rounded-md` resolve to the live variables:
+
+```css
+@import 'tailwindcss';
+
+:root {
+  --bg: #F9FAFB; --surface: #FFFFFF; --surface-2: #F3F4F6;
+  --border: #E5E7EB; --border-strong: #D1D5DB;
+  --text: #030712; --text-2: #374151; --text-3: #6B7280; --text-4: #9CA3AF;
+  --accent: #4C1D95; --accent-2: #6D28D9; --accent-soft: #EDE9FE; --accent-softer: #F5F3FF; --accent-fg: #FFFFFF;
+  --radius: 12px; --radius-sm: 8px; --radius-lg: 18px;
+  /* shadow-sm/md/lg ported verbatim from prototype */
+}
+[data-theme='dark'] {
+  --bg: #0B0D10; --surface: #14171C; --surface-2: #1B1F26;
+  --border: #262B33; --border-strong: #323842;
+  --text: #F3F4F6; --text-2: #D1D5DB; --text-3: #9CA3AF; --text-4: #6B7280;
+}
+
+@theme inline {
+  --color-bg: var(--bg); --color-surface: var(--surface); --color-surface-2: var(--surface-2);
+  --color-border: var(--border); --color-border-strong: var(--border-strong);
+  --color-text: var(--text); --color-text-2: var(--text-2); --color-text-3: var(--text-3); --color-text-4: var(--text-4);
+  --color-accent: var(--accent); --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft); --color-accent-softer: var(--accent-softer); --color-accent-fg: var(--accent-fg);
+  --radius-md: var(--radius); --radius-sm: var(--radius-sm); --radius-lg: var(--radius-lg);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body { margin: 0; font-family: var(--font-sans); color: var(--text); background: var(--bg);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+}
+
+/* Bespoke, non-utility styles ported from the prototype live here in @layer:
+   keyframes (slideIn/fadeIn), custom scrollbars, Mapbox .wp-pin/.dot marker styling,
+   the image-gradient placeholder helper, and the detail hero swatch gradient. */
+```
+
+Subsequent component tasks build markup with Tailwind utilities referencing these tokens (e.g. `className="bg-accent text-accent-fg rounded-md"`); only the listed bespoke pieces use ported class rules. Confirm the `@theme inline` syntax against current Tailwind v4 docs via context7 if the build errors; keep the token names above.
 
 - [ ] **Step 5: Run → pass**
 
