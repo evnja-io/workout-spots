@@ -84,9 +84,8 @@ describe('Detail', () => {
 
   it('renders reviews count', () => {
     renderDetail()
-    // 2 comments → stat shows "120" ratingCount and "2" equipment count
-    // The reviews section shows 2 comments
-    expect(screen.getAllByText('2').length).toBeGreaterThan(0)
+    // ratingCount: 120 → stat shows "120" in the reviews stat
+    expect(screen.getByText('120')).toBeInTheDocument()
   })
 
   it('get directions link contains google maps url with coordinates', () => {
