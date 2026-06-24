@@ -9,6 +9,17 @@
     "signingIn": "Signing you in…",
     "required": "Sign in to contribute"
   },
+  "detail": {
+    "about": "About",
+    "disciplines": "Disciplines",
+    "equipment": "Equipment",
+    "contributor": "Added by",
+    "reviews": "Reviews",
+    "getDirections": "Get directions",
+    "save": "Save",
+    "rating": "Rating",
+    "notFound": "Spot not found"
+  },
   "discover": {
     "title": "Discover",
     "searchPlaceholder": "Search by name, city or address…",

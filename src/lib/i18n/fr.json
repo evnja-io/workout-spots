@@ -14,6 +14,17 @@
     "signingIn": "Connexion en cours…",
     "required": "Connectez-vous pour contribuer"
   },
+  "detail": {
+    "about": "À propos",
+    "disciplines": "Disciplines",
+    "equipment": "Équipement",
+    "contributor": "Ajouté par",
+    "reviews": "Avis",
+    "getDirections": "Itinéraire",
+    "save": "Enregistrer",
+    "rating": "Note",
+    "notFound": "Spot introuvable"
+  },
   "discover": {
     "title": "Découvrir",
     "searchPlaceholder": "Rechercher par nom, ville ou adresse…",

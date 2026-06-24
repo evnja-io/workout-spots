@@ -3,7 +3,7 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useTranslation } from 'react-i18next'
-import { Route } from '~/routes/spots/index'
+import { Route } from '~/routes/spots/route'
 import { spotsQueryOptions } from './queries'
 import { disciplinesQueryOptions, equipmentsQueryOptions } from '~/features/taxonomy/queries'
 import { spotSearchSchema, applyFilters } from './filters'
@@ -13,9 +13,9 @@ import { Filters } from './Filters'
 
 const VIRTUALIZE_THRESHOLD = 30
 
-export function Sidebar() {
+export function Sidebar({ onSpotClick }: { onSpotClick?: (id: string) => void } = {}) {
   const { t } = useTranslation()
-  const navigate = useNavigate({ from: '/spots/' })
+  const navigate = useNavigate({ from: '/spots' })
   const rawSearch = Route.useSearch()
   const search = spotSearchSchema.parse(rawSearch)
 
@@ -90,16 +90,10 @@ export function Sidebar() {
   }
 
   function handleSpotClick(id: string) {
-    // /spots/$spotId is added in Task 16; navigate by building the href directly
-    const searchStr = new URLSearchParams()
-    if (search.q) searchStr.set('q', search.q)
-    if (search.open24h) searchStr.set('open24h', 'true')
-    if (search.sort !== 'rating') searchStr.set('sort', search.sort)
-    search.disciplines.forEach((d) => searchStr.append('disciplines', d))
-    search.equipment.forEach((e) => searchStr.append('equipment', e))
-    const qs = searchStr.toString()
-    if (typeof window !== 'undefined') {
-      window.location.href = `/spots/${id}${qs ? `?${qs}` : ''}`
+    if (onSpotClick) {
+      onSpotClick(id)
+    } else {
+      void navigate({ to: '/spots/$spotId', params: { spotId: id }, search: (prev) => prev })
     }
   }
 

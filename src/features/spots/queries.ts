@@ -160,7 +160,8 @@ export function spotsQueryOptions() {
 export function spotDetailQueryOptions(id: string) {
   return queryOptions({
     queryKey: ['spot', id] as const,
-    queryFn: async (): Promise<SpotDetail> => {
+    queryFn: async (): Promise<SpotDetail | null> => {
+      if (!isSupabaseConfigured()) return null
       const { data, error } = await getBrowserSupabase()
         .from('locations')
         .select(
@@ -172,8 +173,9 @@ export function spotDetailQueryOptions(id: string) {
           location_comments(id,content,created_at,rating,users(pseudo,name))`,
         )
         .eq('id', id)
-        .single()
+        .maybeSingle()
       if (error) throw error
+      if (!data) return null
       return mapSpotDetailRow(data)
     },
   })

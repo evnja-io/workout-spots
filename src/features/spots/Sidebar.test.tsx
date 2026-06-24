@@ -23,7 +23,7 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 // Mock the Route import used inside Sidebar.tsx
-vi.mock('~/routes/spots/index', () => ({
+vi.mock('~/routes/spots/route', () => ({
   Route: {
     useSearch: () => ({ q: 'bercy', disciplines: [], equipment: [], open24h: false, sort: 'rating' }),
   },
