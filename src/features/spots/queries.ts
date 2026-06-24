@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import { getBrowserSupabase } from '~/lib/supabase/browser'
+import { getBrowserSupabase, isSupabaseConfigured } from '~/lib/supabase/browser'
 import type { SpotListItem, SpotDetail, SpotImage, Equipment, Discipline, SpotComment } from './domain'
 
 // ─── Input row types (embedded-join select shapes) ───────────────────────────
@@ -145,6 +145,7 @@ export function spotsQueryOptions() {
   return queryOptions({
     queryKey: ['spots'] as const,
     queryFn: async (): Promise<SpotListItem[]> => {
+      if (!isSupabaseConfigured()) return []
       const { data, error } = await getBrowserSupabase()
         .from('locations')
         .select(

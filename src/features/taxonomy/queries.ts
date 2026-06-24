@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import type { TFunction } from 'i18next'
-import { getBrowserSupabase } from '~/lib/supabase/browser'
+import { getBrowserSupabase, isSupabaseConfigured } from '~/lib/supabase/browser'
 import type { Equipment, Discipline } from '~/features/spots/domain'
 import type { Database } from '~/lib/supabase/types'
 
@@ -11,6 +11,7 @@ export function equipmentsQueryOptions() {
   return queryOptions<Equipment[]>({
     queryKey: ['equipments'],
     queryFn: async () => {
+      if (!isSupabaseConfigured()) return []
       const { data, error } = await getBrowserSupabase()
         .from('equipments')
         .select('id,name,equipment_locale_key,category')
@@ -29,6 +30,7 @@ export function disciplinesQueryOptions() {
   return queryOptions<Discipline[]>({
     queryKey: ['disciplines'],
     queryFn: async () => {
+      if (!isSupabaseConfigured()) return []
       const { data, error } = await getBrowserSupabase()
         .from('disciplines')
         .select('id,name,discipline_locale_key,category')
