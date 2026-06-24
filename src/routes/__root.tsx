@@ -4,6 +4,7 @@ import { I18nextProvider } from 'react-i18next'
 import { createIsomorphicFn } from '@tanstack/react-start'
 import { createI18n, type Locale } from '~/lib/i18n/config'
 import { getServerLocale } from '~/lib/i18n/locale.server'
+import { SessionProvider } from '~/features/auth/session'
 import '~/styles/global.css'
 
 // createIsomorphicFn strips the .server() branch (and imports used only by it,
@@ -31,7 +32,9 @@ function RootComponent() {
       </head>
       <body>
         <I18nextProvider i18n={i18n}>
-          <Outlet />
+          <SessionProvider>
+            <Outlet />
+          </SessionProvider>
         </I18nextProvider>
         <Scripts />
       </body>

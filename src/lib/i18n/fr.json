@@ -5,6 +5,15 @@
     "back": "Retour",
     "continue": "Continuer"
   },
+  "auth": {
+    "signInTitle": "Se connecter",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "vous@example.com",
+    "sendLink": "Envoyer le lien de connexion",
+    "checkInbox": "Vérifiez votre boîte mail pour le lien de connexion.",
+    "signingIn": "Connexion en cours…",
+    "required": "Connectez-vous pour contribuer"
+  },
   "discover": {
     "title": "Découvrir",
     "searchPlaceholder": "Rechercher par nom, ville ou adresse…",

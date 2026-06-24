@@ -1,5 +1,14 @@
 {
   "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue" },
+  "auth": {
+    "signInTitle": "Sign in",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "sendLink": "Send sign-in link",
+    "checkInbox": "Check your inbox for a sign-in link.",
+    "signingIn": "Signing you in…",
+    "required": "Sign in to contribute"
+  },
   "discover": {
     "title": "Discover",
     "searchPlaceholder": "Search by name, city or address…",
