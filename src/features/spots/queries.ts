@@ -33,7 +33,8 @@ type SpotDetailCommentRow = {
   id: string
   content: string
   created_at: string | null
-  rating?: number | null
+  // NOTE: location_comments has NO rating column (db.sql). A per-comment rating
+  // would require correlating the author's location_ratings row (Task 19). null for now.
   users: { pseudo: string | null; name: string | null } | null
 }
 
@@ -107,7 +108,7 @@ export function mapSpotDetailRow(row: SpotDetailRow): SpotDetail {
   const comments: SpotComment[] = row.location_comments.map((c) => ({
     id: c.id,
     user: c.users?.pseudo ?? c.users?.name ?? 'Anonymous',
-    rating: c.rating ?? null,
+    rating: null,
     date: c.created_at ?? '',
     text: c.content,
   }))
@@ -170,7 +171,7 @@ export function spotDetailQueryOptions(id: string) {
           location_disciplines(discipline_id,disciplines(id,name,discipline_locale_key,category)),
           location_equipments(equipment_id,equipments(id,name,equipment_locale_key,category)),
           location_images(id,image_url,image_order),
-          location_comments(id,content,created_at,rating,users(pseudo,name))`,
+          location_comments(id,content,created_at,users(pseudo,name))`,
         )
         .eq('id', id)
         .maybeSingle()

@@ -26,7 +26,7 @@ function SpotsLayout() {
 
   // Get active spotId from child route params (non-strict)
   const params = useParams({ strict: false })
-  const activeSpotId = (params as { spotId?: string }).spotId ?? null
+  const activeSpotId = (params).spotId ?? null
 
   function handleSelectSpot(id: string) {
     void navigate({ to: '/spots/$spotId', params: { spotId: id }, search: (prev) => prev })

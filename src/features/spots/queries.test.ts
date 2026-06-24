@@ -63,7 +63,6 @@ describe('mapSpotDetailRow', () => {
         id: 'cmt-1',
         content: 'Amazing place',
         created_at: '2024-01-15',
-        rating: 5,
         users: { pseudo: 'bob', name: null },
       },
     ],
@@ -91,7 +90,7 @@ describe('mapSpotDetailRow', () => {
     expect(detail.comments[0]).toMatchObject({
       id: 'cmt-1',
       user: 'bob',
-      rating: 5,
+      rating: null,
       date: '2024-01-15',
       text: 'Amazing place',
     })

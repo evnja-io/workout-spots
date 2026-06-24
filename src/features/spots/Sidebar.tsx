@@ -21,7 +21,7 @@ export function Sidebar({ onSpotClick }: { onSpotClick?: (id: string) => void } 
 
   // Get the active spotId param if we're on a spot detail page
   const params = useParams({ strict: false })
-  const activeSpotId = (params as { spotId?: string }).spotId
+  const activeSpotId = (params).spotId
 
   const { data: spots } = useSuspenseQuery(spotsQueryOptions())
   const { data: disciplines } = useSuspenseQuery(disciplinesQueryOptions())

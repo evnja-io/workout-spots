@@ -7,7 +7,7 @@ import { Detail } from '~/features/spots/Detail'
 
 export const Route = createFileRoute('/spots/$spotId')({
   loader: async ({ context, params }) => {
-    const spotId = (params as { spotId: string }).spotId
+    const spotId = (params).spotId
     try {
       const data = await context.queryClient.ensureQueryData(spotDetailQueryOptions(spotId))
       if (!data) throw notFound()
@@ -33,7 +33,7 @@ export const Route = createFileRoute('/spots/$spotId')({
 
 function SpotDetailPage() {
   const params = Route.useParams()
-  const spotId = (params as { spotId: string }).spotId
+  const spotId = (params).spotId
   const navigate = useNavigate()
   const { data: spot } = useSuspenseQuery(spotDetailQueryOptions(spotId))
 
