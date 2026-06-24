@@ -3,23 +3,18 @@ import type { QueryClient } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
 import { createIsomorphicFn } from '@tanstack/react-start'
 import { createI18n, type Locale } from '~/lib/i18n/config'
+import { getServerLocale } from '~/lib/i18n/locale.server'
 import '~/styles/global.css'
 
+// createIsomorphicFn strips the .server() branch (and imports used only by it,
+// i.e. getServerLocale → @tanstack/react-start/server) from the client bundle.
 const getLocale = createIsomorphicFn()
   .client((): Locale => {
-    const match = document.cookie
-      .split('; ')
-      .find((c) => c.startsWith('lang='))
+    const match = document.cookie.split('; ').find((c) => c.startsWith('lang='))
     const value = match?.split('=')[1]
     return value === 'fr' ? 'fr' : 'en'
   })
-  .server((): Locale => {
-    // getServerLocale lives in locale.server.ts — the .server.ts suffix
-    // keeps @tanstack/react-start/server out of the client bundle.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { getServerLocale } = require('~/lib/i18n/locale.server') as typeof import('~/lib/i18n/locale.server')
-    return getServerLocale()
-  })
+  .server((): Locale => getServerLocale())
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({ meta: [{ title: 'Workout Spots' }] }),
