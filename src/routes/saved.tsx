@@ -5,8 +5,26 @@ import { useTranslation } from 'react-i18next'
 import { useSession, useSessionContext } from '~/features/auth/session'
 import { savedSpotsQueryOptions } from '~/features/likes/queries'
 import { SpotCard } from '~/features/spots/SpotCard'
+import { ErrorState } from '~/components/ErrorState'
+
+function SavedError({ reset }: { reset: () => void }) {
+  const { t } = useTranslation()
+  return (
+    <ErrorState
+      title={t('common.errorTitle')}
+      message={t('common.errorMessage')}
+      onRetry={reset}
+    />
+  )
+}
+
+function SavedPending() {
+  return <div className="empty" aria-busy="true" />
+}
 
 export const Route = createFileRoute('/saved')({
+  pendingComponent: SavedPending,
+  errorComponent: SavedError,
   component: SavedPage,
 })
 

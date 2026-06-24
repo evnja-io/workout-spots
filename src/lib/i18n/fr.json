@@ -3,7 +3,10 @@
     "save": "Enregistrer",
     "cancel": "Annuler",
     "back": "Retour",
-    "continue": "Continuer"
+    "continue": "Continuer",
+    "retry": "Réessayer",
+    "errorTitle": "Une erreur s'est produite",
+    "errorMessage": "Une erreur inattendue s'est produite. Veuillez réessayer."
   },
   "auth": {
     "signInTitle": "Se connecter",

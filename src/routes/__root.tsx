@@ -26,8 +26,25 @@ function accentInlineVars(
   } as React.CSSProperties
 }
 
+function RootError({ error }: { error: Error; reset: () => void }) {
+  return (
+    <html lang="en">
+      <head>
+        <title>Error – Workout Spots</title>
+      </head>
+      <body>
+        <div style={{ padding: 24 }}>
+          <h1>Something went wrong</h1>
+          <p>{error.message}</p>
+        </div>
+      </body>
+    </html>
+  )
+}
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({ meta: [{ title: 'Workout Spots' }] }),
+  errorComponent: RootError,
   component: RootComponent,
 })
 

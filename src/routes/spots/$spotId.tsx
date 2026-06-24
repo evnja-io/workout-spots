@@ -4,6 +4,18 @@ import { useTranslation } from 'react-i18next'
 import { spotDetailQueryOptions } from '~/features/spots/queries'
 import type { SpotDetail } from '~/features/spots/domain'
 import { Detail } from '~/features/spots/Detail'
+import { ErrorState } from '~/components/ErrorState'
+
+function SpotError({ reset }: { reset: () => void }) {
+  const { t } = useTranslation()
+  return (
+    <ErrorState
+      title={t('common.errorTitle')}
+      message={t('common.errorMessage')}
+      onRetry={reset}
+    />
+  )
+}
 
 export const Route = createFileRoute('/spots/$spotId')({
   loader: async ({ context, params }) => {
@@ -28,6 +40,7 @@ export const Route = createFileRoute('/spots/$spotId')({
     }
   },
   notFoundComponent: SpotNotFound,
+  errorComponent: SpotError,
   component: SpotDetailPage,
 })
 

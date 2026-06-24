@@ -12,6 +12,22 @@ import { SettingsPanel } from '~/features/settings/SettingsPanel'
 import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
 import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
+import { ErrorState } from '~/components/ErrorState'
+
+function SpotsPending() {
+  return <div className="empty" aria-busy="true" />
+}
+
+function SpotsError({ reset }: { reset: () => void }) {
+  const { t } = useTranslation()
+  return (
+    <ErrorState
+      title={t('common.errorTitle')}
+      message={t('common.errorMessage')}
+      onRetry={reset}
+    />
+  )
+}
 
 export const Route = createFileRoute('/spots')({
   validateSearch: spotRouteSearchSchema,
@@ -20,6 +36,8 @@ export const Route = createFileRoute('/spots')({
     await context.queryClient.ensureQueryData(equipmentsQueryOptions())
     await context.queryClient.ensureQueryData(disciplinesQueryOptions())
   },
+  pendingComponent: SpotsPending,
+  errorComponent: SpotsError,
   component: SpotsLayout,
 })
 

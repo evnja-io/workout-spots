@@ -1,5 +1,5 @@
 {
-  "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue" },
+  "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue", "retry": "Retry", "errorTitle": "Something went wrong", "errorMessage": "An unexpected error occurred. Please try again." },
   "auth": {
     "signInTitle": "Sign in",
     "emailLabel": "Email address",
