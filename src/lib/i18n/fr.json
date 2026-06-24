@@ -36,6 +36,17 @@
     "submit": "Publier l'avis",
     "noReviews": "Aucun avis pour le moment."
   },
+  "settings": {
+    "title": "Paramètres",
+    "theme": "Thème",
+    "accent": "Accentuation",
+    "language": "Langue",
+    "mapStyle": "Style de carte",
+    "light": "Clair",
+    "dark": "Sombre",
+    "minimal": "Minimal",
+    "satellite": "Satellite"
+  },
   "discover": {
     "title": "Découvrir",
     "searchPlaceholder": "Rechercher par nom, ville ou adresse…",

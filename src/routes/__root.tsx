@@ -2,54 +2,46 @@ import { Outlet, createRootRouteWithContext, HeadContent, Scripts } from '@tanst
 import { QueryClientProvider } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
-import { useEffect } from 'react'
-import { createIsomorphicFn } from '@tanstack/react-start'
-import { createI18n, type Locale } from '~/lib/i18n/config'
-import { getServerLocale } from '~/lib/i18n/locale.server'
+import { createI18n } from '~/lib/i18n/config'
 import { SessionProvider } from '~/features/auth/session'
-import { applyTheme, applyAccent, type Theme, type AccentKey } from '~/features/theme/theme'
+import { ACCENTS } from '~/features/theme/theme'
+import { getPrefs } from '~/features/settings/prefs'
 import '~/styles/global.css'
 
-// createIsomorphicFn strips the .server() branch (and imports used only by it,
-// i.e. getServerLocale → @tanstack/react-start/server) from the client bundle.
-const getLocale = createIsomorphicFn()
-  .client((): Locale => {
-    const match = document.cookie.split('; ').find((c) => c.startsWith('lang='))
-    const value = match?.split('=')[1]
-    return value === 'fr' ? 'fr' : 'en'
-  })
-  .server((): Locale => getServerLocale())
+// createIsomorphicFn strips the .server() branch from the client bundle.
+// getPrefs() follows the same pattern as the old getLocale(): safe on both
+// sides because prefs.server.ts is imported only via the .server() branch.
+
+function accentInlineVars(
+  accent: keyof typeof ACCENTS,
+  theme: 'light' | 'dark',
+): React.CSSProperties {
+  const a = ACCENTS[accent][theme]
+  return {
+    '--accent': a.accent,
+    '--accent-2': a.accent2,
+    '--accent-soft': a.soft,
+    '--accent-softer': a.softer,
+    '--accent-fg': a.fg,
+  } as React.CSSProperties
+}
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({ meta: [{ title: 'Workout Spots' }] }),
   component: RootComponent,
 })
 
-/** Read a cookie value by name; returns undefined when not found. */
-function readCookie(name: string): string | undefined {
-  if (typeof document === 'undefined') return undefined
-  return document.cookie
-    .split('; ')
-    .find((c) => c.startsWith(`${name}=`))
-    ?.split('=')[1]
-}
-
-function ThemeApplier() {
-  useEffect(() => {
-    const theme = (readCookie('theme') ?? 'light') as Theme
-    const accent = (readCookie('accent') ?? 'violet') as AccentKey
-    applyTheme(theme)
-    applyAccent(accent, theme)
-  }, [])
-  return null
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext()
-  const locale = getLocale()
-  const i18n = createI18n(locale)
+  const prefs = getPrefs()
+  const i18n = createI18n(prefs.lang)
+
   return (
-    <html lang={locale}>
+    <html
+      lang={prefs.lang}
+      data-theme={prefs.theme}
+      style={accentInlineVars(prefs.accent, prefs.theme)}
+    >
       <head>
         <HeadContent />
       </head>
@@ -57,7 +49,6 @@ function RootComponent() {
         <QueryClientProvider client={queryClient}>
           <I18nextProvider i18n={i18n}>
             <SessionProvider>
-              <ThemeApplier />
               <Outlet />
             </SessionProvider>
           </I18nextProvider>

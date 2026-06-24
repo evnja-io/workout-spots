@@ -7,6 +7,8 @@ import { Sidebar } from '~/features/spots/Sidebar'
 import { MapView } from '~/features/spots/MapView'
 import { spotsQueryOptions } from '~/features/spots/queries'
 import { equipmentsQueryOptions, disciplinesQueryOptions } from '~/features/taxonomy/queries'
+import { getPrefs } from '~/features/settings/prefs'
+import { SettingsPanel } from '~/features/settings/SettingsPanel'
 import type { MapStyle } from '~/lib/mapbox/map'
 
 export const Route = createFileRoute('/spots')({
@@ -20,13 +22,14 @@ export const Route = createFileRoute('/spots')({
 })
 
 function SpotsLayout() {
-  const [mapStyle, setMapStyle] = useState<MapStyle>('light')
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
   const { data: spots } = useSuspenseQuery(spotsQueryOptions())
   const navigate = useNavigate()
 
   // Get active spotId from child route params (non-strict)
   const params = useParams({ strict: false })
-  const activeSpotId = (params).spotId ?? null
+  const activeSpotId = params.spotId ?? null
 
   function handleSelectSpot(id: string) {
     void navigate({ to: '/spots/$spotId', params: { spotId: id }, search: (prev) => prev })
@@ -34,7 +37,7 @@ function SpotsLayout() {
 
   return (
     <div className="app">
-      <Rail />
+      <Rail onOpenSettings={() => setSettingsOpen(true)} />
       <aside className="sidebar">
         <Suspense fallback={null}>
           <Sidebar onSpotClick={handleSelectSpot} />
@@ -50,6 +53,12 @@ function SpotsLayout() {
           theme="light"
         />
       </div>
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        mapStyle={mapStyle}
+        onMapStyleChange={setMapStyle}
+      />
       <Outlet />
     </div>
   )

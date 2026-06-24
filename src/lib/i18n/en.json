@@ -31,6 +31,17 @@
     "submit": "Post review",
     "noReviews": "No reviews yet."
   },
+  "settings": {
+    "title": "Settings",
+    "theme": "Theme",
+    "accent": "Accent",
+    "language": "Language",
+    "mapStyle": "Map style",
+    "light": "Light",
+    "dark": "Dark",
+    "minimal": "Minimal",
+    "satellite": "Satellite"
+  },
   "discover": {
     "title": "Discover",
     "searchPlaceholder": "Search by name, city or address…",
