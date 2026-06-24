@@ -1,0 +1,23 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "back": "Retour",
+    "continue": "Continuer"
+  },
+  "discover": {
+    "title": "Découvrir",
+    "searchPlaceholder": "Rechercher par nom, ville ou adresse…",
+    "spotsCount": "{{count}} spots",
+    "results": "{{count}} résultats",
+    "empty": "Aucun spot ne correspond à vos filtres.",
+    "open24": "Ouvert 24/7",
+    "disciplines": "Disciplines",
+    "equipment": "Équipement",
+    "access": "Accès",
+    "sortRating": "Mieux notés",
+    "sortPopular": "Plus notés",
+    "sortName": "A–Z",
+    "addSpot": "Ajouter un spot"
+  }
+}
