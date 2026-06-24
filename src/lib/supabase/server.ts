@@ -14,9 +14,11 @@ import {
 import type { Database } from './types'
 
 export function getServerSupabase(): SupabaseClient<Database> {
+  // VITE_* vars are inlined into the SSR bundle by Vite at build time; they are
+  // NOT present in process.env at runtime (`node .output/server/index.mjs`).
   return createServerClient<Database>(
-    process.env['VITE_SUPABASE_URL']!,
-    process.env['VITE_SUPABASE_ANON_KEY']!,
+    import.meta.env.VITE_SUPABASE_URL as string,
+    import.meta.env.VITE_SUPABASE_ANON_KEY as string,
     {
       cookies: {
         getAll: () => {

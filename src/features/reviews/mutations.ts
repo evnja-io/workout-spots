@@ -53,6 +53,7 @@ export function useSubmitReview(spotId: string): {
         if (!prev) return prev
         return {
           ...prev,
+          viewerRating: values.rating,
           comments: [
             {
               id: optimisticId,

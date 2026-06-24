@@ -152,6 +152,10 @@ export function spotsQueryOptions() {
         .select(
           'id,name,city,address,latitude,longitude,is_open_24h,average_rating,rating_count,location_disciplines(discipline_id),location_equipments(equipment_id),location_images(id,image_url,image_order)',
         )
+        // A spot with no coordinates can't be placed on the map (would render at
+        // 0°,0° in the Gulf of Guinea) — exclude it from the discover list.
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
       if (error) throw error
       return (data as unknown as SpotListRow[]).map(mapSpotRow)
     },
