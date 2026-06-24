@@ -1,4 +1,4 @@
-import { useLocation } from '@tanstack/react-router'
+import { useLocation, Link } from '@tanstack/react-router'
 import { Icon } from '~/components/ui/Icon'
 import { useSession } from '~/features/auth/session'
 
@@ -48,15 +48,15 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
         <Icon name="list" size={20} />
       </button>
 
-      {/* Saved — plain anchor until the /saved route is scaffolded (Task N) */}
-      <a
-        href="/saved"
+      {/* Saved */}
+      <Link
+        to="/saved"
         className={`rail-btn${isSavedActive ? ' active' : ''}`}
         aria-label="Saved"
         title="Saved"
       >
         <Icon name="heart" size={20} />
-      </a>
+      </Link>
 
       <div className="rail-spacer" />
 

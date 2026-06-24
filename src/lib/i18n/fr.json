@@ -22,8 +22,13 @@
     "reviews": "Avis",
     "getDirections": "Itinéraire",
     "save": "Enregistrer",
+    "saved": "Enregistré",
     "rating": "Note",
     "notFound": "Spot introuvable"
+  },
+  "saved": {
+    "title": "Spots enregistrés",
+    "empty": "Vous n'avez pas encore enregistré de spots."
   },
   "discover": {
     "title": "Découvrir",

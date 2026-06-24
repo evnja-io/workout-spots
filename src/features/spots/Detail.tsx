@@ -5,10 +5,12 @@ import { Stars } from '~/components/ui/Stars'
 import { Icon } from '~/components/ui/Icon'
 import { Button } from '~/components/ui/Button'
 import { resolveLabel } from '~/features/taxonomy/queries'
+import { useSaveSpot } from '~/features/likes/useSaveSpot'
 
 export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => void }) {
   const { t } = useTranslation()
   const [imgIdx, setImgIdx] = useState(0)
+  const { liked, toggle, pending } = useSaveSpot(spot.id)
 
   const hasImages = spot.images.length > 0
   const currentImg = spot.images[imgIdx]
@@ -146,9 +148,15 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
             <Icon name="route" size={14} />
             {t('detail.getDirections')}
           </a>
-          <Button variant="secondary" disabled data-testid="save-button">
+          <Button
+            variant="secondary"
+            onClick={toggle}
+            disabled={pending}
+            aria-pressed={liked}
+            data-testid="save-button"
+          >
             <Icon name="heart" size={14} />
-            {t('detail.save')}
+            {liked ? t('detail.saved') : t('detail.save')}
           </Button>
         </div>
       </div>

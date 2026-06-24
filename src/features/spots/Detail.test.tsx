@@ -10,6 +10,10 @@ vi.mock('~/lib/supabase/browser', () => ({
   getBrowserSupabase: vi.fn(),
 }))
 
+vi.mock('~/features/likes/useSaveSpot', () => ({
+  useSaveSpot: () => ({ liked: false, toggle: vi.fn(), pending: false }),
+}))
+
 const mockSpot: SpotDetail = {
   id: 'spot-bercy',
   name: 'Bercy',

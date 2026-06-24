@@ -17,8 +17,13 @@
     "reviews": "Reviews",
     "getDirections": "Get directions",
     "save": "Save",
+    "saved": "Saved",
     "rating": "Rating",
     "notFound": "Spot not found"
+  },
+  "saved": {
+    "title": "Saved spots",
+    "empty": "You haven't saved any spots yet."
   },
   "discover": {
     "title": "Discover",
