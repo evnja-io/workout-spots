@@ -22,6 +22,10 @@
     "sortRating": "Top rated",
     "sortPopular": "Most rated",
     "sortName": "A–Z",
-    "addSpot": "Add a spot"
+    "addSpot": "Add a spot",
+    "mapTokenMissing": "Add a Mapbox token to enable the map.",
+    "styleLight": "Light",
+    "styleMinimal": "Minimal",
+    "styleSatellite": "Satellite"
   }
 }

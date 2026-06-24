@@ -27,6 +27,10 @@
     "sortRating": "Mieux notés",
     "sortPopular": "Plus notés",
     "sortName": "A–Z",
-    "addSpot": "Ajouter un spot"
+    "addSpot": "Ajouter un spot",
+    "mapTokenMissing": "Ajoutez un jeton Mapbox pour activer la carte.",
+    "styleLight": "Clair",
+    "styleMinimal": "Minimal",
+    "styleSatellite": "Satellite"
   }
 }
