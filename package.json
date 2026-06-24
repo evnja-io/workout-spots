@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "directories": {
-    "doc": "docs"
-  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
