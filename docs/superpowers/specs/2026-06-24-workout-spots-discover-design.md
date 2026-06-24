@@ -10,6 +10,7 @@
 Build the **"Discover"** experience of Workout Spots as a production web app: a map-first directory of outdoor calisthenics / street-workout spots, with filtering, spot detail, reviews, saving, and community-contributed spots.
 
 **In scope (v1):**
+
 - Discover: Mapbox map + sidebar list, search, discipline/equipment filters, "Open 24/7" filter, sort (top-rated / most-rated / A–Z).
 - Spot detail: photos, address, stats, about, disciplines, equipment, contributor, reviews, directions, save.
 - Reviews: combined rating (1–5) + optional text in one action.
@@ -24,27 +25,27 @@ Build the **"Discover"** experience of Workout Spots as a production web app: a 
 
 ## 2. Stack & tooling
 
-| Concern | Choice |
-|---|---|
-| Framework | TanStack Start (SSR) on React 19, TypeScript (strict), Vite |
-| Routing | TanStack Router (file-based, type-safe, validated search params) |
-| Server state | TanStack Query v5 (hydrated from route loaders) |
-| Forms | TanStack Form + Zod (add-spot wizard, review form) |
-| Long lists | TanStack Virtual (virtualized spot list) |
-| Backend SDK | Supabase JS v2 — server client (loaders/SSR) + browser client (auth + mutations) |
-| Styling | **Tailwind CSS v4** (`@tailwindcss/vite`, CSS-first `@theme`); design tokens mapped to runtime CSS variables so light/dark + accent palettes stay swappable; bespoke styles (animations, scrollbars, map pins) in a small `@layer` |
-| Types | `supabase gen types typescript` → typed DB client; **no `any`** (lint-enforced) |
-| Map | Mapbox GL JS v3 + `@types/mapbox-gl`; Mapbox Geocoding API for autocomplete + reverse geocode |
-| i18n | react-i18next (en + fr), SSR-safe; locale via cookie + `?lang`; taxonomy via `*_locale_key` |
-| Testing | Vitest + React Testing Library + user-event + MSW (mock Supabase REST/Storage + Mapbox Geocoding) + jsdom; Mapbox GL mocked |
-| Quality | ESLint (`@typescript-eslint/no-explicit-any: error`), Prettier, `tsc --noEmit` in CI |
+| Concern      | Choice                                                                                                                                                                                                                             |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework    | TanStack Start (SSR) on React 19, TypeScript (strict), Vite                                                                                                                                                                        |
+| Routing      | TanStack Router (file-based, type-safe, validated search params)                                                                                                                                                                   |
+| Server state | TanStack Query v5 (hydrated from route loaders)                                                                                                                                                                                    |
+| Forms        | TanStack Form + Zod (add-spot wizard, review form)                                                                                                                                                                                 |
+| Long lists   | TanStack Virtual (virtualized spot list)                                                                                                                                                                                           |
+| Backend SDK  | Supabase JS v2 — server client (loaders/SSR) + browser client (auth + mutations)                                                                                                                                                   |
+| Styling      | **Tailwind CSS v4** (`@tailwindcss/vite`, CSS-first `@theme`); design tokens mapped to runtime CSS variables so light/dark + accent palettes stay swappable; bespoke styles (animations, scrollbars, map pins) in a small `@layer` |
+| Types        | `supabase gen types typescript` → typed DB client; **no `any`** (lint-enforced)                                                                                                                                                    |
+| Map          | Mapbox GL JS v3 + `@types/mapbox-gl`; Mapbox Geocoding API for autocomplete + reverse geocode                                                                                                                                      |
+| i18n         | react-i18next (en + fr), SSR-safe; locale via cookie + `?lang`; taxonomy via `*_locale_key`                                                                                                                                        |
+| Testing      | Vitest + React Testing Library + user-event + MSW (mock Supabase REST/Storage + Mapbox Geocoding) + jsdom; Mapbox GL mocked                                                                                                        |
+| Quality      | ESLint (`@typescript-eslint/no-explicit-any: error`), Prettier, `tsc --noEmit` in CI                                                                                                                                               |
 
 ## 3. Project structure (feature-first)
 
 ```
 src/
   routes/
-    __root.tsx            # shell: rail + providers (Query, i18n, theme, auth) 
+    __root.tsx            # shell: rail + providers (Query, i18n, theme, auth)
     index.tsx             # redirect → /spots
     spots/
       route.tsx           # Discover layout (sidebar + map); validates search params
@@ -70,15 +71,15 @@ src/
 
 ## 4. Data model mapping
 
-| App concept | Supabase tables |
-|---|---|
-| Spot | `locations` (denormalized `average_rating`, `rating_count`) |
-| Spot photos | `location_images` (Supabase Storage) |
-| Equipment | `equipments`, `location_equipments` |
-| Disciplines | `disciplines`, `location_disciplines` |
-| Review | `location_ratings` (1–5, upsert per user) + `location_comments` (text) |
-| Save | `location_likes` |
-| Profile | `public.users` (FK target for `created_by` / `user_id`), keyed to `auth.users.id` |
+| App concept | Supabase tables                                                                   |
+| ----------- | --------------------------------------------------------------------------------- |
+| Spot        | `locations` (denormalized `average_rating`, `rating_count`)                       |
+| Spot photos | `location_images` (Supabase Storage)                                              |
+| Equipment   | `equipments`, `location_equipments`                                               |
+| Disciplines | `disciplines`, `location_disciplines`                                             |
+| Review      | `location_ratings` (1–5, upsert per user) + `location_comments` (text)            |
+| Save        | `location_likes`                                                                  |
+| Profile     | `public.users` (FK target for `created_by` / `user_id`), keyed to `auth.users.id` |
 
 - **List query:** card fields (`id, name, city, average_rating, rating_count, is_open_24h`) + one thumbnail + discipline/equipment ids for filter parity with the prototype. (Server-side filtering can replace client filtering once datasets grow.)
 - **Detail query:** `locations` joined with `location_images` (ordered), `location_equipments`→`equipments`, `location_disciplines`→`disciplines`, `location_comments` (+ author from `public.users`), `location_ratings` aggregate, and the viewer's own like + rating when authenticated.
@@ -101,7 +102,7 @@ Port the prototype 1:1 visually (same CSS variables, light/dark themes, accent p
 
 - **Reads (public):** route loader → server Supabase client → data hydrated into TanStack Query cache → components consume via `useQuery`/`useSuspenseQuery`. RLS permits anon `select`.
 - **Mutations (auth):** browser Supabase client via `useMutation`. Optimistic updates for likes and reviews; invalidate/refetch the affected spot. Magic-link session stored in SSR-readable cookie storage.
-- **Ratings denormalization:** assume DB triggers maintain `locations.average_rating` / `rating_count`; after a review mutation, refetch the spot. *(Assumption — §11.)*
+- **Ratings denormalization:** assume DB triggers maintain `locations.average_rating` / `rating_count`; after a review mutation, refetch the spot. _(Assumption — §11.)_
 - **Auth gate:** contribute actions check the session; if absent, open the magic-link modal, then resume the action on return.
 
 ## 8. i18n
@@ -131,6 +132,7 @@ Port the prototype 1:1 visually (same CSS variables, light/dark themes, accent p
 ## 12. Testing strategy
 
 Vitest + RTL + user-event; MSW mocks Supabase REST/Storage and Mapbox Geocoding; Mapbox GL mocked. Coverage focus (meaningful, not a vanity %):
+
 - Filter / sort / search logic and URL search-param sync.
 - Review submit (rating + comment, optimistic update + rollback).
 - Like toggle (optimistic).

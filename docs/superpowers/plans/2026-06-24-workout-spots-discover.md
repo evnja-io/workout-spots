@@ -77,21 +77,25 @@ src/
 ## Task 1: Project scaffold (TanStack Start + TS strict + Vite)
 
 **Files:**
+
 - Create: `package.json`, `vite.config.ts`, `tsconfig.json`, `.env.example`, `src/router.tsx`, `src/routes/__root.tsx`, `src/routes/index.tsx`, `src/routes/spots/route.tsx`, `src/routes/spots/index.tsx`
 - Create: `index.html`
 
 **Interfaces:**
+
 - Produces: a running TanStack Start dev server; `createRouter()` factory in `src/router.tsx`; route tree with `/` → redirect `/spots` and a placeholder `/spots`.
 
 - [ ] **Step 1: Initialize package + install**
 
 Run:
+
 ```bash
 npm init -y
 npm i react@^19 react-dom@^19 @tanstack/react-start @tanstack/react-router @tanstack/react-query
 npm i tailwindcss @tailwindcss/vite
 npm i -D typescript @types/react @types/react-dom vite @vitejs/plugin-react vite-tsconfig-paths
 ```
+
 If any TanStack Start or Tailwind v4 install detail differs from current docs, consult context7 (`/websites/tanstack_start_framework_react`, query "build from scratch vite config"; and resolve `Tailwind CSS` → query "v4 @tailwindcss/vite plugin setup and @theme") and follow it. Keep the produced config shape below.
 
 - [ ] **Step 2: Write `tsconfig.json` (strict)**
@@ -134,14 +138,17 @@ export default defineConfig({
 ```
 
 Create `src/styles/global.css` with the Tailwind entrypoint (theme tokens are added in Task 4):
+
 ```css
 @import 'tailwindcss';
 ```
+
 Import it in `__root.tsx`: `import '~/styles/global.css'`. Add `@tailwindcss/vite` and the css plugin to `vitest.config.ts` is unnecessary (Task 3 sets `css: false`).
 
 - [ ] **Step 4: Write router + root + routes**
 
 `src/router.tsx`:
+
 ```tsx
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { QueryClient } from '@tanstack/react-query'
@@ -160,11 +167,14 @@ export function createRouter() {
 }
 
 declare module '@tanstack/react-router' {
-  interface Register { router: ReturnType<typeof createRouter> }
+  interface Register {
+    router: ReturnType<typeof createRouter>
+  }
 }
 ```
 
 `src/routes/__root.tsx`:
+
 ```tsx
 import { Outlet, createRootRouteWithContext, HeadContent, Scripts } from '@tanstack/react-router'
 import type { QueryClient } from '@tanstack/react-query'
@@ -177,23 +187,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootComponent() {
   return (
     <html lang="en">
-      <head><HeadContent /></head>
-      <body><Outlet /><Scripts /></body>
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <Outlet />
+        <Scripts />
+      </body>
     </html>
   )
 }
 ```
 
 `src/routes/index.tsx`:
+
 ```tsx
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
-  beforeLoad: () => { throw redirect({ to: '/spots' }) },
+  beforeLoad: () => {
+    throw redirect({ to: '/spots' })
+  },
 })
 ```
 
 `src/routes/spots/route.tsx`:
+
 ```tsx
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
@@ -201,6 +220,7 @@ export const Route = createFileRoute('/spots')({ component: () => <Outlet /> })
 ```
 
 `src/routes/spots/index.tsx`:
+
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
 
@@ -210,6 +230,7 @@ export const Route = createFileRoute('/spots/')({
 ```
 
 `.env.example`:
+
 ```
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
@@ -244,10 +265,12 @@ git add -A && git commit -m "chore: scaffold TanStack Start app with strict Type
 ## Task 2: Lint, format, and `no-any` enforcement
 
 **Files:**
+
 - Create: `eslint.config.js`, `.prettierrc`
 - Modify: `package.json` (scripts)
 
 **Interfaces:**
+
 - Produces: `npm run lint` failing on any `any`; `npm run format`.
 
 - [ ] **Step 1: Install**
@@ -308,9 +331,11 @@ git add -A && git commit -m "chore: add eslint (no-any) and prettier"
 ## Task 3: Test harness (Vitest + RTL + MSW + Mapbox mock)
 
 **Files:**
+
 - Create: `vitest.config.ts`, `src/test/setup.ts`, `src/test/msw/server.ts`, `src/test/msw/handlers.ts`, `src/test/mapbox-mock.ts`, `src/test/sanity.test.ts`
 
 **Interfaces:**
+
 - Produces: `npm test`; MSW `server` for HTTP mocks; `mapbox-mock` that stubs `mapbox-gl`.
 
 - [ ] **Step 1: Install**
@@ -340,11 +365,14 @@ export default defineConfig({
 - [ ] **Step 3: Write MSW server + empty handlers**
 
 `src/test/msw/handlers.ts`:
+
 ```ts
 import type { RequestHandler } from 'msw'
 export const handlers: RequestHandler[] = []
 ```
+
 `src/test/msw/server.ts`:
+
 ```ts
 import { setupServer } from 'msw/node'
 import { handlers } from './handlers'
@@ -369,24 +397,37 @@ afterAll(() => server.close())
 import { vi } from 'vitest'
 
 export class FakeMarker {
-  setLngLat() { return this }
-  addTo() { return this }
-  remove() { return this }
+  setLngLat() {
+    return this
+  }
+  addTo() {
+    return this
+  }
+  remove() {
+    return this
+  }
 }
 export class FakeMap {
   private handlers: Record<string, ((e: unknown) => void)[]> = {}
-  on(evt: string, cb: (e: unknown) => void) { (this.handlers[evt] ??= []).push(cb) }
-  fire(evt: string, e: unknown) { (this.handlers[evt] ?? []).forEach((h) => h(e)) }
+  on(evt: string, cb: (e: unknown) => void) {
+    ;(this.handlers[evt] ??= []).push(cb)
+  }
+  fire(evt: string, e: unknown) {
+    ;(this.handlers[evt] ?? []).forEach((h) => h(e))
+  }
   setStyle() {}
   flyTo() {}
   zoomTo() {}
-  getZoom() { return 11.5 }
+  getZoom() {
+    return 11.5
+  }
   remove() {}
 }
 export function mockMapboxGl() {
   vi.mock('mapbox-gl', () => ({
     default: { Map: FakeMap, Marker: FakeMarker, accessToken: '' },
-    Map: FakeMap, Marker: FakeMarker,
+    Map: FakeMap,
+    Marker: FakeMarker,
   }))
 }
 ```
@@ -394,10 +435,14 @@ export function mockMapboxGl() {
 - [ ] **Step 6: Sanity test**
 
 `src/test/sanity.test.ts`:
+
 ```ts
 import { expect, test } from 'vitest'
-test('harness runs', () => { expect(1 + 1).toBe(2) })
+test('harness runs', () => {
+  expect(1 + 1).toBe(2)
+})
 ```
+
 Run: `npx vitest run src/test/sanity.test.ts`
 Expected: 1 passed.
 
@@ -407,6 +452,7 @@ Expected: 1 passed.
 "test": "vitest run",
 "test:watch": "vitest"
 ```
+
 ```bash
 git add -A && git commit -m "test: add vitest + RTL + MSW + mapbox mock harness"
 ```
@@ -416,25 +462,36 @@ git add -A && git commit -m "test: add vitest + RTL + MSW + mapbox mock harness"
 ## Task 4: Global styles + theme
 
 **Files:**
+
 - Create: `src/styles/global.css` (port of prototype `styles.css`), `src/features/theme/theme.ts`, `src/features/theme/theme.test.ts`
 - Modify: `src/routes/__root.tsx` (import css; set `data-theme`)
 
 **Interfaces:**
+
 - Produces: `applyTheme(theme: Theme)`, `applyAccent(accent: AccentKey, theme: Theme)`, `ACCENTS`, types `Theme = 'light' | 'dark'`, `AccentKey = 'violet' | 'slate' | 'emerald' | 'rose'`.
 
 - [ ] **Step 1: Failing test**
 
 `src/features/theme/theme.test.ts`:
+
 ```ts
 import { describe, expect, it, beforeEach } from 'vitest'
 import { ACCENTS, applyAccent, applyTheme } from './theme'
 
 describe('theme', () => {
-  beforeEach(() => { document.documentElement.removeAttribute('data-theme'); document.documentElement.removeAttribute('style') })
-  it('sets data-theme', () => { applyTheme('dark'); expect(document.documentElement.dataset.theme).toBe('dark') })
+  beforeEach(() => {
+    document.documentElement.removeAttribute('data-theme')
+    document.documentElement.removeAttribute('style')
+  })
+  it('sets data-theme', () => {
+    applyTheme('dark')
+    expect(document.documentElement.dataset.theme).toBe('dark')
+  })
   it('sets accent css vars', () => {
     applyAccent('violet', 'dark')
-    expect(document.documentElement.style.getPropertyValue('--accent')).toBe(ACCENTS.violet.dark.accent)
+    expect(document.documentElement.style.getPropertyValue('--accent')).toBe(
+      ACCENTS.violet.dark.accent,
+    )
   })
 })
 ```
@@ -452,20 +509,68 @@ type Palette = { accent: string; accent2: string; soft: string; softer: string; 
 
 export const ACCENTS: Record<AccentKey, Record<Theme, Palette>> = {
   violet: {
-    light: { accent: '#4C1D95', accent2: '#6D28D9', soft: '#EDE9FE', softer: '#F5F3FF', fg: '#FFFFFF' },
-    dark: { accent: '#A78BFA', accent2: '#8B5CF6', soft: '#2A1F4A', softer: '#1B1633', fg: '#0B0D10' },
+    light: {
+      accent: '#4C1D95',
+      accent2: '#6D28D9',
+      soft: '#EDE9FE',
+      softer: '#F5F3FF',
+      fg: '#FFFFFF',
+    },
+    dark: {
+      accent: '#A78BFA',
+      accent2: '#8B5CF6',
+      soft: '#2A1F4A',
+      softer: '#1B1633',
+      fg: '#0B0D10',
+    },
   },
   slate: {
-    light: { accent: '#1E293B', accent2: '#334155', soft: '#E2E8F0', softer: '#F1F5F9', fg: '#FFFFFF' },
-    dark: { accent: '#E2E8F0', accent2: '#CBD5E1', soft: '#1E293B', softer: '#0F172A', fg: '#0B0D10' },
+    light: {
+      accent: '#1E293B',
+      accent2: '#334155',
+      soft: '#E2E8F0',
+      softer: '#F1F5F9',
+      fg: '#FFFFFF',
+    },
+    dark: {
+      accent: '#E2E8F0',
+      accent2: '#CBD5E1',
+      soft: '#1E293B',
+      softer: '#0F172A',
+      fg: '#0B0D10',
+    },
   },
   emerald: {
-    light: { accent: '#065F46', accent2: '#047857', soft: '#D1FAE5', softer: '#ECFDF5', fg: '#FFFFFF' },
-    dark: { accent: '#34D399', accent2: '#10B981', soft: '#0F2E22', softer: '#09201A', fg: '#0B0D10' },
+    light: {
+      accent: '#065F46',
+      accent2: '#047857',
+      soft: '#D1FAE5',
+      softer: '#ECFDF5',
+      fg: '#FFFFFF',
+    },
+    dark: {
+      accent: '#34D399',
+      accent2: '#10B981',
+      soft: '#0F2E22',
+      softer: '#09201A',
+      fg: '#0B0D10',
+    },
   },
   rose: {
-    light: { accent: '#9F1239', accent2: '#BE123C', soft: '#FFE4E6', softer: '#FFF1F2', fg: '#FFFFFF' },
-    dark: { accent: '#FB7185', accent2: '#F43F5E', soft: '#3B1522', softer: '#260E18', fg: '#0B0D10' },
+    light: {
+      accent: '#9F1239',
+      accent2: '#BE123C',
+      soft: '#FFE4E6',
+      softer: '#FFF1F2',
+      fg: '#FFFFFF',
+    },
+    dark: {
+      accent: '#FB7185',
+      accent2: '#F43F5E',
+      soft: '#3B1522',
+      softer: '#260E18',
+      fg: '#0B0D10',
+    },
   },
 }
 
@@ -491,33 +596,72 @@ Extend `src/styles/global.css` (created in Task 1) so the design tokens are Tail
 @import 'tailwindcss';
 
 :root {
-  --bg: #F9FAFB; --surface: #FFFFFF; --surface-2: #F3F4F6;
-  --border: #E5E7EB; --border-strong: #D1D5DB;
-  --text: #030712; --text-2: #374151; --text-3: #6B7280; --text-4: #9CA3AF;
-  --accent: #4C1D95; --accent-2: #6D28D9; --accent-soft: #EDE9FE; --accent-softer: #F5F3FF; --accent-fg: #FFFFFF;
-  --radius: 12px; --radius-sm: 8px; --radius-lg: 18px;
+  --bg: #f9fafb;
+  --surface: #ffffff;
+  --surface-2: #f3f4f6;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #030712;
+  --text-2: #374151;
+  --text-3: #6b7280;
+  --text-4: #9ca3af;
+  --accent: #4c1d95;
+  --accent-2: #6d28d9;
+  --accent-soft: #ede9fe;
+  --accent-softer: #f5f3ff;
+  --accent-fg: #ffffff;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 18px;
   /* shadow-sm/md/lg ported verbatim from prototype */
 }
 [data-theme='dark'] {
-  --bg: #0B0D10; --surface: #14171C; --surface-2: #1B1F26;
-  --border: #262B33; --border-strong: #323842;
-  --text: #F3F4F6; --text-2: #D1D5DB; --text-3: #9CA3AF; --text-4: #6B7280;
+  --bg: #0b0d10;
+  --surface: #14171c;
+  --surface-2: #1b1f26;
+  --border: #262b33;
+  --border-strong: #323842;
+  --text: #f3f4f6;
+  --text-2: #d1d5db;
+  --text-3: #9ca3af;
+  --text-4: #6b7280;
 }
 
 @theme inline {
-  --color-bg: var(--bg); --color-surface: var(--surface); --color-surface-2: var(--surface-2);
-  --color-border: var(--border); --color-border-strong: var(--border-strong);
-  --color-text: var(--text); --color-text-2: var(--text-2); --color-text-3: var(--text-3); --color-text-4: var(--text-4);
-  --color-accent: var(--accent); --color-accent-2: var(--accent-2);
-  --color-accent-soft: var(--accent-soft); --color-accent-softer: var(--accent-softer); --color-accent-fg: var(--accent-fg);
-  --radius-md: var(--radius); --radius-sm: var(--radius-sm); --radius-lg: var(--radius-lg);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-text-4: var(--text-4);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-softer: var(--accent-softer);
+  --color-accent-fg: var(--accent-fg);
+  --radius-md: var(--radius);
+  --radius-sm: var(--radius-sm);
+  --radius-lg: var(--radius-lg);
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 @layer base {
-  html, body, #root { height: 100%; }
-  body { margin: 0; font-family: var(--font-sans); color: var(--text); background: var(--bg);
-    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
 }
 
 /* Bespoke, non-utility styles ported from the prototype live here in @layer:
@@ -542,9 +686,11 @@ git add -A && git commit -m "feat: port global styles and theme/accent helpers"
 ## Task 5: Supabase types + client factories
 
 **Files:**
+
 - Create: `src/lib/supabase/types.ts`, `src/lib/supabase/browser.ts`, `src/lib/supabase/server.ts`, `src/lib/supabase/browser.test.ts`
 
 **Interfaces:**
+
 - Consumes: env vars.
 - Produces: `getBrowserSupabase(): SupabaseClient<Database>`; `getServerSupabase(): SupabaseClient<Database>` (reads request cookies via server fn context); `Database` type.
 
@@ -557,14 +703,17 @@ npm i @supabase/supabase-js @supabase/ssr
 - [ ] **Step 2: Generate types (or stub until access)**
 
 If Supabase CLI access is available:
+
 ```bash
 npx supabase gen types typescript --project-id <PROJECT_ID> > src/lib/supabase/types.ts
 ```
+
 If keys are not yet provided, create `src/lib/supabase/types.ts` with the minimal hand-written `Database` interface covering tables used in this plan (`locations`, `location_images`, `location_comments`, `location_ratings`, `location_likes`, `equipments`, `location_equipments`, `disciplines`, `location_disciplines`, `users`), matching `db.sql` columns/types. Replace with generated types once access lands. This file is committed.
 
 - [ ] **Step 3: Failing test**
 
 `src/lib/supabase/browser.test.ts`:
+
 ```ts
 import { afterEach, expect, test, vi } from 'vitest'
 afterEach(() => vi.unstubAllEnvs())
@@ -583,6 +732,7 @@ Run: `npx vitest run src/lib/supabase/browser.test.ts` — Expected: FAIL.
 - [ ] **Step 5: Implement clients**
 
 `src/lib/supabase/browser.ts`:
+
 ```ts
 import { createBrowserClient } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -601,6 +751,7 @@ export function getBrowserSupabase(): SupabaseClient<Database> {
 ```
 
 `src/lib/supabase/server.ts`:
+
 ```ts
 import { createServerClient } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -615,14 +766,18 @@ export function getServerSupabase(): SupabaseClient<Database> {
     process.env.VITE_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => Object.entries(parseCookies(cookieHeader)).map(([name, value]) => ({ name, value })),
-        setAll: (toSet) => toSet.forEach(({ name, value, options }) =>
-          setResponseHeaders([['set-cookie', serializeCookie(name, value, options)]])),
+        getAll: () =>
+          Object.entries(parseCookies(cookieHeader)).map(([name, value]) => ({ name, value })),
+        setAll: (toSet) =>
+          toSet.forEach(({ name, value, options }) =>
+            setResponseHeaders([['set-cookie', serializeCookie(name, value, options)]]),
+          ),
       },
     },
   )
 }
 ```
+
 Also create `src/lib/supabase/cookies.ts` with small typed `parseCookies` / `serializeCookie` helpers (use the `cookie` package: `npm i cookie @types/cookie`). If the exact `@tanstack/react-start/server` header API differs, consult context7 (query "createServerFn request headers cookies") and adapt — keep the `getServerSupabase` signature unchanged.
 
 - [ ] **Step 6: Run → pass; typecheck**
@@ -640,10 +795,12 @@ git add -A && git commit -m "feat: add Supabase types and browser/server client 
 ## Task 6: i18n (EN + FR)
 
 **Files:**
+
 - Create: `src/lib/i18n/config.ts`, `src/lib/i18n/en.json`, `src/lib/i18n/fr.json`, `src/lib/i18n/i18n.test.tsx`
 - Modify: `src/routes/__root.tsx` (wrap app in `I18nextProvider`)
 
 **Interfaces:**
+
 - Produces: `createI18n(locale: Locale)`; `Locale = 'en' | 'fr'`; translation keys used across the app (namespaced: `discover.*`, `detail.*`, `addSpot.*`, `review.*`, `auth.*`, `common.*`).
 
 - [ ] **Step 1: Install**
@@ -655,6 +812,7 @@ npm i i18next react-i18next
 - [ ] **Step 2: Failing test**
 
 `src/lib/i18n/i18n.test.tsx`:
+
 ```tsx
 import { expect, test } from 'vitest'
 import { createI18n } from './config'
@@ -670,16 +828,58 @@ test('resolves english and french title', () => {
 - [ ] **Step 4: Implement**
 
 `src/lib/i18n/en.json` (seed with keys; expand as components are built):
+
 ```json
-{ "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue" },
-  "discover": { "title": "Discover", "searchPlaceholder": "Search by name, city or address…", "spotsCount": "{{count}} spots", "results": "{{count}} results", "empty": "No spots match your filters.", "open24": "Open 24/7", "disciplines": "Disciplines", "equipment": "Equipment", "access": "Access", "sortRating": "Top rated", "sortPopular": "Most rated", "sortName": "A–Z", "addSpot": "Add a spot" } }
+{
+  "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue" },
+  "discover": {
+    "title": "Discover",
+    "searchPlaceholder": "Search by name, city or address…",
+    "spotsCount": "{{count}} spots",
+    "results": "{{count}} results",
+    "empty": "No spots match your filters.",
+    "open24": "Open 24/7",
+    "disciplines": "Disciplines",
+    "equipment": "Equipment",
+    "access": "Access",
+    "sortRating": "Top rated",
+    "sortPopular": "Most rated",
+    "sortName": "A–Z",
+    "addSpot": "Add a spot"
+  }
+}
 ```
+
 `src/lib/i18n/fr.json`:
+
 ```json
-{ "common": { "save": "Enregistrer", "cancel": "Annuler", "back": "Retour", "continue": "Continuer" },
-  "discover": { "title": "Découvrir", "searchPlaceholder": "Rechercher par nom, ville ou adresse…", "spotsCount": "{{count}} spots", "results": "{{count}} résultats", "empty": "Aucun spot ne correspond à vos filtres.", "open24": "Ouvert 24/7", "disciplines": "Disciplines", "equipment": "Équipement", "access": "Accès", "sortRating": "Mieux notés", "sortPopular": "Plus notés", "sortName": "A–Z", "addSpot": "Ajouter un spot" } }
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "back": "Retour",
+    "continue": "Continuer"
+  },
+  "discover": {
+    "title": "Découvrir",
+    "searchPlaceholder": "Rechercher par nom, ville ou adresse…",
+    "spotsCount": "{{count}} spots",
+    "results": "{{count}} résultats",
+    "empty": "Aucun spot ne correspond à vos filtres.",
+    "open24": "Ouvert 24/7",
+    "disciplines": "Disciplines",
+    "equipment": "Équipement",
+    "access": "Accès",
+    "sortRating": "Mieux notés",
+    "sortPopular": "Plus notés",
+    "sortName": "A–Z",
+    "addSpot": "Ajouter un spot"
+  }
+}
 ```
+
 `src/lib/i18n/config.ts`:
+
 ```ts
 import i18next, { type i18n } from 'i18next'
 import { initReactI18next } from 'react-i18next'
@@ -718,9 +918,11 @@ git add -A && git commit -m "feat: add react-i18next with EN/FR resources"
 ## Task 7: Mapbox geocoding client
 
 **Files:**
+
 - Create: `src/lib/mapbox/geocoding.ts`, `src/lib/mapbox/map.ts`, `src/lib/mapbox/geocoding.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `forwardGeocode(query: string, opts?: { limit?: number; signal?: AbortSignal }): Promise<GeocodeResult[]>`
   - `reverseGeocode(lng: number, lat: number): Promise<GeocodeResult | null>`
@@ -730,6 +932,7 @@ git add -A && git commit -m "feat: add react-i18next with EN/FR resources"
 - [ ] **Step 1: Failing test**
 
 `src/lib/mapbox/geocoding.test.ts`:
+
 ```ts
 import { afterEach, expect, test, vi } from 'vitest'
 import { http, HttpResponse } from 'msw'
@@ -740,14 +943,32 @@ afterEach(() => vi.unstubAllEnvs())
 
 test('forwardGeocode maps features to results', async () => {
   vi.stubEnv('VITE_MAPBOX_TOKEN', 'pk.test')
-  server.use(http.get('https://api.mapbox.com/geocoding/v5/mapbox.places/:q.json', () =>
-    HttpResponse.json({ features: [{
-      place_name: '47 Rue des Couronnes, Paris', text: '47 Rue des Couronnes',
-      center: [2.38, 48.87],
-      context: [{ id: 'place.1', text: 'Paris' }, { id: 'region.1', text: 'Île-de-France' }, { id: 'country.1', text: 'France' }],
-    }] })))
+  server.use(
+    http.get('https://api.mapbox.com/geocoding/v5/mapbox.places/:q.json', () =>
+      HttpResponse.json({
+        features: [
+          {
+            place_name: '47 Rue des Couronnes, Paris',
+            text: '47 Rue des Couronnes',
+            center: [2.38, 48.87],
+            context: [
+              { id: 'place.1', text: 'Paris' },
+              { id: 'region.1', text: 'Île-de-France' },
+              { id: 'country.1', text: 'France' },
+            ],
+          },
+        ],
+      }),
+    ),
+  )
   const [r] = await forwardGeocode('couronnes')
-  expect(r).toMatchObject({ city: 'Paris', region: 'Île-de-France', country: 'France', lng: 2.38, lat: 48.87 })
+  expect(r).toMatchObject({
+    city: 'Paris',
+    region: 'Île-de-France',
+    country: 'France',
+    lng: 2.38,
+    lat: 48.87,
+  })
 })
 ```
 
@@ -757,10 +978,21 @@ test('forwardGeocode maps features to results', async () => {
 
 ```ts
 export type GeocodeResult = {
-  placeName: string; address: string; city: string; region: string; country: string; lng: number; lat: number
+  placeName: string
+  address: string
+  city: string
+  region: string
+  country: string
+  lng: number
+  lat: number
 }
 type MapboxContext = { id: string; text: string }
-type MapboxFeature = { place_name: string; text: string; center: [number, number]; context?: MapboxContext[] }
+type MapboxFeature = {
+  place_name: string
+  text: string
+  center: [number, number]
+  context?: MapboxContext[]
+}
 
 function token(): string {
   const t = import.meta.env.VITE_MAPBOX_TOKEN
@@ -772,14 +1004,23 @@ function pick(ctx: MapboxContext[] | undefined, prefix: string): string {
 }
 function toResult(f: MapboxFeature): GeocodeResult {
   return {
-    placeName: f.place_name, address: f.text,
-    city: pick(f.context, 'place'), region: pick(f.context, 'region'), country: pick(f.context, 'country'),
-    lng: f.center[0], lat: f.center[1],
+    placeName: f.place_name,
+    address: f.text,
+    city: pick(f.context, 'place'),
+    region: pick(f.context, 'region'),
+    country: pick(f.context, 'country'),
+    lng: f.center[0],
+    lat: f.center[1],
   }
 }
-export async function forwardGeocode(query: string, opts: { limit?: number; signal?: AbortSignal } = {}): Promise<GeocodeResult[]> {
+export async function forwardGeocode(
+  query: string,
+  opts: { limit?: number; signal?: AbortSignal } = {},
+): Promise<GeocodeResult[]> {
   if (!query.trim()) return []
-  const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`)
+  const url = new URL(
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`,
+  )
   url.searchParams.set('access_token', token())
   url.searchParams.set('limit', String(opts.limit ?? 5))
   const res = await fetch(url, { signal: opts.signal })
@@ -805,8 +1046,12 @@ import type { Theme } from '~/features/theme/theme'
 export type MapStyle = 'light' | 'minimal' | 'satellite'
 export function mapStyleUrl(style: MapStyle, theme: Theme): string {
   const map: Record<MapStyle, string> = {
-    light: theme === 'dark' ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/light-v11',
-    minimal: theme === 'dark' ? 'mapbox://styles/mapbox/navigation-night-v1' : 'mapbox://styles/mapbox/streets-v12',
+    light:
+      theme === 'dark' ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/light-v11',
+    minimal:
+      theme === 'dark'
+        ? 'mapbox://styles/mapbox/navigation-night-v1'
+        : 'mapbox://styles/mapbox/streets-v12',
     satellite: 'mapbox://styles/mapbox/satellite-streets-v12',
   }
   return map[style]
@@ -826,9 +1071,11 @@ git add -A && git commit -m "feat: add Mapbox geocoding client and style helpers
 ## Task 8: Spot domain types + filter/sort logic + search-param schema
 
 **Files:**
+
 - Create: `src/features/spots/domain.ts`, `src/features/spots/filters.ts`, `src/features/spots/filters.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `domain.ts`: `SpotListItem`, `SpotDetail`, `Equipment`, `Discipline`, `SpotComment`, `SpotImage` types (below).
   - `filters.ts`: `spotSearchSchema` (Zod), `type SpotSearch`, `applyFilters(spots: SpotListItem[], search: SpotSearch): SpotListItem[]`, `sortSpots(...)`.
@@ -839,55 +1086,114 @@ git add -A && git commit -m "feat: add Mapbox geocoding client and style helpers
 export type Equipment = { id: string; name: string; localeKey: string; category: string }
 export type Discipline = { id: string; name: string; localeKey: string; category: string }
 export type SpotImage = { id: string; url: string; order: number }
-export type SpotComment = { id: string; user: string; rating: number | null; date: string; text: string }
+export type SpotComment = {
+  id: string
+  user: string
+  rating: number | null
+  date: string
+  text: string
+}
 
 export type SpotListItem = {
-  id: string; name: string; city: string; address: string
-  latitude: number; longitude: number
-  isOpen24h: boolean; averageRating: number; ratingCount: number
-  disciplineIds: string[]; equipmentIds: string[]
+  id: string
+  name: string
+  city: string
+  address: string
+  latitude: number
+  longitude: number
+  isOpen24h: boolean
+  averageRating: number
+  ratingCount: number
+  disciplineIds: string[]
+  equipmentIds: string[]
   thumbnailUrl: string | null
 }
 export type SpotDetail = SpotListItem & {
-  description: string | null; region: string; country: string
-  contributor: string; openingHours: Record<string, string> | null
-  images: SpotImage[]; equipment: Equipment[]; disciplines: Discipline[]
-  comments: SpotComment[]; viewerLiked: boolean; viewerRating: number | null
+  description: string | null
+  region: string
+  country: string
+  contributor: string
+  openingHours: Record<string, string> | null
+  images: SpotImage[]
+  equipment: Equipment[]
+  disciplines: Discipline[]
+  comments: SpotComment[]
+  viewerLiked: boolean
+  viewerRating: number | null
 }
 ```
 
 - [ ] **Step 2: Failing test**
 
 `src/features/spots/filters.test.ts`:
+
 ```ts
 import { describe, expect, it } from 'vitest'
 import { applyFilters, spotSearchSchema } from './filters'
 import type { SpotListItem } from './domain'
 
 const base: Omit<SpotListItem, 'id' | 'name'> = {
-  city: 'Paris', address: 'x', latitude: 0, longitude: 0, isOpen24h: false,
-  averageRating: 0, ratingCount: 0, disciplineIds: [], equipmentIds: [], thumbnailUrl: null,
+  city: 'Paris',
+  address: 'x',
+  latitude: 0,
+  longitude: 0,
+  isOpen24h: false,
+  averageRating: 0,
+  ratingCount: 0,
+  disciplineIds: [],
+  equipmentIds: [],
+  thumbnailUrl: null,
 }
 const spots: SpotListItem[] = [
-  { ...base, id: 'a', name: 'Bercy Bars', averageRating: 4.8, ratingCount: 200, disciplineIds: ['di-1'], isOpen24h: true },
-  { ...base, id: 'b', name: 'Charléty', averageRating: 4.7, ratingCount: 400, disciplineIds: ['di-4'] },
+  {
+    ...base,
+    id: 'a',
+    name: 'Bercy Bars',
+    averageRating: 4.8,
+    ratingCount: 200,
+    disciplineIds: ['di-1'],
+    isOpen24h: true,
+  },
+  {
+    ...base,
+    id: 'b',
+    name: 'Charléty',
+    averageRating: 4.7,
+    ratingCount: 400,
+    disciplineIds: ['di-4'],
+  },
 ]
 
 describe('filters', () => {
   it('search schema defaults', () => {
-    expect(spotSearchSchema.parse({})).toEqual({ q: '', disciplines: [], equipment: [], open24h: false, sort: 'rating' })
+    expect(spotSearchSchema.parse({})).toEqual({
+      q: '',
+      disciplines: [],
+      equipment: [],
+      open24h: false,
+      sort: 'rating',
+    })
   })
   it('filters by discipline', () => {
     const out = applyFilters(spots, spotSearchSchema.parse({ disciplines: ['di-4'] }))
     expect(out.map((s) => s.id)).toEqual(['b'])
   })
   it('filters by open24h and query', () => {
-    expect(applyFilters(spots, spotSearchSchema.parse({ open24h: true })).map((s) => s.id)).toEqual(['a'])
-    expect(applyFilters(spots, spotSearchSchema.parse({ q: 'charl' })).map((s) => s.id)).toEqual(['b'])
+    expect(applyFilters(spots, spotSearchSchema.parse({ open24h: true })).map((s) => s.id)).toEqual(
+      ['a'],
+    )
+    expect(applyFilters(spots, spotSearchSchema.parse({ q: 'charl' })).map((s) => s.id)).toEqual([
+      'b',
+    ])
   })
   it('sorts by popular then name', () => {
-    expect(applyFilters(spots, spotSearchSchema.parse({ sort: 'popular' })).map((s) => s.id)).toEqual(['b', 'a'])
-    expect(applyFilters(spots, spotSearchSchema.parse({ sort: 'name' })).map((s) => s.id)).toEqual(['a', 'b'])
+    expect(
+      applyFilters(spots, spotSearchSchema.parse({ sort: 'popular' })).map((s) => s.id),
+    ).toEqual(['b', 'a'])
+    expect(applyFilters(spots, spotSearchSchema.parse({ sort: 'name' })).map((s) => s.id)).toEqual([
+      'a',
+      'b',
+    ])
   })
 })
 ```
@@ -914,8 +1220,10 @@ function matches(s: SpotListItem, search: SpotSearch): boolean {
     const q = search.q.toLowerCase()
     if (![s.name, s.address, s.city].some((f) => f.toLowerCase().includes(q))) return false
   }
-  if (search.disciplines.length && !search.disciplines.some((d) => s.disciplineIds.includes(d))) return false
-  if (search.equipment.length && !search.equipment.some((e) => s.equipmentIds.includes(e))) return false
+  if (search.disciplines.length && !search.disciplines.some((d) => s.disciplineIds.includes(d)))
+    return false
+  if (search.equipment.length && !search.equipment.some((e) => s.equipmentIds.includes(e)))
+    return false
   if (search.open24h && !s.isOpen24h) return false
   return true
 }
@@ -928,6 +1236,7 @@ export function applyFilters(spots: SpotListItem[], search: SpotSearch): SpotLis
   return sorted
 }
 ```
+
 Install zod if needed: `npm i zod`.
 
 - [ ] **Step 5: Run → pass.**
@@ -943,9 +1252,11 @@ git add -A && git commit -m "feat: spot domain types, search-param schema, filte
 ## Task 9: Icon component (port)
 
 **Files:**
+
 - Create: `src/components/ui/Icon.tsx`, `src/components/ui/Icon.test.tsx`
 
 **Interfaces:**
+
 - Produces: `Icon` with `type IconName` union covering all names in the prototype `icons.jsx` (`map, list, heart, user, settings, search, plus, close, star, mappin, clock, users, chevronR, chevronL, chevronD, chevronU, zoomIn, zoomOut, minus, locate, filter, camera, image, share, dumbbell, route`).
 
 - [ ] **Step 1: Failing test**
@@ -975,9 +1286,11 @@ test('renders an svg of given size', () => {
 ## Task 10: UI primitives (Button, Chip, Switch, Stars, Modal)
 
 **Files:**
+
 - Create: `src/components/ui/{Button,Chip,Switch,Stars,Modal}.tsx` and matching `*.test.tsx`
 
 **Interfaces:**
+
 - Produces:
   - `Button` `{ variant?: 'primary'|'secondary'|'ghost'; ... } & ButtonHTMLAttributes`
   - `Chip` `{ active?: boolean; onClick?: () => void; children }`
@@ -1014,23 +1327,37 @@ test('interactive stars report clicked value', async () => {
 ## Task 11: Taxonomy queries (equipments + disciplines, locale-resolved)
 
 **Files:**
+
 - Create: `src/features/taxonomy/queries.ts`, `src/features/taxonomy/queries.test.ts`
 
 **Interfaces:**
+
 - Consumes: `getBrowserSupabase`, `getServerSupabase`, i18n `t`, `Equipment`/`Discipline` types.
 - Produces:
   - `equipmentsQueryOptions()` / `disciplinesQueryOptions()` returning `queryOptions` with stable keys `['equipments']` / `['disciplines']`.
   - `resolveLabel(localeKey: string, fallback: string, t: TFunction): string` — resolves `taxonomy.<localeKey>` if present, else fallback.
 
 - [ ] **Step 1: Failing test** (mock Supabase select via MSW on the REST endpoint `/rest/v1/equipments`):
+
 ```ts
 import { http, HttpResponse } from 'msw'
 import { expect, test, vi } from 'vitest'
 import { server } from '~/test/msw/server'
 test('equipmentsQueryOptions maps rows', async () => {
-  vi.stubEnv('VITE_SUPABASE_URL', 'https://x.supabase.co'); vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon')
-  server.use(http.get('https://x.supabase.co/rest/v1/equipments', () =>
-    HttpResponse.json([{ id: 'eq-1', name: 'Pull-up bar', equipment_locale_key: 'equipment.pull_up_bar', category: 'bars' }])))
+  vi.stubEnv('VITE_SUPABASE_URL', 'https://x.supabase.co')
+  vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon')
+  server.use(
+    http.get('https://x.supabase.co/rest/v1/equipments', () =>
+      HttpResponse.json([
+        {
+          id: 'eq-1',
+          name: 'Pull-up bar',
+          equipment_locale_key: 'equipment.pull_up_bar',
+          category: 'bars',
+        },
+      ]),
+    ),
+  )
   const { equipmentsQueryOptions } = await import('./queries')
   const data = await equipmentsQueryOptions().queryFn!({} as never)
   expect(data[0]).toMatchObject({ id: 'eq-1', localeKey: 'equipment.pull_up_bar' })
@@ -1050,9 +1377,11 @@ test('equipmentsQueryOptions maps rows', async () => {
 ## Task 12: Spot read queries + loaders (list + detail)
 
 **Files:**
+
 - Create: `src/features/spots/queries.ts`, `src/features/spots/queries.test.ts`
 
 **Interfaces:**
+
 - Consumes: Supabase clients, `SpotListItem`/`SpotDetail`.
 - Produces:
   - `spotsQueryOptions()` → `queryOptions<SpotListItem[]>` key `['spots']`.
@@ -1060,17 +1389,33 @@ test('equipmentsQueryOptions maps rows', async () => {
   - `mapSpotRow(row): SpotListItem`, `mapSpotDetailRow(row): SpotDetail` (pure, exported for tests).
 
 - [ ] **Step 1: Failing test** — feed a representative joined row (built from `db.sql` columns) into `mapSpotDetailRow` and assert it produces a `SpotDetail` with `images` ordered by `order`, `viewerLiked=false` when no like rows, comments mapped, `disciplineIds` derived.
+
 ```ts
 import { expect, test } from 'vitest'
 import { mapSpotRow } from './queries'
 test('mapSpotRow flattens taxonomy join ids', () => {
   const item = mapSpotRow({
-    id: 'sp-1', name: 'Bercy', city: 'Paris', address: 'Quai', latitude: 48.83, longitude: 2.38,
-    is_open_24h: true, average_rating: 4.8, rating_count: 214,
-    location_disciplines: [{ discipline_id: 'di-1' }], location_equipments: [{ equipment_id: 'eq-1' }],
+    id: 'sp-1',
+    name: 'Bercy',
+    city: 'Paris',
+    address: 'Quai',
+    latitude: 48.83,
+    longitude: 2.38,
+    is_open_24h: true,
+    average_rating: 4.8,
+    rating_count: 214,
+    location_disciplines: [{ discipline_id: 'di-1' }],
+    location_equipments: [{ equipment_id: 'eq-1' }],
     location_images: [{ image_url: 'u', image_order: 1 }],
   })
-  expect(item).toMatchObject({ id: 'sp-1', isOpen24h: true, averageRating: 4.8, disciplineIds: ['di-1'], equipmentIds: ['eq-1'], thumbnailUrl: 'u' })
+  expect(item).toMatchObject({
+    id: 'sp-1',
+    isOpen24h: true,
+    averageRating: 4.8,
+    disciplineIds: ['di-1'],
+    equipmentIds: ['eq-1'],
+    thumbnailUrl: 'u',
+  })
 })
 ```
 
@@ -1087,16 +1432,19 @@ test('mapSpotRow flattens taxonomy join ids', () => {
 ## Task 13: Auth — magic-link session, sign-in modal, auth gate
 
 **Files:**
+
 - Create: `src/features/auth/session.tsx`, `src/features/auth/SignInModal.tsx`, `src/features/auth/useAuthGate.ts`, `src/routes/auth.callback.tsx`, `src/features/auth/auth.test.tsx`
 - Modify: `src/lib/i18n/{en,fr}.json` (auth keys)
 
 **Interfaces:**
+
 - Produces:
   - `SessionProvider` + `useSession(): { userId: string | null; status: 'loading'|'authed'|'anon' }`.
   - `useAuthGate(): (action: () => void) => void` — runs `action` if authed, else opens `SignInModal` and resumes after sign-in.
   - `SignInModal` `{ open; onClose }` calling `supabase.auth.signInWithOtp({ email, options: { emailRedirectTo } })`.
 
 - [ ] **Step 1: Failing test** — render a component using `useAuthGate`; with no session, clicking the gated button shows the sign-in modal (email input present); submitting calls a mocked `signInWithOtp`.
+
 ```tsx
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -1108,6 +1456,7 @@ test('auth gate opens sign-in when anonymous', async () => {
   // assert: email field visible; submit triggers signInWithOtp with emailRedirectTo containing '/auth/callback'
 })
 ```
+
 Fill the test body using `vi.mock('~/lib/supabase/browser', ...)` to return a fake client whose `auth.getSession` resolves `{ data: { session: null } }`, `auth.onAuthStateChange` returns an unsubscribe, and `auth.signInWithOtp` is a spy.
 
 - [ ] **Step 2: Run → fail.**
@@ -1123,10 +1472,12 @@ Fill the test body using `vi.mock('~/lib/supabase/browser', ...)` to return a fa
 ## Task 14: App shell — Rail + Discover layout route
 
 **Files:**
+
 - Create: `src/features/spots/Rail.tsx`, `src/features/spots/Rail.test.tsx`
 - Modify: `src/routes/__root.tsx` (render `Rail` + providers: Query, i18n, Session, Theme), `src/routes/spots/route.tsx` (search-param validation + layout grid)
 
 **Interfaces:**
+
 - Consumes: `spotSearchSchema`, `useSession`, theme helpers, `Icon`.
 - Produces: `/spots` route validates search via `validateSearch: spotSearchSchema`; layout renders `.app` grid (rail + sidebar slot + map `<Outlet/>`). `Rail` with Map/List/Saved/Settings (Community omitted) + avatar.
 
@@ -1145,10 +1496,12 @@ Fill the test body using `vi.mock('~/lib/supabase/browser', ...)` to return a fa
 ## Task 15: Sidebar + Filters + SpotCard (virtualized)
 
 **Files:**
+
 - Create: `src/features/spots/Filters.tsx`, `src/features/spots/SpotCard.tsx`, `src/features/spots/Sidebar.tsx`, and `*.test.tsx`
 - Modify: `src/routes/spots/index.tsx` (loader + render Sidebar)
 
 **Interfaces:**
+
 - Consumes: `spotsQueryOptions`, `applyFilters`, taxonomy queries, `useNavigate`/`Route.useSearch`, `Chip`, `Stars`, `Icon`, `resolveLabel`.
 - Produces: `Sidebar` driven by URL search params; `SpotCard` `{ spot: SpotListItem; active: boolean; onClick }`; filter changes call `navigate({ search })`.
 
@@ -1170,10 +1523,12 @@ Fill the test body using `vi.mock('~/lib/supabase/browser', ...)` to return a fa
 ## Task 16: MapView (real Mapbox) + style switch + controls
 
 **Files:**
+
 - Create: `src/features/spots/MapView.tsx`, `src/features/spots/MapStyleSwitch.tsx`, `src/features/spots/MapView.test.tsx`
 - Modify: `src/routes/spots/index.tsx` (render `MapView` in the map column)
 
 **Interfaces:**
+
 - Consumes: `mapbox-gl`, `mapStyleUrl`, `MapStyle`, `SpotListItem`, theme.
 - Produces: `MapView` `{ spots; activeSpotId; onSelectSpot; onMapClick?; addMode?; newSpotPosition?; mapStyle; theme }`; `MapStyleSwitch` `{ value: MapStyle; onChange }`.
 
@@ -1182,6 +1537,7 @@ Fill the test body using `vi.mock('~/lib/supabase/browser', ...)` to return a fa
 ```bash
 npm i mapbox-gl && npm i -D @types/mapbox-gl
 ```
+
 Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; assert a `FakeMarker` was created per spot (spy on `Marker`), and that clicking a marker element calls `onSelectSpot`. Also assert `onMapClick` fires when the fake map emits `click`.
 
 - [ ] **Step 2: Run → fail.**
@@ -1197,11 +1553,13 @@ Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; asse
 ## Task 17: Spot detail panel + route
 
 **Files:**
+
 - Create: `src/features/spots/Detail.tsx`, `src/features/spots/Detail.test.tsx`
 - Modify: `src/routes/spots/$spotId.tsx` (loader + render)
 - Modify: i18n `detail.*` keys
 
 **Interfaces:**
+
 - Consumes: `spotDetailQueryOptions`, `getSpotDetailFn`, `Stars`, `Icon`, `Button`, `resolveLabel`, `ReviewForm` (Task 19 — render a placeholder slot until then), likes (Task 18).
 - Produces: `/spots/$spotId` SSR loader → `ensureQueryData(spotDetailQueryOptions(id))`; `Detail` `{ spot: SpotDetail; onClose }`.
 
@@ -1220,10 +1578,12 @@ Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; asse
 ## Task 18: Likes (save/unsave) + Saved page
 
 **Files:**
+
 - Create: `src/features/likes/mutations.ts`, `src/features/likes/useSaveSpot.ts`, `src/routes/saved.tsx`, `src/features/likes/likes.test.tsx`
 - Modify: `src/features/spots/Detail.tsx` (wire Save button), `Rail` (Saved active state)
 
 **Interfaces:**
+
 - Consumes: browser Supabase, `useAuthGate`, `useSession`, Query client.
 - Produces: `useSaveSpot(spotId)` → `{ liked: boolean; toggle: () => void; pending: boolean }` (optimistic, auth-gated); `savedSpotsQueryOptions(userId)`.
 
@@ -1242,10 +1602,12 @@ Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; asse
 ## Task 19: Combined reviews (rating + comment)
 
 **Files:**
+
 - Create: `src/features/reviews/schema.ts`, `src/features/reviews/mutations.ts`, `src/features/reviews/ReviewForm.tsx`, `src/features/reviews/ReviewList.tsx`, `src/features/reviews/reviews.test.tsx`
 - Modify: `src/features/spots/Detail.tsx` (mount form + list), i18n `review.*`
 
 **Interfaces:**
+
 - Consumes: browser Supabase, `useAuthGate`, `useSession`, `Stars`, `Button`, TanStack Form, Zod.
 - Produces: `reviewSchema` (`{ rating: 1..5; text: string (≤1000) }`), `useSubmitReview(spotId)` → `{ submit, pending }` that upserts `location_ratings` and inserts `location_comments`, then invalidates `['spot', spotId]`.
 
@@ -1267,10 +1629,12 @@ Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; asse
 ## Task 20: Settings panel (theme, accent, language, map style)
 
 **Files:**
+
 - Create: `src/features/settings/SettingsPanel.tsx`, `src/features/settings/settings.test.tsx`
 - Modify: `Rail`/shell to toggle it; persist to cookies (`theme`, `accent`, `lang`, `mapStyle`)
 
 **Interfaces:**
+
 - Consumes: theme helpers, i18n, `MapStyle`.
 - Produces: `SettingsPanel` `{ open; onClose }`; persisted prefs read on load (SSR-safe) to avoid theme flash.
 
@@ -1289,10 +1653,12 @@ Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; asse
 ## Task 21: Add-spot wizard (steps + geocoding + create)
 
 **Files:**
+
 - Create: `src/features/add-spot/schema.ts`, `src/features/add-spot/AddSpotWizard.tsx`, `src/features/add-spot/steps/{LocationStep,BasicsStep,TaxonomyStep,ReviewStep}.tsx`, `src/features/add-spot/mutations.ts`, `src/features/add-spot/AddressAutocomplete.tsx`, `src/features/add-spot/addspot.test.tsx`
 - Modify: `src/routes/spots/route.tsx` or `index.tsx` (add-mode + modal mount), i18n `addSpot.*`
 
 **Interfaces:**
+
 - Consumes: `useAuthGate`, geocoding client, taxonomy queries, `MapView` (pin), `Modal`, TanStack Form, Zod, browser Supabase.
 - Produces: `addSpotSchema`; `useCreateSpot()` → `{ create, pending }` inserting `locations` (+ `location_disciplines`, `location_equipments`) and returning the new id; `AddressAutocomplete` `{ value; onSelect: (r: GeocodeResult) => void }`.
 
@@ -1315,10 +1681,12 @@ Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; asse
 ## Task 22: Photo upload to Supabase Storage
 
 **Files:**
+
 - Create: `src/features/add-spot/photos.ts`, `src/features/add-spot/PhotoPicker.tsx`, `src/features/add-spot/photos.test.ts`
 - Modify: `BasicsStep.tsx` (mount `PhotoPicker`), `useCreateSpot` (write `location_images`), `Detail` carousel already consumes `images`.
 
 **Interfaces:**
+
 - Consumes: browser Supabase Storage, validation constants.
 - Produces:
   - `validateImage(file: File): { ok: true } | { ok: false; reason: string }` (mime in allowed set, size > 0, ≤ 5 MB).
@@ -1341,10 +1709,12 @@ Test uses `mockMapboxGl()` from the harness: render `MapView` with 2 spots; asse
 ## Task 23: Error boundaries, empty/loading states, integration pass
 
 **Files:**
+
 - Modify: `src/routes/spots/index.tsx`, `src/routes/spots/$spotId.tsx`, `__root.tsx` (errorComponent/pendingComponent), `src/routes/saved.tsx`
 - Create: `src/components/ErrorState.tsx`, `src/components/ErrorState.test.tsx`, `src/features/spots/discover.integration.test.tsx`
 
 **Interfaces:**
+
 - Produces: `ErrorState` `{ title; message; onRetry? }`; route `errorComponent`/`pendingComponent` wired on data routes.
 
 - [ ] **Step 1: Failing tests**

@@ -10,8 +10,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootComponent() {
   return (
     <html lang="en">
-      <head><HeadContent /></head>
-      <body><Outlet /><Scripts /></body>
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <Outlet />
+        <Scripts />
+      </body>
     </html>
   )
 }
