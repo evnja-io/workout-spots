@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="plum" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#311038"></stop><stop offset="1" stop-color="#1A0A20"></stop></linearGradient>
+    <linearGradient id="ro" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#E11D48"></stop><stop offset="0.5" stop-color="#F4374F"></stop><stop offset="1" stop-color="#FB7A1E"></stop></linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="24" fill="url(#plum)"></rect>
+  <g transform="translate(8.44 14.65) scale(0.6384)">
+    <path d="M 8.71 100.24 L 24.95 63.15 L 55.05 31.85 L 72.14 49.96 L 103.05 19.05 L 112.95 28.95 L 71.86 70.04 L 54.95 52.15 L 35.05 72.85 Z" fill="url(#ro)" stroke="url(#ro)" stroke-width="3" stroke-linejoin="round"></path>
+    <circle cx="108" cy="24" r="13.5" fill="url(#ro)"></circle>
+  </g>
+</svg>

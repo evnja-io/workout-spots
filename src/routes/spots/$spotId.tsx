@@ -7,6 +7,7 @@ import { spotDetailQueryOptions } from '~/features/spots/queries'
 import type { SpotDetail } from '~/features/spots/domain'
 import { Detail } from '~/features/spots/Detail'
 import { ErrorState } from '~/components/ErrorState'
+import { SITE_URL } from '~/routes/__root'
 
 function SpotError({ reset }: { reset: () => void }) {
   const { t } = useTranslation()
@@ -34,11 +35,21 @@ export const Route = createFileRoute('/spots/$spotId')({
     const spot = match.context.queryClient.getQueryData<SpotDetail | null>(
       spotDetailQueryOptions(params.spotId).queryKey
     )
+    const title = spot?.name ? `${spot.name} · Workout Spots` : 'Workout Spot · Workout Spots'
+    const description =
+      spot?.description ||
+      `${spot?.name ?? 'A workout spot'} — view details, ratings, and directions on Workout Spots.`
+    const url = `${SITE_URL}/spots/${params.spotId}`
     return {
       meta: [
-        { title: spot?.name ?? 'Workout Spot' },
-        { name: 'description', content: spot?.description ?? '' },
+        { title },
+        { name: 'description', content: description },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:url', content: url },
       ],
+      links: [{ rel: 'canonical', href: url }],
     }
   },
   notFoundComponent: SpotNotFound,

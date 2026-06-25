@@ -1,0 +1,14 @@
+{
+  "name": "Workout Spots",
+  "short_name": "Spots",
+  "description": "Discover outdoor calisthenics & workout spots near you on an interactive map.",
+  "start_url": "/spots",
+  "display": "standalone",
+  "background_color": "#150A1B",
+  "theme_color": "#E11D48",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/favicon-180.png", "type": "image/png", "sizes": "180x180" },
+    { "src": "/favicon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any maskable" }
+  ]
+}

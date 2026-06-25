@@ -11,7 +11,7 @@ export function getServerPrefs(): Prefs {
 
   const accent = VALID_ACCENTS.includes(cookies['accent'] as Prefs['accent'])
     ? (cookies['accent'] as Prefs['accent'])
-    : 'violet'
+    : 'rose'
 
   const mapStyle = VALID_MAP_STYLES.includes(cookies['mapStyle'] as Prefs['mapStyle'])
     ? (cookies['mapStyle'] as Prefs['mapStyle'])
