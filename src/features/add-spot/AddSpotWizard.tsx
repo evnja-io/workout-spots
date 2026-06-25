@@ -1,8 +1,9 @@
 import { useState, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal } from '~/components/ui/Modal'
+import { ResponsiveOverlay } from '~/components/ui/ResponsiveOverlay'
 import { Button } from '~/components/ui/Button'
 import { Icon } from '~/components/ui/Icon'
+import { cx } from '~/components/ui/cx'
 import { getPrefs } from '~/features/settings/prefs'
 import { LocationStep } from './steps/LocationStep'
 import { BasicsStep } from './steps/BasicsStep'
@@ -140,17 +141,19 @@ export function AddSpotWizard({
     step === 3 ? addSpotSchema.safeParse(values) : null
 
   return (
-    <Modal open={open} onClose={handleClose} labelledBy="add-spot-title">
+    <ResponsiveOverlay open={open} onClose={handleClose} labelledBy="add-spot-title">
       {/* Header */}
-      <div className="modal-head">
-        <h2 id="add-spot-title">{stepTitles[step]}</h2>
+      <div className="flex items-center justify-between border-b border-border px-[22px] py-[18px]">
+        <h2 id="add-spot-title" className="m-0 text-[17px] font-semibold tracking-[-0.01em]">
+          {stepTitles[step]}
+        </h2>
         <button type="button" onClick={handleClose} aria-label={t('common.cancel')}>
           <Icon name="close" size={18} />
         </button>
       </div>
 
       {/* Body */}
-      <div className="modal-body">
+      <div className="flex flex-col gap-3.5 overflow-y-auto px-[22px] py-[18px]">
         {step === 0 && (
           <LocationStep
             values={values}
@@ -188,20 +191,23 @@ export function AddSpotWizard({
       </div>
 
       {/* Footer */}
-      <div className="modal-foot">
+      <div className="flex items-center justify-between gap-2 border-t border-border px-[22px] py-3.5">
         {/* Step dots */}
-        <div className="step-dots" aria-label={t('addSpot.progress')}>
+        <div className="flex gap-1.5" aria-label={t('addSpot.progress')}>
           {Array.from({ length: STEP_COUNT }).map((_, i) => (
             <div
               key={i}
-              className={`step-dot${i < step ? ' done' : i === step ? ' active' : ''}`}
+              className={cx(
+                'h-1 w-[22px] rounded-[2px]',
+                i <= step ? 'bg-accent' : 'bg-border-strong',
+              )}
               aria-current={i === step ? 'step' : undefined}
             />
           ))}
         </div>
 
         {/* Navigation buttons */}
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex gap-2">
           {step > 0 && (
             <Button variant="secondary" type="button" onClick={() => setStep((s) => s - 1)}>
               {t('common.back')}
@@ -238,6 +244,6 @@ export function AddSpotWizard({
           )}
         </div>
       </div>
-    </Modal>
+    </ResponsiveOverlay>
   )
 }

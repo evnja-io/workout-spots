@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal } from '~/components/ui/Modal'
+import { ResponsiveOverlay } from '~/components/ui/ResponsiveOverlay'
 import { Icon } from '~/components/ui/Icon'
+import { Button } from '~/components/ui/Button'
+import { Input, FieldLabel } from '~/components/ui/Field'
 import { useUpdatePseudo } from './profile'
 
 interface OnboardingModalProps {
@@ -35,12 +37,14 @@ export function OnboardingModal({ open, onClose, onSaved }: OnboardingModalProps
   }
 
   return (
-    <Modal open={open} onClose={onClose} labelledBy={titleId} className="modal-sm">
-      <div className="modal-head">
-        <h2 id={titleId}>{t('onboarding.title')}</h2>
+    <ResponsiveOverlay open={open} onClose={onClose} labelledBy={titleId} desktopClassName="w-[440px]">
+      <div className="flex items-center justify-between border-b border-border px-[22px] py-[18px]">
+        <h2 id={titleId} className="m-0 text-[17px] font-semibold tracking-[-0.01em]">
+          {t('onboarding.title')}
+        </h2>
         <button
           type="button"
-          className="modal-close-btn"
+          className="grid size-[30px] place-items-center rounded-[8px] text-text-3 transition-colors duration-150 hover:bg-surface-2 hover:text-text"
           aria-label={t('onboarding.skip')}
           onClick={onClose}
         >
@@ -48,16 +52,13 @@ export function OnboardingModal({ open, onClose, onSaved }: OnboardingModalProps
         </button>
       </div>
 
-      <div className="modal-body auth-body">
-        <form className="auth-form" onSubmit={(e) => void handleSubmit(e)}>
-          <p className="auth-subtitle">{t('onboarding.subtitle')}</p>
-          <div className="field">
-            <label htmlFor="onboarding-pseudo" className="field-label">
-              {t('onboarding.nicknameLabel')}
-            </label>
-            <input
+      <div className="flex flex-col gap-4 overflow-y-auto px-[22px] py-[18px]">
+        <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
+          <p className="m-0 text-[13.5px] leading-[1.5] text-text-3">{t('onboarding.subtitle')}</p>
+          <div>
+            <FieldLabel htmlFor="onboarding-pseudo">{t('onboarding.nicknameLabel')}</FieldLabel>
+            <Input
               id="onboarding-pseudo"
-              className="input"
               type="text"
               value={pseudo}
               maxLength={MAX_PSEUDO}
@@ -66,18 +67,18 @@ export function OnboardingModal({ open, onClose, onSaved }: OnboardingModalProps
               autoFocus
             />
           </div>
-          <button
-            type="submit"
-            className="btn btn-primary auth-submit"
-            disabled={pending || !trimmed}
-          >
+          <Button type="submit" variant="primary" className="w-full flex-none" disabled={pending || !trimmed}>
             {t('onboarding.save')}
-          </button>
-          <button type="button" className="auth-skip" onClick={onClose}>
+          </Button>
+          <button
+            type="button"
+            className="cursor-pointer self-center border-none bg-none p-0 text-[13px] text-text-3 underline hover:text-text-2"
+            onClick={onClose}
+          >
             {t('onboarding.skip')}
           </button>
         </form>
       </div>
-    </Modal>
+    </ResponsiveOverlay>
   )
 }

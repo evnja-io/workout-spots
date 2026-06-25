@@ -55,7 +55,7 @@ export function ReviewForm({ spotId }: { spotId: string }) {
         {(field) => (
           <div style={{ marginBottom: 8 }}>
             <textarea
-              className="textarea"
+              className="min-h-[90px] w-full resize-y rounded-[10px] border border-border-strong bg-surface px-3 py-2.5 text-[14px] transition-[border-color,box-shadow] duration-150 focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-softer)] focus:outline-none"
               maxLength={1000}
               placeholder={t('review.placeholder')}
               value={field.state.value}

@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Icon } from '~/components/ui/Icon'
+import { cx } from '~/components/ui/cx'
 import { validateImage, MAX_IMAGES } from './photos'
+
+const imgSlot =
+  'grid aspect-square place-items-center rounded-[10px] border-[1.5px] border-dashed border-border-strong bg-surface-2 text-[11px] text-text-3'
+const imgSlotFilled = 'border-solid border-transparent bg-cover bg-center'
 
 interface PhotoPickerProps {
   files: File[]
@@ -97,7 +102,7 @@ export function PhotoPicker({ files, onChange }: PhotoPickerProps) {
         {slots.map((slot, index) => (
           <div key={slot.previewUrl} style={{ position: 'relative' }}>
             <div
-              className="img-slot filled"
+              className={cx(imgSlot, imgSlotFilled)}
               style={{ backgroundImage: `url(${slot.previewUrl})` }}
               aria-label={slot.file.name}
             />
@@ -146,7 +151,7 @@ export function PhotoPicker({ files, onChange }: PhotoPickerProps) {
         ))}
 
         {canAddMore && (
-          <label className="img-slot" style={{ cursor: 'pointer' }} aria-label="Add photo">
+          <label className={cx(imgSlot, 'cursor-pointer')} aria-label="Add photo">
             <Icon name="camera" size={22} />
             <input
               ref={inputRef}

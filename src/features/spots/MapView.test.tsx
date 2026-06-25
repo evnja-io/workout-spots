@@ -164,7 +164,7 @@ describe('MapView', () => {
       theme: 'light',
     })
     // The token-notice should be present immediately (no map init)
-    const notice = container.querySelector('.token-notice')
+    const notice = container.querySelector('[data-testid="token-notice"]')
     expect(notice).toBeTruthy()
     // Restore
     vi.stubEnv('VITE_MAPBOX_TOKEN', 'pk.test')

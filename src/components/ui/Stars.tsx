@@ -18,7 +18,7 @@ function StarSvg({ on, size }: { on: boolean; size: number }) {
       stroke="currentColor"
       strokeWidth={2}
       strokeLinejoin="round"
-      className={on ? 'on' : ''}
+      className={on ? 'on' : undefined}
       aria-hidden="true"
     >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -26,12 +26,14 @@ function StarSvg({ on, size }: { on: boolean; size: number }) {
   )
 }
 
+const baseStars = 'inline-flex gap-0.5 [&_svg]:size-3.5'
+
 export function Stars({ value, size = 12, interactive = false, onChange }: StarsProps) {
   const [hover, setHover] = useState(0)
 
   if (!interactive) {
     return (
-      <span className="stars">
+      <span className={cx(baseStars, 'text-[#f59e0b]')}>
         {Array.from({ length: 5 }, (_, idx) => {
           const i = idx + 1
           const on = i <= Math.round(value)
@@ -42,7 +44,12 @@ export function Stars({ value, size = 12, interactive = false, onChange }: Stars
   }
 
   return (
-    <span className={cx('stars', 'interactive')}>
+    <span
+      className={cx(
+        baseStars,
+        '[&_svg]:cursor-pointer [&_svg]:text-border-strong [&_svg]:transition-colors [&_svg]:duration-100 [&_.on]:text-[#f59e0b]',
+      )}
+    >
       {Array.from({ length: 5 }, (_, idx) => {
         const i = idx + 1
         const on = i <= (hover || value)

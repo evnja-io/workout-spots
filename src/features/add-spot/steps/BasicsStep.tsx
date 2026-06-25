@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Switch } from '~/components/ui/Switch'
+import { Input, Textarea, FieldLabel } from '~/components/ui/Field'
 import { PhotoPicker } from '../PhotoPicker'
 import { SpotPhotoManager } from '../SpotPhotoManager'
 import type { AddSpotInput } from '../schema'
@@ -19,14 +20,13 @@ export function BasicsStep({ values, onChange, files, onFilesChange, existingIma
   const { t } = useTranslation()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+    <div className="flex flex-col gap-3.5">
       <div>
-        <label className="field-label" htmlFor="add-spot-name">
+        <FieldLabel htmlFor="add-spot-name">
           {t('addSpot.nameLabel')}
-        </label>
-        <input
+        </FieldLabel>
+        <Input
           id="add-spot-name"
-          className="input"
           type="text"
           value={values.name}
           onChange={(e) => onChange({ name: e.target.value })}
@@ -35,19 +35,18 @@ export function BasicsStep({ values, onChange, files, onFilesChange, existingIma
       </div>
 
       <div>
-        <label className="field-label" htmlFor="add-spot-description">
+        <FieldLabel htmlFor="add-spot-description">
           {t('addSpot.descriptionLabel')}
-        </label>
-        <textarea
+        </FieldLabel>
+        <Textarea
           id="add-spot-description"
-          className="textarea"
           value={values.description}
           onChange={(e) => onChange({ description: e.target.value })}
           placeholder={t('addSpot.descriptionPlaceholder')}
         />
       </div>
 
-      <div className="toggle-row">
+      <div className="flex items-center justify-between rounded-[10px] bg-surface-2 px-3 py-2.5">
         <span style={{ fontWeight: 500, fontSize: '13px' }}>{t('discover.open24')}</span>
         <Switch
           on={values.isOpen24h ?? false}

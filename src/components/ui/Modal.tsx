@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { cx } from './cx'
 
 type ModalProps = {
   open: boolean
@@ -66,10 +67,17 @@ export function Modal({ open, onClose, children, labelledBy, className }: ModalP
   }
 
   return createPortal(
-    <div className="modal-backdrop" onClick={handleBackdropClick}>
+    <div
+      data-testid="modal-backdrop"
+      className="fixed inset-0 z-20 grid place-items-center bg-[rgba(15,23,42,0.35)] backdrop-blur-[4px] animate-[fadeIn_0.2s_ease]"
+      onClick={handleBackdropClick}
+    >
       <div
         ref={modalRef}
-        className={className ? `modal ${className}` : 'modal'}
+        className={cx(
+          'flex w-[540px] max-w-[calc(100vw-40px)] max-h-[calc(100vh-40px)] flex-col overflow-hidden rounded-[18px] bg-surface shadow-[var(--shadow-lg)]',
+          className,
+        )}
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}

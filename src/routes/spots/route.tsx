@@ -4,7 +4,9 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { spotRouteSearchSchema } from '~/features/spots/filters'
 import { Rail } from '~/features/spots/Rail'
 import { Sidebar } from '~/features/spots/Sidebar'
+import { BottomNav } from '~/features/spots/BottomNav'
 import { MapView } from '~/features/spots/MapView'
+import { Sheet } from '~/components/ui/Sheet'
 import {
   spotsInBoundsQueryOptions,
   WORLD_BOUNDS,
@@ -21,7 +23,7 @@ import { ErrorState } from '~/components/ErrorState'
 const BOUNDS_DEBOUNCE_MS = 400
 
 function SpotsPending() {
-  return <div className="empty" aria-busy="true" />
+  return <div className="px-5 py-10 text-center text-[13px] text-text-3" aria-busy="true" />
 }
 
 function SpotsError({ reset }: { reset: () => void }) {
@@ -53,6 +55,7 @@ function SpotsLayout() {
   const { t } = useTranslation()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [addSpotOpen, setAddSpotOpen] = useState(false)
+  const [listSheetOpen, setListSheetOpen] = useState(false)
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
   const navigate = useNavigate()
 
@@ -81,20 +84,22 @@ function SpotsLayout() {
   const activeSpotId = params.spotId ?? null
 
   function handleSelectSpot(id: string) {
+    setListSheetOpen(false)
     void navigate({ to: '/spots/$spotId', params: { spotId: id }, search: (prev) => prev })
   }
 
   return (
-    <div className="app">
+    <div className="h-screen overflow-hidden bg-bg md:grid md:grid-cols-[64px_380px_1fr]">
       <Rail onOpenSettings={() => setSettingsOpen(true)} />
-      <aside className="sidebar">
+      {/* Sidebar column — desktop only; on mobile the list lives in a bottom sheet */}
+      <aside className="hidden min-h-0 flex-col border-r border-border bg-surface md:flex">
         <Suspense fallback={null}>
           {/* NOTE: text search only matches spots in the current viewport (Task 24).
               Global name search would require server-side full-text query. */}
           <Sidebar spots={spots} onSpotClick={handleSelectSpot} />
         </Suspense>
       </aside>
-      <div className="map-container">
+      <div className="relative h-full bg-surface-2">
         <MapView
           spots={spots}
           activeSpotId={activeSpotId}
@@ -104,19 +109,11 @@ function SpotsLayout() {
           onChange={setMapStyle}
           theme="light"
         />
-        {/* Add-spot button — rendered inside map-topbar area via the MapView wrapper */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '14px',
-            right: '14px',
-            zIndex: 3,
-            pointerEvents: 'auto',
-          }}
-        >
+        {/* Add-spot button — floating top-right of the map (desktop; mobile uses the BottomNav FAB) */}
+        <div className="pointer-events-auto absolute top-[14px] right-[14px] z-[3] hidden md:block">
           <button
             type="button"
-            className="add-spot-btn"
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-[9px] text-[13px] font-medium text-white shadow-[var(--shadow-md)] transition-[background-color,transform] duration-150 hover:bg-accent-2 active:translate-y-px"
             data-testid="add-spot-btn"
             onClick={() => setAddSpotOpen(true)}
           >
@@ -124,6 +121,23 @@ function SpotsLayout() {
           </button>
         </div>
       </div>
+
+      {/* Mobile bottom navigation (hidden on md+) */}
+      <BottomNav
+        onOpenList={() => setListSheetOpen(true)}
+        onOpenAdd={() => setAddSpotOpen(true)}
+        onOpenSettings={() => setSettingsOpen(true)}
+      />
+
+      {/* Mobile list/filters sheet — hosts the same Sidebar shown on desktop */}
+      <Sheet open={listSheetOpen} onClose={() => setListSheetOpen(false)}>
+        <div className="flex h-[78vh] flex-col">
+          <Suspense fallback={null}>
+            <Sidebar spots={spots} onSpotClick={handleSelectSpot} />
+          </Suspense>
+        </div>
+      </Sheet>
+
       <SettingsPanel
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}

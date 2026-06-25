@@ -45,9 +45,11 @@ function ChipGroup({
   const hiddenCount = ordered.length - visible.length
 
   return (
-    <div className="filter-group">
-      <div className="filter-group-label">{label}</div>
-      <div className="filters-row">
+    <div className="flex flex-col">
+      <div className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-4">
+        {label}
+      </div>
+      <div className="flex flex-wrap gap-1.5 mt-3">
         {visible.map((item) => (
           <Chip key={item.id} active={selected.includes(item.id)} onClick={() => onToggle(item.id)}>
             {resolveLabel(item.localeKey, item.name, t)}
@@ -56,7 +58,7 @@ function ChipGroup({
         {(hiddenCount > 0 || expanded) && (
           <button
             type="button"
-            className="show-more-btn"
+            className="inline-flex items-center whitespace-nowrap rounded-full border border-dashed border-border-strong bg-transparent px-2.5 py-[5px] text-[12px] font-medium text-accent transition-[background-color,border-color] duration-150 hover:border-accent hover:bg-accent-softer"
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
           >
@@ -80,7 +82,7 @@ export function Filters({
   const { t } = useTranslation()
 
   return (
-    <div className="filters">
+    <div className="flex flex-col gap-2.5 px-4 pt-3 pb-2.5 border-b border-border shrink-0">
       {disciplines.length > 0 && (
         <ChipGroup
           label={t('discover.disciplines')}
@@ -101,20 +103,27 @@ export function Filters({
         />
       )}
 
-      <div className="filter-group">
-        <div className="filter-group-label">{t('discover.access')}</div>
-        <div className="filters-row">
+      <div className="flex flex-col">
+        <div className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-4">
+          {t('discover.access')}
+        </div>
+        <div className="flex flex-wrap gap-1.5 mt-3">
           <Chip active={search.open24h} onClick={onToggle24h}>
             {t('discover.open24')}
           </Chip>
         </div>
       </div>
 
-      <div className="sort-row">
+      <div className="flex items-center justify-end pt-0.5 text-[12.5px] text-text-3">
         <select
           value={search.sort}
           onChange={(e) => onSortChange(e.target.value as SpotSearch['sort'])}
           aria-label={t('discover.filters')}
+          className="cursor-pointer appearance-none border-0 bg-transparent bg-no-repeat bg-right py-0.5 pl-0.5 pr-4 font-medium text-text"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>\")",
+          }}
         >
           <option value="rating">{t('discover.sortRating')}</option>
           <option value="popular">{t('discover.sortPopular')}</option>

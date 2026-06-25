@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Button } from '~/components/ui/Button'
 
 interface CookieBannerProps {
   onAccept: () => void
@@ -12,35 +13,16 @@ export function CookieBanner({ onAccept, onDecline }: CookieBannerProps) {
     <div
       role="dialog"
       aria-label={t('cookieConsent.title')}
-      style={{
-        position: 'fixed',
-        left: 16,
-        right: 16,
-        bottom: 16,
-        zIndex: 60,
-        margin: '0 auto',
-        maxWidth: 480,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-        padding: 16,
-        background: 'var(--surface)',
-        color: 'var(--text)',
-        border: '1px solid var(--border)',
-        borderRadius: 'var(--radius)',
-        boxShadow: 'var(--shadow-lg)',
-      }}
+      className="fixed bottom-4 left-4 right-4 z-[60] mx-auto flex max-w-[480px] flex-col gap-3 rounded-[12px] border border-border bg-surface p-4 text-text shadow-[var(--shadow-lg)]"
     >
-      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.4, color: 'var(--text-2)' }}>
-        {t('cookieConsent.description')}
-      </p>
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-        <button type="button" className="btn btn-secondary" onClick={onDecline}>
+      <p className="m-0 text-[14px] leading-[1.4] text-text-2">{t('cookieConsent.description')}</p>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="secondary" onClick={onDecline}>
           {t('cookieConsent.decline')}
-        </button>
-        <button type="button" className="btn btn-primary" onClick={onAccept}>
+        </Button>
+        <Button type="button" variant="primary" onClick={onAccept}>
           {t('cookieConsent.accept')}
-        </button>
+        </Button>
       </div>
     </div>
   )
