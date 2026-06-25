@@ -122,8 +122,8 @@ export function Sidebar({
   })
 
   return (
-    <div className="flex flex-col min-h-0 bg-surface border-r border-border">
-      <div className="pt-4.5 px-5 pb-3 border-b border-border">
+    <div className="flex flex-1 flex-col min-h-0 bg-surface border-r border-border">
+      <div className="shrink-0 pt-4.5 px-5 pb-3 border-b border-border">
         <div className="flex items-center justify-between mb-2.5">
           <h1 className="m-0 text-[20px] font-semibold tracking-[-0.01em]">
             {t('discover.title')}
@@ -146,18 +146,23 @@ export function Sidebar({
         </div>
       </div>
 
-      <Filters
-        search={search}
-        disciplines={disciplines}
-        equipment={equipment}
-        onToggleDiscipline={toggleDiscipline}
-        onToggleEquipment={toggleEquipment}
-        onToggle24h={toggle24h}
-        onSortChange={handleSortChange}
-      />
+      {/* On mobile the sheet is height-constrained: cap the filters into their own
+          scrollable region so the spot list keeps the majority of the space. On
+          desktop (md+) filters render at natural height and the list takes the rest. */}
+      <div className="min-h-0 flex-1 overflow-y-auto md:flex-none md:overflow-visible">
+        <Filters
+          search={search}
+          disciplines={disciplines}
+          equipment={equipment}
+          onToggleDiscipline={toggleDiscipline}
+          onToggleEquipment={toggleEquipment}
+          onToggle24h={toggle24h}
+          onSortChange={handleSortChange}
+        />
+      </div>
 
       {filtered.length === 0 ? (
-        <div className="flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
+        <div className="flex-[1.7] md:flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
           <div className="text-center px-5 py-10 text-text-3 text-[13px]">
             {t('discover.empty')}
           </div>
@@ -165,7 +170,7 @@ export function Sidebar({
       ) : shouldVirtualize ? (
         <div
           ref={parentRef}
-          className="flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5"
+          className="flex-[1.7] md:flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5"
         >
           <div
             style={{
@@ -197,7 +202,7 @@ export function Sidebar({
           </div>
         </div>
       ) : (
-        <div className="flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
+        <div className="flex-[1.7] md:flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
           {filtered.map((spot) => (
             <SpotCard
               key={spot.id}
