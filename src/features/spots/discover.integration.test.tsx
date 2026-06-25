@@ -104,9 +104,11 @@ const discYoga: Discipline = {
 
 const i18n = createI18n('en')
 
+const allSpots = [spotCalisthenics, spotYoga]
+
 function makeClient() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  client.setQueryData(['spots'], [spotCalisthenics, spotYoga])
+  // Sidebar receives spots as a prop now; only taxonomy data needed in cache
   client.setQueryData(['disciplines'], [discCalis, discYoga])
   client.setQueryData(['equipments'], [])
   return client
@@ -116,7 +118,8 @@ function renderSidebar(onSpotClick?: (id: string) => void) {
   return render(
     <QueryClientProvider client={makeClient()}>
       <I18nextProvider i18n={i18n}>
-        <Sidebar onSpotClick={onSpotClick} />
+        {/* spots prop: route.tsx owns the bbox query and passes results down */}
+        <Sidebar spots={allSpots} onSpotClick={onSpotClick} />
       </I18nextProvider>
     </QueryClientProvider>,
   )

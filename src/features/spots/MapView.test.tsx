@@ -11,6 +11,13 @@ interface MarkerInstance {
   remove: () => void
 }
 
+interface FakeLngLatBounds {
+  getWest: () => number
+  getSouth: () => number
+  getEast: () => number
+  getNorth: () => number
+}
+
 interface MapInstance {
   on: (event: string, cb: (e: unknown) => void) => void
   fire: (event: string, payload: unknown) => void
@@ -18,6 +25,7 @@ interface MapInstance {
   flyTo: ReturnType<typeof vi.fn>
   zoomTo: ReturnType<typeof vi.fn>
   getZoom: () => number
+  getBounds: () => FakeLngLatBounds
   remove: ReturnType<typeof vi.fn>
   _handlers: Record<string, Array<(e: unknown) => void>>
 }
@@ -43,6 +51,12 @@ const MapMock = vi.fn(function (this: MapInstance) {
   this.flyTo = vi.fn()
   this.zoomTo = vi.fn()
   this.getZoom = () => 11.5
+  this.getBounds = () => ({
+    getWest: () => -180,
+    getSouth: () => -90,
+    getEast: () => 180,
+    getNorth: () => 90,
+  })
   this.remove = vi.fn()
   this._handlers = handlers
 })

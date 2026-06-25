@@ -1,4 +1,6 @@
-import { describe, expect, test } from 'vitest'
+import { http, HttpResponse } from 'msw'
+import { describe, expect, test, vi } from 'vitest'
+import { server } from '~/test/msw/server'
 import { mapSpotRow, mapSpotDetailRow } from './queries'
 
 test('mapSpotRow flattens taxonomy join ids', () => {
@@ -149,5 +151,81 @@ describe('mapSpotDetailRow', () => {
     const detail = mapSpotDetailRow(rowWithName)
     expect(detail.comments.at(0)?.user).toBe('charlie')
     expect(detail.comments.at(1)?.user).toBe('Anonymous')
+  })
+})
+
+// ─── spotsInBoundsQueryOptions ────────────────────────────────────────────────
+
+describe('spotsInBoundsQueryOptions', () => {
+  const mockSpotRow = {
+    id: 'sp-bbox-1',
+    name: 'Bbox Spot',
+    city: 'Paris',
+    address: '1 Rue Test',
+    latitude: 48.85,
+    longitude: 2.35,
+    is_open_24h: true,
+    average_rating: 4.5,
+    rating_count: 20,
+    location_disciplines: [{ discipline_id: 'di-1' }],
+    location_equipments: [{ equipment_id: 'eq-1' }],
+    location_images: [{ image_url: 'http://img.jpg', image_order: 1 }],
+  }
+
+  test('query key includes rounded bounds', async () => {
+    const { spotsInBoundsQueryOptions, WORLD_BOUNDS } = await import('./queries')
+    const opts = spotsInBoundsQueryOptions(WORLD_BOUNDS)
+    // Key shape: ['spots', 'bbox', roundedBounds]
+    expect(opts.queryKey[0]).toBe('spots')
+    expect(opts.queryKey[1]).toBe('bbox')
+    // The rounded object should be present (queryKey[2] is already typed as Bounds)
+    const rounded = opts.queryKey[2]
+    expect(typeof rounded.west).toBe('number')
+    expect(typeof rounded.north).toBe('number')
+  })
+
+  test('query key rounds tiny pan differences to same cache key', async () => {
+    const { spotsInBoundsQueryOptions } = await import('./queries')
+    const b1 = { west: 2.351, south: 48.851, east: 2.361, north: 48.861 }
+    const b2 = { west: 2.352, south: 48.852, east: 2.362, north: 48.862 }
+    const k1 = spotsInBoundsQueryOptions(b1).queryKey[2]
+    const k2 = spotsInBoundsQueryOptions(b2).queryKey[2]
+    // Both should round to the same 2-decimal key
+    expect(k1).toEqual(k2)
+  })
+
+  test('maps rows returned by Supabase bbox query', async () => {
+    vi.stubEnv('VITE_SUPABASE_URL', 'https://x.supabase.co')
+    vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon')
+
+    server.use(
+      http.get('https://x.supabase.co/rest/v1/locations', () =>
+        HttpResponse.json([mockSpotRow]),
+      ),
+    )
+
+    const { spotsInBoundsQueryOptions, WORLD_BOUNDS } = await import('./queries')
+    const opts = spotsInBoundsQueryOptions(WORLD_BOUNDS)
+    const data = await opts.queryFn!({} as never)
+    expect(Array.isArray(data)).toBe(true)
+    expect((data as { id: string }[])[0]).toMatchObject({
+      id: 'sp-bbox-1',
+      name: 'Bbox Spot',
+      disciplineIds: ['di-1'],
+      equipmentIds: ['eq-1'],
+      thumbnailUrl: 'http://img.jpg',
+    })
+  })
+
+  test('returns [] when supabase not configured', async () => {
+    vi.stubEnv('VITE_SUPABASE_URL', '')
+    vi.stubEnv('VITE_SUPABASE_ANON_KEY', '')
+    const { spotsInBoundsQueryOptions, WORLD_BOUNDS } = await import('./queries')
+    const opts = spotsInBoundsQueryOptions(WORLD_BOUNDS)
+    const data = await opts.queryFn!({} as never)
+    expect(data).toEqual([])
+    // Restore
+    vi.stubEnv('VITE_SUPABASE_URL', 'https://x.supabase.co')
+    vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon')
   })
 })

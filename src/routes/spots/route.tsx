@@ -1,11 +1,15 @@
 import { createFileRoute, Outlet, useNavigate, useParams } from '@tanstack/react-router'
-import { Suspense, useState } from 'react'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { Suspense, useState, useRef, useCallback } from 'react'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { spotRouteSearchSchema } from '~/features/spots/filters'
 import { Rail } from '~/features/spots/Rail'
 import { Sidebar } from '~/features/spots/Sidebar'
 import { MapView } from '~/features/spots/MapView'
-import { spotsQueryOptions } from '~/features/spots/queries'
+import {
+  spotsInBoundsQueryOptions,
+  WORLD_BOUNDS,
+  type Bounds,
+} from '~/features/spots/queries'
 import { equipmentsQueryOptions, disciplinesQueryOptions } from '~/features/taxonomy/queries'
 import { getPrefs } from '~/features/settings/prefs'
 import { SettingsPanel } from '~/features/settings/SettingsPanel'
@@ -13,6 +17,8 @@ import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
 import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
 import { ErrorState } from '~/components/ErrorState'
+
+const BOUNDS_DEBOUNCE_MS = 400
 
 function SpotsPending() {
   return <div className="empty" aria-busy="true" />
@@ -32,7 +38,9 @@ function SpotsError({ reset }: { reset: () => void }) {
 export const Route = createFileRoute('/spots')({
   validateSearch: spotRouteSearchSchema,
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(spotsQueryOptions())
+    // Prefetch the initial world-bounds query (top-500 most-rated spots globally)
+    // so SSR renders spots immediately without a loading state.
+    await context.queryClient.ensureQueryData(spotsInBoundsQueryOptions(WORLD_BOUNDS))
     await context.queryClient.ensureQueryData(equipmentsQueryOptions())
     await context.queryClient.ensureQueryData(disciplinesQueryOptions())
   },
@@ -46,8 +54,27 @@ function SpotsLayout() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [addSpotOpen, setAddSpotOpen] = useState(false)
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
-  const { data: spots } = useSuspenseQuery(spotsQueryOptions())
   const navigate = useNavigate()
+
+  // ── Bounds state (starts at world, tightens as the map reports its viewport) ─
+  const [bounds, setBounds] = useState<Bounds>(WORLD_BOUNDS)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Debounced setter passed to MapView — avoids a query per frame while panning.
+  const debouncedSetBounds = useCallback((newBounds: Bounds) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setBounds(newBounds)
+    }, BOUNDS_DEBOUNCE_MS)
+  }, [])
+
+  // ── Spots query — non-suspense so bounds changes don't unmount the layout ───
+  // keepPreviousData: the list keeps showing the previous viewport's spots while
+  // the new bbox fetch is in flight, avoiding a flash to empty on every pan.
+  const { data: spots = [] } = useQuery({
+    ...spotsInBoundsQueryOptions(bounds),
+    placeholderData: keepPreviousData,
+  })
 
   // Get active spotId from child route params (non-strict)
   const params = useParams({ strict: false })
@@ -62,7 +89,9 @@ function SpotsLayout() {
       <Rail onOpenSettings={() => setSettingsOpen(true)} />
       <aside className="sidebar">
         <Suspense fallback={null}>
-          <Sidebar onSpotClick={handleSelectSpot} />
+          {/* NOTE: text search only matches spots in the current viewport (Task 24).
+              Global name search would require server-side full-text query. */}
+          <Sidebar spots={spots} onSpotClick={handleSelectSpot} />
         </Suspense>
       </aside>
       <div className="map-container">
@@ -70,6 +99,7 @@ function SpotsLayout() {
           spots={spots}
           activeSpotId={activeSpotId}
           onSelectSpot={handleSelectSpot}
+          onBoundsChange={debouncedSetBounds}
           mapStyle={mapStyle}
           onChange={setMapStyle}
           theme="light"

@@ -4,6 +4,7 @@ import { Icon } from '~/components/ui/Icon'
 import { mapStyleUrl, type MapStyle } from '~/lib/mapbox/map'
 import type { Theme } from '~/features/theme/theme'
 import type { SpotListItem } from './domain'
+import type { Bounds } from './queries'
 import { MapStyleSwitch } from './MapStyleSwitch'
 
 const DEFAULT_CENTER: [number, number] = [2.35, 48.85]
@@ -20,12 +21,20 @@ interface MapboxMapEvent {
   lngLat: { lng: number; lat: number }
 }
 
+interface MapboxLngLatBounds {
+  getWest: () => number
+  getSouth: () => number
+  getEast: () => number
+  getNorth: () => number
+}
+
 interface MapboxMap {
   on: (event: string, cb: (e: MapboxMapEvent) => void) => void
   setStyle: (style: string) => void
   flyTo: (opts: { center: [number, number]; zoom?: number }) => void
   zoomTo: (zoom: number) => void
   getZoom: () => number
+  getBounds: () => MapboxLngLatBounds
   remove: () => void
 }
 
@@ -41,6 +50,7 @@ export interface MapViewProps {
   activeSpotId: string | null
   onSelectSpot: (id: string) => void
   onMapClick?: (pos: { lng: number; lat: number }) => void
+  onBoundsChange?: (bounds: Bounds) => void
   addMode?: boolean
   newSpotPosition?: { lng: number; lat: number } | null
   mapStyle: MapStyle
@@ -53,6 +63,7 @@ export function MapView({
   activeSpotId,
   onSelectSpot,
   onMapClick,
+  onBoundsChange,
   addMode = false,
   newSpotPosition = null,
   mapStyle,
@@ -76,6 +87,8 @@ export function MapView({
   onSelectSpotRef.current = onSelectSpot
   const onMapClickRef = useRef(onMapClick)
   onMapClickRef.current = onMapClick
+  const onBoundsChangeRef = useRef(onBoundsChange)
+  onBoundsChangeRef.current = onBoundsChange
 
   // ── Init effect (mount, client-only, token required) ─────────────────────
   useEffect(() => {
@@ -102,6 +115,21 @@ export function MapView({
       map.on('click', (e) => {
         onMapClickRef.current?.({ lng: e.lngLat.lng, lat: e.lngLat.lat })
       })
+
+      // Emit viewport bounds on initial load and on every pan/zoom end.
+      // We use a named helper so the moveend listener can be removed on unmount.
+      function emitBounds() {
+        const b = map.getBounds()
+        onBoundsChangeRef.current?.({
+          west: b.getWest(),
+          south: b.getSouth(),
+          east: b.getEast(),
+          north: b.getNorth(),
+        })
+      }
+
+      map.on('load', emitBounds)
+      map.on('moveend', emitBounds)
 
       mapRef.current = map
       setMapReady(true)

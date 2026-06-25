@@ -4,16 +4,23 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useTranslation } from 'react-i18next'
 import { Route } from '~/routes/spots/route'
-import { spotsQueryOptions } from './queries'
 import { disciplinesQueryOptions, equipmentsQueryOptions } from '~/features/taxonomy/queries'
 import { spotSearchSchema, applyFilters } from './filters'
 import type { SpotSearch } from './filters'
+import type { SpotListItem } from './domain'
 import { SpotCard } from './SpotCard'
 import { Filters } from './Filters'
 
 const VIRTUALIZE_THRESHOLD = 30
 
-export function Sidebar({ onSpotClick }: { onSpotClick?: (id: string) => void } = {}) {
+export function Sidebar({
+  spots,
+  onSpotClick,
+}: {
+  /** In-viewport spots from the route's bbox query — single source of truth. */
+  spots: SpotListItem[]
+  onSpotClick?: (id: string) => void
+}) {
   const { t } = useTranslation()
   const navigate = useNavigate({ from: '/spots' })
   const rawSearch = Route.useSearch()
@@ -23,7 +30,6 @@ export function Sidebar({ onSpotClick }: { onSpotClick?: (id: string) => void } 
   const params = useParams({ strict: false })
   const activeSpotId = (params).spotId
 
-  const { data: spots } = useSuspenseQuery(spotsQueryOptions())
   const { data: disciplines } = useSuspenseQuery(disciplinesQueryOptions())
   const { data: equipment } = useSuspenseQuery(equipmentsQueryOptions())
 

@@ -66,7 +66,7 @@ const i18n = createI18n('en')
 
 function makeClient() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  client.setQueryData(['spots'], twoSpots)
+  // Sidebar no longer self-fetches spots; taxonomy data still needed
   client.setQueryData(['disciplines'], [])
   client.setQueryData(['equipments'], [])
   return client
@@ -78,7 +78,8 @@ describe('Sidebar', () => {
     render(
       <QueryClientProvider client={client}>
         <I18nextProvider i18n={i18n}>
-          <Sidebar />
+          {/* spots passed as prop — Sidebar no longer self-fetches */}
+          <Sidebar spots={twoSpots} />
         </I18nextProvider>
       </QueryClientProvider>,
     )

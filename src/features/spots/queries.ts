@@ -2,6 +2,29 @@ import { queryOptions } from '@tanstack/react-query'
 import { getBrowserSupabase, isSupabaseConfigured } from '~/lib/supabase/browser'
 import type { SpotListItem, SpotDetail, SpotImage, Equipment, Discipline, SpotComment } from './domain'
 
+// ─── Bounds types ─────────────────────────────────────────────────────────────
+
+export type Bounds = { west: number; south: number; east: number; north: number }
+
+/** Default to the whole world so the initial query returns top-rated spots globally. */
+export const WORLD_BOUNDS: Bounds = { west: -180, south: -90, east: 180, north: 90 }
+
+/** Cap per-viewport query to avoid huge result sets. */
+export const SPOTS_LIMIT = 500
+
+/**
+ * Round each edge to 2 decimal places (~1.1 km precision at the equator).
+ * Tiny pans within the same ~1km cell reuse the same cache entry.
+ */
+function roundBounds(b: Bounds): Bounds {
+  return {
+    west: Math.round(b.west * 100) / 100,
+    south: Math.round(b.south * 100) / 100,
+    east: Math.round(b.east * 100) / 100,
+    north: Math.round(b.north * 100) / 100,
+  }
+}
+
 // ─── Input row types (embedded-join select shapes) ───────────────────────────
 
 type SpotListRow = {
@@ -156,6 +179,40 @@ export function spotsQueryOptions() {
         // 0°,0° in the Gulf of Guinea) — exclude it from the discover list.
         .not('latitude', 'is', null)
         .not('longitude', 'is', null)
+      if (error) throw error
+      return (data as unknown as SpotListRow[]).map(mapSpotRow)
+    },
+  })
+}
+
+/**
+ * Viewport-aware query: fetches only spots within the current map bounding box,
+ * ordered by rating_count descending, capped at SPOTS_LIMIT.
+ *
+ * NOTE: Text search (applyFilters) only matches spots in the loaded viewport —
+ * global name search would require a server-side full-text query. The user
+ * opted for the viewport approach (Task 24).
+ */
+export function spotsInBoundsQueryOptions(bounds: Bounds) {
+  const rounded = roundBounds(bounds)
+  return queryOptions({
+    queryKey: ['spots', 'bbox', rounded] as const,
+    queryFn: async (): Promise<SpotListItem[]> => {
+      if (!isSupabaseConfigured()) return []
+      const { data, error } = await getBrowserSupabase()
+        .from('locations')
+        .select(
+          'id,name,city,address,latitude,longitude,is_open_24h,average_rating,rating_count,location_disciplines(discipline_id),location_equipments(equipment_id),location_images(id,image_url,image_order)',
+        )
+        // Exclude spots with no coordinates (can't be placed on the map)
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
+        .gte('latitude', bounds.south)
+        .lte('latitude', bounds.north)
+        .gte('longitude', bounds.west)
+        .lte('longitude', bounds.east)
+        .order('rating_count', { ascending: false })
+        .limit(SPOTS_LIMIT)
       if (error) throw error
       return (data as unknown as SpotListRow[]).map(mapSpotRow)
     },
