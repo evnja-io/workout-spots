@@ -73,6 +73,22 @@
   #root {
     height: 100%;
   }
+  /*
+   * Clamp the document to the viewport width. iOS Safari positions
+   * `position: fixed` elements (the mobile bottom sheets / vaul drawers and the
+   * bottom nav) relative to the *layout* viewport, so any stray horizontal
+   * overflow — e.g. a Mapbox edge marker translated past the edge — lets the
+   * page scroll sideways and drags those fixed overlays off-screen, clipping
+   * their content. `overflow-x: clip` (with a `hidden` fallback for older
+   * Safari) removes that horizontal scroll without creating a scroll container,
+   * so sticky/fixed positioning inside still behaves normally.
+   */
+  html,
+  body {
+    overflow-x: hidden;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
   body {
     margin: 0;
     font-family: var(--font);
