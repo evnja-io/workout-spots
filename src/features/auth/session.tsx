@@ -21,6 +21,8 @@ interface SessionState {
 interface SessionContextValue extends SessionState {
   /** Open the sign-in modal (set by SignInModal host) */
   openSignIn: () => void
+  /** Sign the current user out. */
+  signOut: () => void
   /** Pending action to replay once authed */
   pendingActionRef: React.MutableRefObject<(() => void) | null>
 }
@@ -82,9 +84,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     pendingActionRef.current = null
   }, [])
 
+  const signOut = useCallback(() => {
+    void getBrowserSupabase().auth.signOut()
+  }, [])
+
   return (
     <SessionContext.Provider
-      value={{ userId, status, openSignIn, pendingActionRef }}
+      value={{ userId, status, openSignIn, signOut, pendingActionRef }}
     >
       {children}
       {/* SignInModal is rendered here (lazy import to avoid circular deps) */}

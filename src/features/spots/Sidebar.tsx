@@ -10,6 +10,7 @@ import type { SpotSearch } from './filters'
 import type { SpotListItem } from './domain'
 import { SpotCard } from './SpotCard'
 import { Filters } from './Filters'
+import { Icon } from '~/components/ui/Icon'
 
 const VIRTUALIZE_THRESHOLD = 30
 
@@ -117,17 +118,22 @@ export function Sidebar({
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <span>{t('discover.title')}</span>
-        <span className="count-pill">{filtered.length}</span>
-      </div>
+        <div className="sidebar-title">
+          <h1>{t('discover.title')}</h1>
+          <span className="count-pill">{filtered.length}</span>
+        </div>
 
-      <input
-        type="search"
-        className="search-input"
-        placeholder={t('discover.searchPlaceholder')}
-        value={inputValue}
-        onChange={(e) => handleSearchChange(e.target.value)}
-      />
+        <div className="search">
+          <Icon name="search" size={16} color="var(--text-3)" />
+          <input
+            type="search"
+            placeholder={t('discover.searchPlaceholder')}
+            value={inputValue}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            aria-label={t('discover.searchPlaceholder')}
+          />
+        </div>
+      </div>
 
       <Filters
         search={search}
@@ -140,9 +146,11 @@ export function Sidebar({
       />
 
       {filtered.length === 0 ? (
-        <div className="empty">{t('discover.empty')}</div>
+        <div className="spot-list">
+          <div className="empty">{t('discover.empty')}</div>
+        </div>
       ) : shouldVirtualize ? (
-        <div ref={parentRef} style={{ overflowY: 'auto', height: '100%' }}>
+        <div ref={parentRef} className="spot-list">
           <div
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,

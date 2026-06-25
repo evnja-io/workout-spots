@@ -252,9 +252,9 @@ describe('AddressAutocomplete', () => {
   })
 
   it('shows no suggestions and does not crash when no token', async () => {
-    // No VITE_MAPBOX_TOKEN → forwardGeocode throws → component catches and shows nothing
-    // Ensure no stub is set
-    vi.unstubAllEnvs()
+    // Force an empty token → forwardGeocode throws → component catches and shows nothing.
+    // (Must stub explicitly: a real .env value isn't cleared by unstubAllEnvs.)
+    vi.stubEnv('VITE_MAPBOX_TOKEN', '')
 
     const onSelect = vi.fn()
     const { Wrapper } = makeWrapper(null)

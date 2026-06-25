@@ -7,7 +7,10 @@
     "sendLink": "Send sign-in link",
     "checkInbox": "Check your inbox for a sign-in link.",
     "signingIn": "Signing you in…",
-    "required": "Sign in to contribute"
+    "required": "Sign in to save spots, leave reviews and add new spots.",
+    "signOut": "Sign out",
+    "account": "Account",
+    "signedInAs": "Signed in"
   },
   "detail": {
     "about": "About",
@@ -83,6 +86,9 @@
     "sortPopular": "Most rated",
     "sortName": "A–Z",
     "addSpot": "Add a spot",
+    "showMore": "+{{count}} more",
+    "showLess": "Show less",
+    "filters": "Filters",
     "mapTokenMissing": "Add a Mapbox token to enable the map.",
     "styleLight": "Light",
     "styleMinimal": "Minimal",

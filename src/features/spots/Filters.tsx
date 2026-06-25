@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import type { Discipline, Equipment } from './domain'
 import type { SpotSearch } from './filters'
 import { resolveLabel } from '~/features/taxonomy/queries'
@@ -12,6 +14,58 @@ type FiltersProps = {
   onToggleEquipment: (id: string) => void
   onToggle24h: () => void
   onSortChange: (s: SpotSearch['sort']) => void
+}
+
+/** Number of chips shown before the "+N more" toggle. */
+const COLLAPSED_COUNT = 6
+
+type TaxonomyItem = { id: string; name: string; localeKey: string }
+
+/** A collapsible chip group that shows the active items + a capped preview. */
+function ChipGroup({
+  label,
+  items,
+  selected,
+  onToggle,
+  t,
+}: {
+  label: string
+  items: TaxonomyItem[]
+  selected: string[]
+  onToggle: (id: string) => void
+  t: TFunction
+}) {
+  const [expanded, setExpanded] = useState(false)
+
+  // Always keep selected chips visible even when collapsed.
+  const selectedItems = items.filter((i) => selected.includes(i.id))
+  const unselectedItems = items.filter((i) => !selected.includes(i.id))
+  const ordered = [...selectedItems, ...unselectedItems]
+  const visible = expanded ? ordered : ordered.slice(0, COLLAPSED_COUNT)
+  const hiddenCount = ordered.length - visible.length
+
+  return (
+    <div className="filter-group">
+      <div className="filter-group-label">{label}</div>
+      <div className="filters-row">
+        {visible.map((item) => (
+          <Chip key={item.id} active={selected.includes(item.id)} onClick={() => onToggle(item.id)}>
+            {resolveLabel(item.localeKey, item.name, t)}
+          </Chip>
+        ))}
+        {(hiddenCount > 0 || expanded) && (
+          <button
+            type="button"
+            className="show-more-btn"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+          >
+            {expanded ? t('discover.showLess') : t('discover.showMore', { count: hiddenCount })}
+          </button>
+        )}
+      </div>
+    </div>
+  )
 }
 
 export function Filters({
@@ -28,40 +82,26 @@ export function Filters({
   return (
     <div className="filters">
       {disciplines.length > 0 && (
-        <div>
-          <div className="filter-group-label">{t('discover.disciplines')}</div>
-          <div className="filters-row">
-            {disciplines.map((d) => (
-              <Chip
-                key={d.id}
-                active={search.disciplines.includes(d.id)}
-                onClick={() => onToggleDiscipline(d.id)}
-              >
-                {resolveLabel(d.localeKey, d.name, t)}
-              </Chip>
-            ))}
-          </div>
-        </div>
+        <ChipGroup
+          label={t('discover.disciplines')}
+          items={disciplines}
+          selected={search.disciplines}
+          onToggle={onToggleDiscipline}
+          t={t}
+        />
       )}
 
       {equipment.length > 0 && (
-        <div>
-          <div className="filter-group-label">{t('discover.equipment')}</div>
-          <div className="filters-row">
-            {equipment.map((e) => (
-              <Chip
-                key={e.id}
-                active={search.equipment.includes(e.id)}
-                onClick={() => onToggleEquipment(e.id)}
-              >
-                {resolveLabel(e.localeKey, e.name, t)}
-              </Chip>
-            ))}
-          </div>
-        </div>
+        <ChipGroup
+          label={t('discover.equipment')}
+          items={equipment}
+          selected={search.equipment}
+          onToggle={onToggleEquipment}
+          t={t}
+        />
       )}
 
-      <div>
+      <div className="filter-group">
         <div className="filter-group-label">{t('discover.access')}</div>
         <div className="filters-row">
           <Chip active={search.open24h} onClick={onToggle24h}>
@@ -74,6 +114,7 @@ export function Filters({
         <select
           value={search.sort}
           onChange={(e) => onSortChange(e.target.value as SpotSearch['sort'])}
+          aria-label={t('discover.filters')}
         >
           <option value="rating">{t('discover.sortRating')}</option>
           <option value="popular">{t('discover.sortPopular')}</option>

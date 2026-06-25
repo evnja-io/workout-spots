@@ -6,9 +6,11 @@ type ModalProps = {
   onClose: () => void
   children: ReactNode
   labelledBy?: string
+  /** Extra class on the `.modal` card (e.g. a size variant). */
+  className?: string
 }
 
-export function Modal({ open, onClose, children, labelledBy }: ModalProps) {
+export function Modal({ open, onClose, children, labelledBy, className }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -67,7 +69,7 @@ export function Modal({ open, onClose, children, labelledBy }: ModalProps) {
     <div className="modal-backdrop" onClick={handleBackdropClick}>
       <div
         ref={modalRef}
-        className="modal"
+        className={className ? `modal ${className}` : 'modal'}
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}

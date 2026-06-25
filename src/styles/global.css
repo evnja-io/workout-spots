@@ -1253,3 +1253,169 @@
 .mapboxgl-canvas:focus {
   outline: none;
 }
+
+/* ===== Discover sidebar / filters redesign (sc:improve) ===== */
+@layer components {
+  /* Header holds the title row + search; search gets breathing room */
+  .sidebar .search {
+    margin-top: 12px;
+  }
+
+  /* Filter groups: padded, compact, with a clear bottom divider */
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .filter-group .filter-group-label {
+    margin: 0 0 6px;
+  }
+
+  /* "+N more" / "Show less" toggle, styled like a ghost chip */
+  .show-more-btn {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px dashed var(--border-strong);
+    background: transparent;
+    color: var(--accent);
+    white-space: nowrap;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+  }
+  .show-more-btn:hover {
+    background: var(--accent-softer);
+    border-color: var(--accent);
+  }
+
+  /* Sort row sits inline within the padded filters (no full-width bar) */
+  .filters .sort-row {
+    padding: 2px 0 0;
+    border: 0;
+    background: transparent;
+    justify-content: flex-end;
+  }
+
+  /* The list is the only scrolling region; it fills the remaining height */
+  .sidebar .spot-list {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ===== Sign-in modal (compact, polished) ===== */
+  .modal.modal-sm {
+    width: 440px;
+  }
+  .modal-close-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: var(--text-3);
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+  .modal-close-btn:hover {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .auth-body {
+    gap: 16px;
+  }
+  .auth-subtitle {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-3);
+    line-height: 1.5;
+  }
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .auth-form .field-label {
+    margin-bottom: 6px;
+  }
+  .auth-submit {
+    width: 100%;
+    flex: none;
+  }
+  .auth-sent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: 10px 0;
+  }
+  .auth-sent-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    display: grid;
+    place-items: center;
+  }
+  .auth-sent p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+
+  /* ===== Account menu (rail avatar) ===== */
+  .account-wrap {
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .account-menu {
+    position: absolute;
+    left: calc(100% + 10px);
+    bottom: 0;
+    min-width: 180px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    padding: 6px;
+    z-index: 50;
+    animation: fadeIn 0.12s ease;
+  }
+  .account-menu-head {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-4);
+    font-weight: 600;
+    padding: 6px 10px 4px;
+  }
+  .account-menu-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .account-menu-item:hover {
+    background: var(--surface-2);
+  }
+}

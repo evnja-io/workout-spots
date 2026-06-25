@@ -15,7 +15,10 @@
     "sendLink": "Envoyer le lien de connexion",
     "checkInbox": "Vérifiez votre boîte mail pour le lien de connexion.",
     "signingIn": "Connexion en cours…",
-    "required": "Connectez-vous pour contribuer"
+    "required": "Connectez-vous pour enregistrer des spots, laisser des avis et en ajouter.",
+    "signOut": "Se déconnecter",
+    "account": "Compte",
+    "signedInAs": "Connecté"
   },
   "detail": {
     "about": "À propos",
@@ -91,6 +94,9 @@
     "sortPopular": "Plus notés",
     "sortName": "A–Z",
     "addSpot": "Ajouter un spot",
+    "showMore": "+{{count}} de plus",
+    "showLess": "Voir moins",
+    "filters": "Filtres",
     "mapTokenMissing": "Ajoutez un jeton Mapbox pour activer la carte.",
     "styleLight": "Clair",
     "styleMinimal": "Minimal",

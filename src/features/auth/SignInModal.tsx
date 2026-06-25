@@ -1,6 +1,7 @@
 import { useCallback, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Modal } from '~/components/ui/Modal'
+import { Icon } from '~/components/ui/Icon'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
 
 interface SignInModalProps {
@@ -37,28 +38,46 @@ export function SignInModal({ open, onClose }: SignInModalProps) {
   }, [onClose])
 
   return (
-    <Modal open={open} onClose={handleClose} labelledBy={titleId}>
-      <h2 id={titleId}>{t('auth.signInTitle')}</h2>
+    <Modal open={open} onClose={handleClose} labelledBy={titleId} className="modal-sm">
+      <div className="modal-head">
+        <h2 id={titleId}>{t('auth.signInTitle')}</h2>
+        <button type="button" className="modal-close-btn" aria-label={t('common.cancel')} onClick={handleClose}>
+          <Icon name="close" size={18} />
+        </button>
+      </div>
 
-      {sent ? (
-        <p role="status">{t('auth.checkInbox')}</p>
-      ) : (
-        <form onSubmit={(e) => void handleSubmit(e)}>
-          <label htmlFor="sign-in-email">{t('auth.emailLabel')}</label>
-          <input
-            id="sign-in-email"
-            type="email"
-            value={email}
-            placeholder={t('auth.emailPlaceholder')}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoFocus
-          />
-          <button type="submit" disabled={loading}>
-            {loading ? t('auth.signingIn') : t('auth.sendLink')}
-          </button>
-        </form>
-      )}
+      <div className="modal-body auth-body">
+        {sent ? (
+          <div className="auth-sent">
+            <div className="auth-sent-icon">
+              <Icon name="user" size={22} color="var(--accent)" />
+            </div>
+            <p role="status">{t('auth.checkInbox')}</p>
+          </div>
+        ) : (
+          <form className="auth-form" onSubmit={(e) => void handleSubmit(e)}>
+            <p className="auth-subtitle">{t('auth.required')}</p>
+            <div className="field">
+              <label htmlFor="sign-in-email" className="field-label">
+                {t('auth.emailLabel')}
+              </label>
+              <input
+                id="sign-in-email"
+                className="input"
+                type="email"
+                value={email}
+                placeholder={t('auth.emailPlaceholder')}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+            <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
+              {loading ? t('auth.signingIn') : t('auth.sendLink')}
+            </button>
+          </form>
+        )}
+      </div>
     </Modal>
   )
 }

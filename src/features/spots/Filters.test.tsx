@@ -66,4 +66,34 @@ describe('Filters', () => {
     const chip = screen.getByRole('button', { name: /calisthenics/i })
     expect(chip).toHaveAttribute('aria-pressed', 'true')
   })
+
+  it('collapses long lists to a preview and expands on "show more"', async () => {
+    const many: Discipline[] = Array.from({ length: 10 }, (_, i) => ({
+      id: `d-${i}`,
+      name: `Discipline ${i}`,
+      localeKey: `discipline.d${i}`,
+      category: 'x',
+    }))
+    render(
+      <I18nextProvider i18n={i18n}>
+        <Filters
+          search={defaultSearch}
+          disciplines={many}
+          equipment={[]}
+          onToggleDiscipline={vi.fn()}
+          onToggleEquipment={vi.fn()}
+          onToggle24h={vi.fn()}
+          onSortChange={vi.fn()}
+        />
+      </I18nextProvider>,
+    )
+    // Collapsed: only the first 6 chips render, the rest are hidden behind "+4 more".
+    expect(screen.getByRole('button', { name: 'Discipline 0' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Discipline 9' })).not.toBeInTheDocument()
+    const toggle = screen.getByRole('button', { name: /\+4 more/i })
+
+    await userEvent.click(toggle)
+    expect(screen.getByRole('button', { name: 'Discipline 9' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /show less/i })).toBeInTheDocument()
+  })
 })
