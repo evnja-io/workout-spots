@@ -67,7 +67,7 @@ export function OnboardingModal({ open, onClose, onSaved }: OnboardingModalProps
               autoFocus
             />
           </div>
-          <Button type="submit" variant="primary" className="w-full flex-none" disabled={pending || !trimmed}>
+          <Button type="submit" variant="primary" className="w-full" disabled={pending || !trimmed}>
             {t('onboarding.save')}
           </Button>
           <button

@@ -80,7 +80,7 @@ export function SignInModal({ open, onClose }: SignInModalProps) {
                 autoFocus
               />
             </div>
-            <Button type="submit" variant="primary" className="w-full flex-none" disabled={loading}>
+            <Button type="submit" variant="primary" className="w-full" disabled={loading}>
               {loading ? t('auth.signingIn') : t('auth.sendLink')}
             </Button>
           </form>

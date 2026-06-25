@@ -193,7 +193,7 @@ export function AddSpotWizard({
       {/* Footer */}
       <div className="flex items-center justify-between gap-2 border-t border-border px-[22px] py-3.5">
         {/* Step dots */}
-        <div className="flex gap-1.5" aria-label={t('addSpot.progress')}>
+        <div className="flex min-w-0 flex-wrap gap-1.5" aria-label={t('addSpot.progress')}>
           {Array.from({ length: STEP_COUNT }).map((_, i) => (
             <div
               key={i}
@@ -207,7 +207,7 @@ export function AddSpotWizard({
         </div>
 
         {/* Navigation buttons */}
-        <div className="flex gap-2">
+        <div className="flex shrink-0 gap-2">
           {step > 0 && (
             <Button variant="secondary" type="button" onClick={() => setStep((s) => s - 1)}>
               {t('common.back')}

@@ -175,12 +175,12 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
         <ReviewList comments={spot.comments} />
         <ReviewForm spotId={spot.id} />
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`https://www.google.com/maps/dir/?api=1&destination=${spot.latitude},${spot.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-[10px] bg-accent px-3.5 py-2.5 text-[13px] font-medium text-accent-fg transition-[background-color,border-color,color,opacity] duration-150 hover:bg-accent-2"
+            className="inline-flex min-w-0 flex-[1_1_8rem] items-center justify-center gap-1.5 rounded-[10px] bg-accent px-3.5 py-2.5 text-[13px] font-medium text-accent-fg transition-[background-color,border-color,color,opacity] duration-150 hover:bg-accent-2"
             onClick={() => trackEvent('get_directions', { spot_id: spot.id })}
           >
             <Icon name="route" size={14} />
