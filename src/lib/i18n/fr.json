@@ -63,7 +63,9 @@
     "ratingLabel": "Votre note",
     "placeholder": "Partagez votre expérience (optionnel)…",
     "submit": "Publier l'avis",
-    "noReviews": "Aucun avis pour le moment."
+    "noReviews": "Aucun avis pour le moment.",
+    "delete": "Supprimer l'avis",
+    "deleteConfirm": "Supprimer cet avis ?"
   },
   "report": {
     "button": "Signaler",

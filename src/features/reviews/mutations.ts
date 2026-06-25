@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from '~/features/auth/session'
 import { useAuthGate } from '~/features/auth/useAuthGate'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
+import { trackEvent } from '~/features/analytics/gtag'
 import { reviewSchema } from './schema'
 import type { ReviewInput, ReviewParsed } from './schema'
 import type { SpotDetail } from '~/features/spots/domain'
@@ -58,6 +59,7 @@ export function useSubmitReview(spotId: string): {
             {
               id: optimisticId,
               user: 'You',
+              userId,
               rating: values.rating,
               date: '',
               text: values.text,
@@ -88,4 +90,63 @@ export function useSubmitReview(spotId: string): {
   }
 
   return { submit, pending: mutation.isPending }
+}
+
+export function useDeleteComment(spotId: string): {
+  remove: (commentId: string) => void
+  pending: boolean
+} {
+  const { userId } = useSession()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async (commentId: string) => {
+      if (!userId) throw new Error('Not authenticated')
+      const supabase = getBrowserSupabase()
+      // The `location_comments delete own` RLS policy (user_id = auth.uid())
+      // already enforces ownership; the user_id filter keeps the request narrow.
+      const { error } = await supabase
+        .from('location_comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', userId)
+      if (error) throw error
+    },
+
+    onMutate: async (commentId: string) => {
+      const key = ['spot', spotId] as const
+      await queryClient.cancelQueries({ queryKey: key })
+      const snapshot = queryClient.getQueryData<SpotDetail>(key)
+
+      queryClient.setQueryData<SpotDetail>(key, (prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          comments: prev.comments.filter((c) => c.id !== commentId),
+        }
+      })
+
+      return { snapshot }
+    },
+
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.snapshot !== undefined) {
+        queryClient.setQueryData(['spot', spotId], ctx.snapshot)
+      }
+    },
+
+    onSuccess: () => {
+      trackEvent('comment_deleted', { spot_id: spotId })
+    },
+
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: ['spot', spotId] })
+    },
+  })
+
+  const remove = (commentId: string) => {
+    mutation.mutate(commentId)
+  }
+
+  return { remove, pending: mutation.isPending }
 }

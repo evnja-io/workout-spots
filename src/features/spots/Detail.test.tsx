@@ -16,6 +16,7 @@ vi.mock('~/features/likes/useSaveSpot', () => ({
 
 vi.mock('~/features/reviews/mutations', () => ({
   useSubmitReview: () => ({ submit: vi.fn(), pending: false }),
+  useDeleteComment: () => ({ remove: vi.fn(), pending: false }),
 }))
 
 vi.mock('~/features/reports/mutations', () => ({
@@ -24,6 +25,10 @@ vi.mock('~/features/reports/mutations', () => ({
 
 vi.mock('~/features/auth/useAuthGate', () => ({
   useAuthGate: () => (fn: () => void) => fn(),
+}))
+
+vi.mock('~/features/auth/session', () => ({
+  useSession: () => ({ userId: null, status: 'anon' }),
 }))
 
 vi.mock('~/features/add-spot/AddSpotWizard', () => ({
@@ -56,8 +61,8 @@ const mockSpot: SpotDetail = {
     { id: 'd1', name: 'Calisthenics', localeKey: 'discipline.calisthenics', category: 'strength' },
   ],
   comments: [
-    { id: 'c1', user: 'bob', text: 'Awesome spot!', date: '2024-01-01', rating: 5 },
-    { id: 'c2', user: 'carol', text: 'Love it', date: '2024-01-02', rating: 4 },
+    { id: 'c1', user: 'bob', userId: 'user-bob', text: 'Awesome spot!', date: '2024-01-01', rating: 5 },
+    { id: 'c2', user: 'carol', userId: 'user-carol', text: 'Love it', date: '2024-01-02', rating: 4 },
   ],
   viewerLiked: false,
   viewerRating: null,

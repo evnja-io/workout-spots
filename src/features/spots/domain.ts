@@ -4,6 +4,7 @@ export type SpotImage = { id: string; url: string; order: number; path?: string 
 export type SpotComment = {
   id: string
   user: string
+  userId: string | null
   rating: number | null
   date: string
   text: string
