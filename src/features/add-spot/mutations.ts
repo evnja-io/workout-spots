@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
+import { trackEvent } from '~/features/analytics/gtag'
 import { useSession } from '~/features/auth/session'
 import { useAuthGate } from '~/features/auth/useAuthGate'
 import type { AddSpotParsed } from './schema'
@@ -76,6 +77,7 @@ export function useCreateSpot() {
       return newId
     },
     onSuccess: (newId: string) => {
+      trackEvent('spot_created', { spot_id: newId })
       void queryClient.invalidateQueries({ queryKey: ['spots'] })
       void navigate({ to: '/spots/$spotId', params: { spotId: newId } })
     },

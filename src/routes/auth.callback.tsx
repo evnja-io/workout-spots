@@ -17,10 +17,15 @@ function AuthCallbackComponent() {
     const supabase = getBrowserSupabase()
     let settled = false
 
-    const goHome = () => {
+    // Heuristic to split sign_up from login: a brand-new account's `created_at`
+    // is within minutes of this verification (magic-link request → click).
+    // Returning users have an old `created_at`. Errs toward `login`.
+    const goHome = (createdAt?: string) => {
       if (settled) return
       settled = true
-      trackEvent('login')
+      const created = createdAt ? new Date(createdAt).getTime() : 0
+      const isNew = created > 0 && Date.now() - created < 5 * 60 * 1000
+      trackEvent(isNew ? 'sign_up' : 'login')
       void navigate({ to: '/spots' })
     }
 
@@ -32,11 +37,11 @@ function AuthCallbackComponent() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) goHome()
+      if (session) goHome(session.user.created_at)
     })
 
     void supabase.auth.getSession().then(({ data }) => {
-      if (data.session) goHome()
+      if (data.session) goHome(data.session.user.created_at)
     })
 
     // If no session materialises, the link was invalid or expired.

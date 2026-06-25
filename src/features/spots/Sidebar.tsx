@@ -11,6 +11,7 @@ import type { SpotListItem } from './domain'
 import { SpotCard } from './SpotCard'
 import { Filters } from './Filters'
 import { Icon } from '~/components/ui/Icon'
+import { trackEvent } from '~/features/analytics/gtag'
 
 const VIRTUALIZE_THRESHOLD = 30
 
@@ -49,6 +50,8 @@ export function Sidebar({
     setInputValue(value)
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
+      const term = value.trim()
+      if (term) trackEvent('search', { search_term: term })
       void navigate({ search: (prev) => ({ ...prev, q: value }) })
     }, 250)
   }
@@ -60,6 +63,7 @@ export function Sidebar({
   }, [])
 
   function toggleDiscipline(id: string) {
+    trackEvent('filter_applied', { filter_type: 'discipline', filter_id: id })
     void navigate({
       search: (prev) => {
         const parsed = spotSearchSchema.parse(prev)
@@ -72,6 +76,7 @@ export function Sidebar({
   }
 
   function toggleEquipment(id: string) {
+    trackEvent('filter_applied', { filter_type: 'equipment', filter_id: id })
     void navigate({
       search: (prev) => {
         const parsed = spotSearchSchema.parse(prev)
@@ -84,6 +89,7 @@ export function Sidebar({
   }
 
   function toggle24h() {
+    trackEvent('filter_applied', { filter_type: 'access', filter_id: 'open_24h' })
     void navigate({
       search: (prev) => {
         const parsed = spotSearchSchema.parse(prev)

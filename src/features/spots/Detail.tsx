@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/Button'
 import { resolveLabel } from '~/features/taxonomy/queries'
 import { useSaveSpot } from '~/features/likes/useSaveSpot'
 import { useAuthGate } from '~/features/auth/useAuthGate'
+import { trackEvent } from '~/features/analytics/gtag'
 import { ReviewList } from '~/features/reviews/ReviewList'
 import { ReviewForm } from '~/features/reviews/ReviewForm'
 import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
@@ -152,6 +153,7 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary"
+            onClick={() => trackEvent('get_directions', { spot_id: spot.id })}
           >
             <Icon name="route" size={14} />
             {t('detail.getDirections')}
