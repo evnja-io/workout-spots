@@ -131,7 +131,7 @@ function SpotsLayout() {
 
       {/* Mobile list/filters sheet — hosts the same Sidebar shown on desktop */}
       <Sheet open={listSheetOpen} onClose={() => setListSheetOpen(false)}>
-        <div className="flex h-[78vh] flex-col">
+        <div className="flex h-[80dvh] flex-col">
           <Suspense fallback={null}>
             <Sidebar spots={spots} onSpotClick={handleSelectSpot} />
           </Suspense>
