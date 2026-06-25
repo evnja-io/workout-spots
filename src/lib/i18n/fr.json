@@ -26,12 +26,23 @@
     "disciplines": "Disciplines",
     "equipment": "Équipement",
     "contributor": "Ajouté par",
+    "sourceThanks": "Merci à {{source}}",
+    "addedBy": "Ajouté par {{name}}",
+    "addedByMember": "Ajouté par un membre",
     "reviews": "Avis",
     "getDirections": "Itinéraire",
     "save": "Enregistrer",
     "saved": "Enregistré",
     "rating": "Note",
     "notFound": "Spot introuvable"
+  },
+  "onboarding": {
+    "title": "Choisissez un pseudo",
+    "subtitle": "Choisissez un pseudo pour être crédité sur les spots que vous ajoutez. Vous pouvez passer cette étape pour l'instant.",
+    "nicknameLabel": "Pseudo",
+    "nicknamePlaceholder": "ex. street_athlete",
+    "save": "Enregistrer le pseudo",
+    "skip": "Plus tard"
   },
   "saved": {
     "title": "Spots enregistrés",

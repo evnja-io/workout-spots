@@ -75,11 +75,15 @@ type SpotDetailRow = {
   region: string | null
   country: string | null
   contributor: string | null
+  created_by: string | null
+  metadata: { source?: string | null; source_url?: string | null } | null
   opening_hours: Record<string, string> | null
   location_images: { id?: string; image_url: string; image_path?: string; image_order: number }[]
   location_equipments: SpotDetailEquipmentRow[]
   location_disciplines: SpotDetailDisciplineRow[]
   location_comments: SpotDetailCommentRow[]
+  // Creator profile, embedded via the locations.created_by FK.
+  creator: { pseudo: string | null; name: string | null } | null
 }
 
 // ─── Pure mappers ─────────────────────────────────────────────────────────────
@@ -137,6 +141,14 @@ export function mapSpotDetailRow(row: SpotDetailRow): SpotDetail {
     text: c.content,
   }))
 
+  // Credit attribution: an app-created spot (created_by set) is credited to its
+  // contributor; otherwise we thank/link the scraped source. Keeping the guard
+  // here means the "if not added by a new contributor" rule lives in one place.
+  const addedByUser = row.created_by != null
+  const contributorName = addedByUser ? (row.creator?.pseudo ?? row.creator?.name ?? null) : null
+  const source = addedByUser ? null : (row.metadata?.source ?? null)
+  const sourceUrl = addedByUser ? null : (row.metadata?.source_url ?? null)
+
   return {
     id: row.id,
     name: row.name,
@@ -154,6 +166,10 @@ export function mapSpotDetailRow(row: SpotDetailRow): SpotDetail {
     region: row.region ?? '',
     country: row.country ?? '',
     contributor: row.contributor ?? '',
+    addedByUser,
+    contributorName,
+    source,
+    sourceUrl,
     openingHours: row.opening_hours ?? null,
     images,
     equipment,
@@ -229,7 +245,8 @@ export function spotDetailQueryOptions(id: string) {
         .from('locations')
         .select(
           `id,name,city,address,latitude,longitude,is_open_24h,average_rating,rating_count,
-          description,region,country,contributor,opening_hours,
+          description,region,country,contributor,created_by,metadata,opening_hours,
+          creator:users!locations_created_by_fkey(pseudo,name),
           location_disciplines(discipline_id,disciplines(id,name,discipline_locale_key,category)),
           location_equipments(equipment_id,equipments(id,name,equipment_locale_key,category)),
           location_images(id,image_url,image_path,image_order),

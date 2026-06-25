@@ -136,11 +136,24 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
           </>
         )}
 
-        {spot.contributor && (
-          <p style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 14 }}>
-            {t('detail.contributor')}: {spot.contributor}
+        {spot.source && spot.sourceUrl ? (
+          <a
+            className="tag-chip source-credit"
+            href={spot.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={spot.sourceUrl}
+          >
+            <Icon name="share" size={12} />
+            {t('detail.sourceThanks', { source: spot.source })}
+          </a>
+        ) : spot.addedByUser ? (
+          <p className="detail-credit">
+            {spot.contributorName
+              ? t('detail.addedBy', { name: spot.contributorName })
+              : t('detail.addedByMember')}
           </p>
-        )}
+        ) : null}
 
         <div className="section-title">{t('detail.reviews')}</div>
         <ReviewList comments={spot.comments} />
