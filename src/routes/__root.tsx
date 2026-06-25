@@ -4,6 +4,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
 import { createI18n } from '~/lib/i18n/config'
 import { SessionProvider } from '~/features/auth/session'
+import { Analytics } from '~/features/analytics/Analytics'
 import { ACCENTS } from '~/features/theme/theme'
 import { getPrefs } from '~/features/settings/prefs'
 import '~/styles/global.css'
@@ -67,6 +68,7 @@ function RootComponent() {
           <I18nextProvider i18n={i18n}>
             <SessionProvider>
               <Outlet />
+              <Analytics />
             </SessionProvider>
           </I18nextProvider>
         </QueryClientProvider>

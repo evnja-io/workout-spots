@@ -1,6 +1,8 @@
 import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { trackEvent } from '~/features/analytics/gtag'
 import { spotDetailQueryOptions } from '~/features/spots/queries'
 import type { SpotDetail } from '~/features/spots/domain'
 import { Detail } from '~/features/spots/Detail'
@@ -49,6 +51,10 @@ function SpotDetailPage() {
   const spotId = (params).spotId
   const navigate = useNavigate()
   const { data: spot } = useSuspenseQuery(spotDetailQueryOptions(spotId))
+
+  useEffect(() => {
+    trackEvent('view_item', { item_id: spotId })
+  }, [spotId])
 
   if (!spot) return null
 

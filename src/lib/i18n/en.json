@@ -102,5 +102,11 @@
     "photosLabel": "Photos",
     "removePhoto": "Remove photo",
     "locationReadOnly": "Location can't be changed."
+  },
+  "cookieConsent": {
+    "title": "Cookies",
+    "description": "We use Google Analytics to understand how the site is used. May we enable analytics cookies?",
+    "accept": "Accept",
+    "decline": "Decline"
   }
 }

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
+import { trackEvent } from '~/features/analytics/gtag'
 
 export function useSaveSpotMutation(spotId: string, userId: string | null) {
   const queryClient = useQueryClient()
@@ -15,11 +16,13 @@ export function useSaveSpotMutation(spotId: string, userId: string | null) {
           .eq('location_id', spotId)
           .eq('user_id', userId)
         if (error) throw error
+        trackEvent('spot_unsaved', { spot_id: spotId })
       } else {
         const { error } = await supabase
           .from('location_likes')
           .insert({ location_id: spotId, user_id: userId })
         if (error) throw error
+        trackEvent('spot_saved', { spot_id: spotId })
       }
     },
     onMutate: async (currentlyLiked: boolean) => {
