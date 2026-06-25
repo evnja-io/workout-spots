@@ -76,6 +76,9 @@ export function MapView({
   const mapboxglRef = useRef<MapboxGLStatic | null>(null)
   const markersRef = useRef<MapboxMarker[]>([])
   const newSpotMarkerRef = useRef<MapboxMarker | null>(null)
+  // Tracks the spot we last flew to, so refetching spots (e.g. after panning)
+  // never re-centers the map — we only fly when the *selection* changes.
+  const flownToRef = useRef<string | null>(null)
   // Trigger re-renders when map becomes ready
   const [mapReady, setMapReady] = useState(false)
 
@@ -181,14 +184,6 @@ export function MapView({
       markersRef.current.push(marker)
     }
 
-    // Fly to active spot when it changes
-    if (activeSpotId) {
-      const active = spots.find((s) => s.id === activeSpotId)
-      if (active) {
-        map.flyTo({ center: [active.longitude, active.latitude] })
-      }
-    }
-
     // New spot position marker
     newSpotMarkerRef.current?.remove()
     newSpotMarkerRef.current = null
@@ -208,6 +203,24 @@ export function MapView({
     if (!mapReady) return
     rebuildMarkers()
   }, [mapReady, rebuildMarkers])
+
+  // ── Fly to the active spot ONLY when the selection changes ────────────────
+  // Decoupled from marker rebuilds so panning (which refetches spots) never
+  // snaps the map back. The ref guard ensures we fly once per selection.
+  useEffect(() => {
+    const map = mapRef.current
+    if (!mapReady || !map) return
+    if (!activeSpotId) {
+      flownToRef.current = null
+      return
+    }
+    if (flownToRef.current === activeSpotId) return
+    const active = spots.find((s) => s.id === activeSpotId)
+    if (active) {
+      map.flyTo({ center: [active.longitude, active.latitude] })
+      flownToRef.current = activeSpotId
+    }
+  }, [activeSpotId, spots, mapReady])
 
   // ── addMode cursor ────────────────────────────────────────────────────────
   useEffect(() => {
