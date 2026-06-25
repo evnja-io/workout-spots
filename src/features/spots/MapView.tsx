@@ -243,7 +243,7 @@ export function MapView({
   }
 
   return (
-    <div className="map-container">
+    <div className="relative h-full bg-surface-2">
       {/* The actual mapbox canvas host — all mapbox code runs in effects, SSR-safe */}
       <div
         ref={mapHostRef}
@@ -252,25 +252,47 @@ export function MapView({
       />
 
       {/* Style switch */}
-      <div className="map-topbar">
+      <div className="pointer-events-none absolute top-[14px] right-[14px] left-[14px] z-[3] flex justify-between gap-2.5">
         {onChange && <MapStyleSwitch value={mapStyle} onChange={onChange} />}
       </div>
 
-      {/* Zoom / recenter controls */}
-      <div className="map-ctrls">
-        <button className="map-ctrl" type="button" onClick={handleZoomIn} aria-label="Zoom in">
+      {/* Zoom / recenter controls — lifted above the bottom nav on mobile */}
+      <div className="absolute right-[14px] bottom-5 z-[3] flex flex-col gap-1.5 max-md:bottom-[88px]">
+        <button
+          className="grid size-9 place-items-center rounded-[10px] border border-border bg-surface text-text-2 shadow-[var(--shadow-md)] transition-colors duration-150 hover:bg-surface-2"
+          type="button"
+          onClick={handleZoomIn}
+          aria-label="Zoom in"
+        >
           <Icon name="zoomIn" size={15} />
         </button>
-        <button className="map-ctrl" type="button" onClick={handleZoomOut} aria-label="Zoom out">
+        <button
+          className="grid size-9 place-items-center rounded-[10px] border border-border bg-surface text-text-2 shadow-[var(--shadow-md)] transition-colors duration-150 hover:bg-surface-2"
+          type="button"
+          onClick={handleZoomOut}
+          aria-label="Zoom out"
+        >
           <Icon name="zoomOut" size={15} />
         </button>
-        <button className="map-ctrl" type="button" onClick={handleRecenter} aria-label="Recenter">
+        <button
+          className="grid size-9 place-items-center rounded-[10px] border border-border bg-surface text-text-2 shadow-[var(--shadow-md)] transition-colors duration-150 hover:bg-surface-2"
+          type="button"
+          onClick={handleRecenter}
+          aria-label="Recenter"
+        >
           <Icon name="locate" size={15} />
         </button>
       </div>
 
       {/* Token notice — shown when no token (mocks-first / SSR) */}
-      {!hasToken && <div className="token-notice">{t('discover.mapTokenMissing')}</div>}
+      {!hasToken && (
+        <div
+          data-testid="token-notice"
+          className="absolute bottom-[14px] left-[14px] z-[2] max-w-[320px] rounded-[10px] border border-border bg-surface px-3 py-2 text-[11.5px] text-text-3 shadow-[var(--shadow-sm)] max-md:bottom-[88px]"
+        >
+          {t('discover.mapTokenMissing')}
+        </div>
+      )}
     </div>
   )
 }

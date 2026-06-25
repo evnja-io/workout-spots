@@ -122,14 +122,18 @@ export function Sidebar({
   })
 
   return (
-    <div className="sidebar">
-      <div className="sidebar-header">
-        <div className="sidebar-title">
-          <h1>{t('discover.title')}</h1>
-          <span className="count-pill">{filtered.length}</span>
+    <div className="flex flex-col min-h-0 bg-surface border-r border-border">
+      <div className="pt-4.5 px-5 pb-3 border-b border-border">
+        <div className="flex items-center justify-between mb-2.5">
+          <h1 className="m-0 text-[20px] font-semibold tracking-[-0.01em]">
+            {t('discover.title')}
+          </h1>
+          <span className="text-[11px] font-medium bg-surface-2 text-text-3 px-2 py-[3px] rounded-full">
+            {filtered.length}
+          </span>
         </div>
 
-        <div className="search">
+        <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-surface-2 border border-transparent rounded-[10px] transition-[border-color,background-color] duration-150 focus-within:bg-surface focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-softer)]">
           <Icon name="search" size={16} color="var(--text-3)" />
           <input
             type="search"
@@ -137,6 +141,7 @@ export function Sidebar({
             value={inputValue}
             onChange={(e) => handleSearchChange(e.target.value)}
             aria-label={t('discover.searchPlaceholder')}
+            className="w-full border-0 bg-transparent text-[13.5px] placeholder:text-text-4"
           />
         </div>
       </div>
@@ -152,11 +157,16 @@ export function Sidebar({
       />
 
       {filtered.length === 0 ? (
-        <div className="spot-list">
-          <div className="empty">{t('discover.empty')}</div>
+        <div className="flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
+          <div className="text-center px-5 py-10 text-text-3 text-[13px]">
+            {t('discover.empty')}
+          </div>
         </div>
       ) : shouldVirtualize ? (
-        <div ref={parentRef} className="spot-list">
+        <div
+          ref={parentRef}
+          className="flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5"
+        >
           <div
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
@@ -187,7 +197,7 @@ export function Sidebar({
           </div>
         </div>
       ) : (
-        <div className="spot-list">
+        <div className="flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
           {filtered.map((spot) => (
             <SpotCard
               key={spot.id}

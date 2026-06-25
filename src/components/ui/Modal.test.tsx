@@ -40,7 +40,7 @@ test('clicking backdrop calls onClose', async () => {
     </Modal>,
   )
   // Click the backdrop (first element in portal, which is modal-backdrop)
-  const backdrop = container.ownerDocument.querySelector('.modal-backdrop')
+  const backdrop = container.ownerDocument.querySelector('[data-testid="modal-backdrop"]')
   if (backdrop) {
     await userEvent.click(backdrop)
   }

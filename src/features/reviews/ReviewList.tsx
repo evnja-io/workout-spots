@@ -14,13 +14,18 @@ export function ReviewList({ comments }: { comments: SpotComment[] }) {
   }
 
   return (
-    <div className="comments">
+    <div className="flex flex-col gap-3">
       {comments.map((c) => (
-        <div key={c.id} className="comment">
-          <div className="comment-head">
-            <div className="comment-avatar">{c.user.charAt(0).toUpperCase()}</div>
-            <div className="comment-meta">
-              <strong>{c.user}</strong>
+        <div
+          key={c.id}
+          className="rounded-[10px] border border-border bg-surface p-3"
+        >
+          <div className="mb-1.5 flex items-center gap-2">
+            <div className="grid h-[26px] w-[26px] place-items-center rounded-full bg-accent-soft text-[11px] font-semibold text-accent">
+              {c.user.charAt(0).toUpperCase()}
+            </div>
+            <div className="text-[12px] text-text-3">
+              <strong className="font-semibold text-text">{c.user}</strong>
               {c.date && <span> · {c.date}</span>}
             </div>
           </div>
@@ -29,7 +34,9 @@ export function ReviewList({ comments }: { comments: SpotComment[] }) {
               <Stars value={c.rating} size={12} />
             </div>
           )}
-          {c.text && <p className="comment-body">{c.text}</p>}
+          {c.text && (
+            <p className="text-[13px] leading-normal text-text-2">{c.text}</p>
+          )}
         </div>
       ))}
     </div>

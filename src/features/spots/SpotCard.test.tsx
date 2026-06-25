@@ -35,13 +35,13 @@ describe('SpotCard', () => {
     expect(onClick).toHaveBeenCalledOnce()
   })
 
-  it('adds active class when active=true', () => {
+  it('marks the card active when active=true', () => {
     render(<SpotCard spot={bercy} active={true} onClick={vi.fn()} />)
-    expect(screen.getByRole('button')).toHaveClass('active')
+    expect(screen.getByRole('button')).toHaveAttribute('data-active', 'true')
   })
 
-  it('does NOT have active class when active=false', () => {
+  it('is NOT marked active when active=false', () => {
     render(<SpotCard spot={bercy} active={false} onClick={vi.fn()} />)
-    expect(screen.getByRole('button')).not.toHaveClass('active')
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-active')
   })
 })

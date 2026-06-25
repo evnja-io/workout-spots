@@ -69,11 +69,8 @@ function SpotDetailPage() {
 function SpotNotFound() {
   const { t } = useTranslation()
   return (
-    <div
-      className="detail"
-      style={{ padding: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <p style={{ color: 'var(--text-3)', fontSize: 14 }}>{t('detail.notFound')}</p>
+    <div className="absolute top-[14px] right-[14px] z-[4] flex max-h-[calc(100vh-28px)] w-[420px] items-center justify-center overflow-hidden rounded-lg border border-border bg-surface p-6 shadow-[var(--shadow-lg)] animate-[slideIn_0.25s_ease]">
+      <p className="text-[14px] text-text-3">{t('detail.notFound')}</p>
     </div>
   )
 }

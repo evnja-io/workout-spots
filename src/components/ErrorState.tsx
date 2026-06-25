@@ -10,9 +10,9 @@ type ErrorStateProps = {
 export function ErrorState({ title, message, onRetry }: ErrorStateProps) {
   const { t } = useTranslation()
   return (
-    <div className="empty" role="alert">
-      <p className="empty-title">{title}</p>
-      <p className="empty-message">{message}</p>
+    <div className="px-5 py-10 text-center text-[13px] text-text-3" role="alert">
+      <p className="mb-1 font-semibold text-text">{title}</p>
+      <p>{message}</p>
       {onRetry && (
         <Button onClick={onRetry} variant="secondary">
           {t('common.retry')}

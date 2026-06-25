@@ -1,5 +1,8 @@
 import type { SpotListItem } from './domain'
 import { Icon } from '~/components/ui/Icon'
+import { Tag } from '~/components/ui/Tag'
+import { RatingBadge } from '~/components/ui/RatingBadge'
+import { cx } from '~/components/ui/cx'
 
 type SpotCardProps = {
   spot: SpotListItem
@@ -17,34 +20,42 @@ export function SpotCard({ spot, active, onClick }: SpotCardProps) {
 
   return (
     <div
-      className={`spot-card${active ? ' active' : ''}`}
+      className={cx(
+        'grid grid-cols-[72px_1fr] gap-3 p-2.5 rounded-lg border border-transparent cursor-pointer transition-[background-color,border-color] duration-150 hover:bg-surface-2',
+        active && 'bg-accent-softer border-accent-soft',
+      )}
+      data-active={active || undefined}
       role="button"
       tabIndex={0}
       onClick={onClick}
       onKeyDown={handleKeyDown}
     >
       <div
-        className={`spot-thumb${spot.thumbnailUrl ? '' : ' placeholder'}`}
+        className={cx(
+          'relative size-[72px] overflow-hidden rounded-[10px]',
+          "after:absolute after:inset-0 after:content-[''] after:bg-[linear-gradient(180deg,transparent_40%,rgba(0,0,0,0.15))]",
+          spot.thumbnailUrl
+            ? 'bg-cover bg-center'
+            : 'bg-[repeating-linear-gradient(135deg,#e5e7eb_0_8px,#eef0f3_8px_16px)]',
+        )}
         style={spot.thumbnailUrl ? { backgroundImage: `url(${spot.thumbnailUrl})` } : undefined}
       />
-      <div className="spot-body">
-        <h3>{spot.name}</h3>
-        <div className="spot-meta">
+      <div>
+        <h3 className="m-0 mb-0.5 text-[14px] font-semibold tracking-[-0.005em] line-clamp-1">
+          {spot.name}
+        </h3>
+        <div className="flex items-center gap-2 mb-1.5 text-[12px] text-text-3">
           <span>{spot.city}</span>
-          <span className="rating-badge">
+          <RatingBadge>
             <Icon name="star" size={12} />
             {spot.averageRating.toFixed(1)}
-          </span>
+          </RatingBadge>
         </div>
         {(spot.isOpen24h || spot.disciplineIds.length > 0 || spot.equipmentIds.length > 0) && (
-          <div className="spot-tags">
-            {spot.isOpen24h && <span className="tag v">24/7</span>}
-            {spot.disciplineIds.length > 0 && (
-              <span className="tag">{spot.disciplineIds.length} disciplines</span>
-            )}
-            {spot.equipmentIds.length > 0 && (
-              <span className="tag">{spot.equipmentIds.length} equipment</span>
-            )}
+          <div className="flex flex-wrap gap-1">
+            {spot.isOpen24h && <Tag accent>24/7</Tag>}
+            {spot.disciplineIds.length > 0 && <Tag>{spot.disciplineIds.length} disciplines</Tag>}
+            {spot.equipmentIds.length > 0 && <Tag>{spot.equipmentIds.length} equipment</Tag>}
           </div>
         )}
       </div>

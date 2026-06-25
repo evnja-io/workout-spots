@@ -44,7 +44,12 @@ function RootError({ error }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({ meta: [{ title: 'Workout Spots' }] }),
+  head: () => ({
+    meta: [
+      { title: 'Workout Spots' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+    ],
+  }),
   errorComponent: RootError,
   component: RootComponent,
 })

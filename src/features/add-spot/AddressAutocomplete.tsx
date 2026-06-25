@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { forwardGeocode, type GeocodeResult } from '~/lib/mapbox/geocoding'
+import { Input } from '~/components/ui/Field'
 
 interface AddressAutocompleteProps {
   value: string
@@ -67,8 +68,7 @@ export function AddressAutocomplete({ value, onSelect }: AddressAutocompleteProp
 
   return (
     <div style={{ position: 'relative' }}>
-      <input
-        className="input"
+      <Input
         type="text"
         value={query}
         onChange={handleChange}

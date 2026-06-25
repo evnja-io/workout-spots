@@ -1,7 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import type { SpotImage } from '~/features/spots/domain'
+import { FieldHint } from '~/components/ui/Field'
 import { PhotoPicker } from './PhotoPicker'
 import { MAX_IMAGES } from './photos'
+
+const imgSlotFilled =
+  'grid aspect-square place-items-center rounded-[10px] border-[1.5px] border-solid border-transparent bg-surface-2 bg-cover bg-center text-[11px] text-text-3'
 
 interface SpotPhotoManagerProps {
   existing: SpotImage[]
@@ -38,7 +42,7 @@ export function SpotPhotoManager({ existing, removedIds, files, onChange }: Spot
           {keptImages.map((img) => (
             <div key={img.id} style={{ position: 'relative' }}>
               <div
-                className="img-slot filled"
+                className={imgSlotFilled}
                 style={{ backgroundImage: `url(${img.url})` }}
                 aria-label={`Photo ${img.order}`}
               />
@@ -73,7 +77,7 @@ export function SpotPhotoManager({ existing, removedIds, files, onChange }: Spot
       )}
 
       {keptCount >= MAX_IMAGES ? (
-        <p className="field-hint">{t('editSpot.photosLabel')} (max {MAX_IMAGES})</p>
+        <FieldHint>{t('editSpot.photosLabel')} (max {MAX_IMAGES})</FieldHint>
       ) : (
         <PhotoPicker files={files} onChange={handleFilesChange} />
       )}

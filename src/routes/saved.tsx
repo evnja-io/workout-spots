@@ -19,7 +19,7 @@ function SavedError({ reset }: { reset: () => void }) {
 }
 
 function SavedPending() {
-  return <div className="empty" aria-busy="true" />
+  return <div className="px-5 py-10 text-center text-[13px] text-text-3" aria-busy="true" />
 }
 
 export const Route = createFileRoute('/saved')({
@@ -44,7 +44,7 @@ function SavedPage() {
   const { data: spots = [] } = useQuery(savedSpotsQueryOptions(userId))
 
   if (status === 'loading') {
-    return <div className="saved-loading" />
+    return <div className="h-screen" />
   }
 
   if (status === 'anon') {
@@ -52,12 +52,12 @@ function SavedPage() {
   }
 
   return (
-    <div className="saved-page">
-      <h1>{t('saved.title')}</h1>
+    <div className="mx-auto flex h-screen max-w-[680px] flex-col overflow-hidden p-6">
+      <h1 className="mb-4 text-[20px] font-semibold tracking-[-0.01em]">{t('saved.title')}</h1>
       {spots.length === 0 ? (
-        <p className="saved-empty">{t('saved.empty')}</p>
+        <p className="text-[13px] text-text-3">{t('saved.empty')}</p>
       ) : (
-        <div className="spot-list">
+        <div className="flex-1 overflow-y-auto pb-5">
           {spots.map((spot) => (
             <SpotCard
               key={spot.id}

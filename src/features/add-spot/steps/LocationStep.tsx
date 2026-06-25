@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { MapView } from '~/features/spots/MapView'
 import { reverseGeocode } from '~/lib/mapbox/geocoding'
 import { AddressAutocomplete } from '../AddressAutocomplete'
+import { FieldLabel, FieldHint } from '~/components/ui/Field'
 import type { AddSpotInput } from '../schema'
 import type { MapStyle } from '~/lib/mapbox/map'
 import type { GeocodeResult } from '~/lib/mapbox/geocoding'
@@ -44,24 +45,24 @@ export function LocationStep({ values, onChange, mapStyle, readOnly }: LocationS
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+    <div className="flex flex-col gap-3.5">
       <div>
-        <label className="field-label">{t('addSpot.addressLabel')}</label>
+        <FieldLabel>{t('addSpot.addressLabel')}</FieldLabel>
         {readOnly ? (
-          <p className="field-hint">{values.address || '—'}</p>
+          <FieldHint>{values.address || '—'}</FieldHint>
         ) : (
           <>
             <AddressAutocomplete value={values.address} onSelect={handleSelect} />
-            <p className="field-hint">{t('addSpot.addressHint')}</p>
+            <FieldHint>{t('addSpot.addressHint')}</FieldHint>
           </>
         )}
         {readOnly && (
-          <p className="field-hint" style={{ fontStyle: 'italic', color: 'var(--text-3)' }}>
+          <FieldHint style={{ fontStyle: 'italic', color: 'var(--text-3)' }}>
             {t('editSpot.locationReadOnly')}
-          </p>
+          </FieldHint>
         )}
       </div>
-      <div className="mini-map">
+      <div className="relative h-[200px] w-full overflow-hidden rounded-md border border-border bg-surface-2">
         <MapView
           spots={[]}
           activeSpotId={null}
@@ -73,7 +74,9 @@ export function LocationStep({ values, onChange, mapStyle, readOnly }: LocationS
           theme="light"
         />
         {!readOnly && !values.position && (
-          <div className="mini-map-hint">{t('addSpot.mapHint')}</div>
+          <div className="absolute left-2.5 top-2.5 rounded-[8px] bg-surface px-2.5 py-1.5 text-[11.5px] text-text-2 shadow-[var(--shadow-sm)]">
+            {t('addSpot.mapHint')}
+          </div>
         )}
       </div>
     </div>

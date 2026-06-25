@@ -1,7 +1,9 @@
 import { useCallback, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal } from '~/components/ui/Modal'
+import { ResponsiveOverlay } from '~/components/ui/ResponsiveOverlay'
 import { Icon } from '~/components/ui/Icon'
+import { Button } from '~/components/ui/Button'
+import { Input, FieldLabel } from '~/components/ui/Field'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
 
 interface SignInModalProps {
@@ -38,32 +40,38 @@ export function SignInModal({ open, onClose }: SignInModalProps) {
   }, [onClose])
 
   return (
-    <Modal open={open} onClose={handleClose} labelledBy={titleId} className="modal-sm">
-      <div className="modal-head">
-        <h2 id={titleId}>{t('auth.signInTitle')}</h2>
-        <button type="button" className="modal-close-btn" aria-label={t('common.cancel')} onClick={handleClose}>
+    <ResponsiveOverlay open={open} onClose={handleClose} labelledBy={titleId} desktopClassName="w-[440px]">
+      <div className="flex items-center justify-between border-b border-border px-[22px] py-[18px]">
+        <h2 id={titleId} className="m-0 text-[17px] font-semibold tracking-[-0.01em]">
+          {t('auth.signInTitle')}
+        </h2>
+        <button
+          type="button"
+          className="grid size-[30px] place-items-center rounded-[8px] text-text-3 transition-colors duration-150 hover:bg-surface-2 hover:text-text"
+          aria-label={t('common.cancel')}
+          onClick={handleClose}
+        >
           <Icon name="close" size={18} />
         </button>
       </div>
 
-      <div className="modal-body auth-body">
+      <div className="flex flex-col gap-4 overflow-y-auto px-[22px] py-[18px]">
         {sent ? (
-          <div className="auth-sent">
-            <div className="auth-sent-icon">
+          <div className="flex flex-col items-center gap-3 py-2.5 text-center">
+            <div className="grid size-[52px] place-items-center rounded-full bg-accent-soft">
               <Icon name="user" size={22} color="var(--accent)" />
             </div>
-            <p role="status">{t('auth.checkInbox')}</p>
+            <p role="status" className="m-0 text-[14px] leading-[1.5] text-text-2">
+              {t('auth.checkInbox')}
+            </p>
           </div>
         ) : (
-          <form className="auth-form" onSubmit={(e) => void handleSubmit(e)}>
-            <p className="auth-subtitle">{t('auth.required')}</p>
-            <div className="field">
-              <label htmlFor="sign-in-email" className="field-label">
-                {t('auth.emailLabel')}
-              </label>
-              <input
+          <form className="flex flex-col gap-4" onSubmit={(e) => void handleSubmit(e)}>
+            <p className="m-0 text-[13.5px] leading-[1.5] text-text-3">{t('auth.required')}</p>
+            <div>
+              <FieldLabel htmlFor="sign-in-email">{t('auth.emailLabel')}</FieldLabel>
+              <Input
                 id="sign-in-email"
-                className="input"
                 type="email"
                 value={email}
                 placeholder={t('auth.emailPlaceholder')}
@@ -72,12 +80,12 @@ export function SignInModal({ open, onClose }: SignInModalProps) {
                 autoFocus
               />
             </div>
-            <button type="submit" className="btn btn-primary auth-submit" disabled={loading}>
+            <Button type="submit" variant="primary" className="w-full flex-none" disabled={loading}>
               {loading ? t('auth.signingIn') : t('auth.sendLink')}
-            </button>
+            </Button>
           </form>
         )}
       </div>
-    </Modal>
+    </ResponsiveOverlay>
   )
 }
