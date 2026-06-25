@@ -172,7 +172,7 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
         ) : null}
 
         <div className="mx-0 mt-4 mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-3">{t('detail.reviews')}</div>
-        <ReviewList comments={spot.comments} />
+        <ReviewList spotId={spot.id} comments={spot.comments} />
         <ReviewForm spotId={spot.id} />
 
         <div className="mt-4 flex flex-wrap gap-2">

@@ -6,7 +6,9 @@ import { I18nextProvider } from 'react-i18next'
 import { createI18n } from '~/lib/i18n/config'
 import { SessionProvider } from '~/features/auth/session'
 import { reviewSchema } from './schema'
-import { useSubmitReview } from './mutations'
+import { useSubmitReview, useDeleteComment } from './mutations'
+import { ReviewList } from './ReviewList'
+import type { SpotComment } from '~/features/spots/domain'
 
 // ── Supabase mock ─────────────────────────────────────────────────────────────
 
@@ -16,10 +18,27 @@ const mockGetSession = vi.fn()
 const mockOnAuthStateChange = vi.fn()
 const mockUnsubscribe = vi.fn()
 
+// .delete().eq('id', …).eq('user_id', …) resolves to whatever mockDeleteResult holds.
+let mockDeleteResult: { error: unknown } = { error: null }
+const mockDeleteEqId = vi.fn()
+const mockDeleteEqUser = vi.fn()
+const mockDelete = vi.fn(() => ({
+  eq: (...idArgs: unknown[]) => {
+    mockDeleteEqId(...idArgs)
+    return {
+      eq: (...userArgs: unknown[]) => {
+        mockDeleteEqUser(...userArgs)
+        return Promise.resolve(mockDeleteResult)
+      },
+    }
+  },
+}))
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockFrom = vi.fn((_table: string) => ({
   upsert: mockUpsert,
   insert: mockInsert,
+  delete: mockDelete,
 }))
 
 vi.mock('~/lib/supabase/browser', () => ({
@@ -288,5 +307,151 @@ describe('useSubmitReview — anon', () => {
     // No DB writes
     expect(mockUpsert).not.toHaveBeenCalled()
     expect(mockInsert).not.toHaveBeenCalled()
+  })
+})
+
+// ── useDeleteComment ────────────────────────────────────────────────────────────
+
+function DeleteButton({ spotId, commentId }: { spotId: string; commentId: string }) {
+  const { remove } = useDeleteComment(spotId)
+  const { status } = useSession()
+  return (
+    <button
+      data-testid="delete-btn"
+      data-session-status={status}
+      onClick={() => remove(commentId)}
+    >
+      Delete
+    </button>
+  )
+}
+
+describe('useDeleteComment', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockDeleteResult = { error: null }
+  })
+
+  it('deletes via location_comments filtered by id + user_id and optimistically removes the comment', async () => {
+    const userId = 'user-owner'
+    const { Wrapper, qc } = makeWrapper(userId)
+
+    qc.setQueryData(['spot', 'spot-del'], {
+      id: 'spot-del',
+      comments: [
+        { id: 'cmt-1', user: 'You', userId, rating: 5, date: '', text: 'Mine' },
+        { id: 'cmt-2', user: 'Bob', userId: 'user-bob', rating: 3, date: '', text: 'Theirs' },
+      ],
+    })
+
+    render(
+      <Wrapper>
+        <DeleteButton spotId="spot-del" commentId="cmt-1" />
+      </Wrapper>,
+    )
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId('delete-btn').getAttribute('data-session-status'),
+      ).toBe('authed'),
+    )
+
+    const user = userEvent.setup()
+    await user.click(screen.getByTestId('delete-btn'))
+
+    // The comment is removed from the cache optimistically; the other remains.
+    await waitFor(() => {
+      const cached = qc.getQueryData<{ comments: { id: string }[] }>(['spot', 'spot-del'])
+      expect(cached?.comments.map((c) => c.id)).toEqual(['cmt-2'])
+    })
+
+    // DELETE was scoped to the comment id and the owner's user_id.
+    expect(mockFrom).toHaveBeenCalledWith('location_comments')
+    expect(mockDelete).toHaveBeenCalledTimes(1)
+    expect(mockDeleteEqId).toHaveBeenCalledWith('id', 'cmt-1')
+    expect(mockDeleteEqUser).toHaveBeenCalledWith('user_id', userId)
+  })
+
+  it('rolls back the optimistic removal when the delete fails', async () => {
+    const userId = 'user-owner'
+    const { Wrapper, qc } = makeWrapper(userId)
+
+    mockDeleteResult = { error: { message: 'denied' } }
+
+    const initialComments = [
+      { id: 'cmt-1', user: 'You', userId, rating: 5, date: '', text: 'Mine' },
+    ]
+    qc.setQueryData(['spot', 'spot-fail'], {
+      id: 'spot-fail',
+      comments: initialComments,
+    })
+
+    render(
+      <Wrapper>
+        <DeleteButton spotId="spot-fail" commentId="cmt-1" />
+      </Wrapper>,
+    )
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId('delete-btn').getAttribute('data-session-status'),
+      ).toBe('authed'),
+    )
+
+    const user = userEvent.setup()
+    await user.click(screen.getByTestId('delete-btn'))
+
+    // After the failed delete, the snapshot is restored — the comment is back.
+    await waitFor(() => {
+      const cached = qc.getQueryData<{ comments: { id: string }[] }>(['spot', 'spot-fail'])
+      expect(cached?.comments.map((c) => c.id)).toEqual(['cmt-1'])
+    })
+  })
+})
+
+// ── ReviewList delete control ───────────────────────────────────────────────────
+
+describe('ReviewList delete button', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockDeleteResult = { error: null }
+  })
+
+  const comments: SpotComment[] = [
+    { id: 'cmt-mine', user: 'You', userId: 'user-me', rating: 5, date: '', text: 'My review' },
+    { id: 'cmt-other', user: 'Bob', userId: 'user-bob', rating: 3, date: '', text: 'Their review' },
+  ]
+
+  it('renders the delete control only for the viewer’s own comment', async () => {
+    const { Wrapper } = makeWrapper('user-me')
+
+    render(
+      <Wrapper>
+        <ReviewList spotId="spot-1" comments={comments} />
+      </Wrapper>,
+    )
+
+    // Wait for the session to resolve to authed so userId is populated.
+    await waitFor(() => {
+      const buttons = screen.getAllByRole('button', { name: /delete review/i })
+      expect(buttons).toHaveLength(1)
+    })
+
+    // The control belongs to the owned comment card (the one containing "My review").
+    const ownButton = screen.getByRole('button', { name: /delete review/i })
+    const ownCard = ownButton.closest('div')?.parentElement
+    expect(ownCard?.textContent).toContain('My review')
+  })
+
+  it('renders no delete control when the viewer is anonymous', () => {
+    const { Wrapper } = makeWrapper(null)
+
+    render(
+      <Wrapper>
+        <ReviewList spotId="spot-1" comments={comments} />
+      </Wrapper>,
+    )
+
+    expect(screen.queryByRole('button', { name: /delete review/i })).toBeNull()
   })
 })

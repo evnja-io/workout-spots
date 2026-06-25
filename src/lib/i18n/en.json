@@ -44,7 +44,9 @@
     "ratingLabel": "Your rating",
     "placeholder": "Share your experience (optional)…",
     "submit": "Post review",
-    "noReviews": "No reviews yet."
+    "noReviews": "No reviews yet.",
+    "delete": "Delete review",
+    "deleteConfirm": "Delete this review?"
   },
   "settings": {
     "title": "Settings",
