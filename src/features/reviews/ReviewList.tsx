@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Stars } from '~/components/ui/Stars'
+import { Icon } from '~/components/ui/Icon'
+import { ReportDialog } from '~/features/reports/ReportDialog'
 import type { SpotComment } from '~/features/spots/domain'
 
 function formatCommentDate(value: string, locale: string): string {
@@ -14,6 +17,7 @@ function formatCommentDate(value: string, locale: string): string {
 
 export function ReviewList({ comments }: { comments: SpotComment[] }) {
   const { t, i18n } = useTranslation()
+  const [reportingId, setReportingId] = useState<string | null>(null)
 
   if (comments.length === 0) {
     return (
@@ -38,6 +42,16 @@ export function ReviewList({ comments }: { comments: SpotComment[] }) {
               <strong className="font-semibold text-text">{c.user}</strong>
               {c.date && <span> · {formatCommentDate(c.date, i18n.language)}</span>}
             </div>
+            <button
+              type="button"
+              className="ml-auto grid size-[24px] place-items-center rounded-[6px] text-text-3 transition-colors duration-150 hover:bg-surface-2 hover:text-text"
+              aria-label={t('report.button')}
+              title={t('report.button')}
+              data-testid="comment-report-button"
+              onClick={() => setReportingId(c.id)}
+            >
+              <Icon name="flag" size={13} />
+            </button>
           </div>
           {c.rating != null && (
             <div style={{ marginBottom: 4 }}>
@@ -49,6 +63,13 @@ export function ReviewList({ comments }: { comments: SpotComment[] }) {
           )}
         </div>
       ))}
+
+      <ReportDialog
+        open={reportingId != null}
+        onClose={() => setReportingId(null)}
+        targetType="comment"
+        targetId={reportingId ?? ''}
+      />
     </div>
   )
 }
