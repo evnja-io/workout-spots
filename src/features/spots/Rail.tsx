@@ -3,6 +3,7 @@ import { useLocation, Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
+import { Logo } from '~/features/spots/Logo'
 import { useSessionContext } from '~/features/auth/session'
 
 export interface RailProps {
@@ -62,11 +63,8 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
       aria-label="Main navigation"
     >
       {/* Logo */}
-      <div
-        className="mb-2.5 grid size-9 place-items-center rounded-[10px] bg-accent font-bold tracking-[-0.02em] text-white shadow-[var(--shadow-sm)]"
-        aria-label="Workout Spots"
-      >
-        WS
+      <div className="mb-2.5 grid size-9 place-items-center" aria-label="Workout Spots">
+        <Logo size={32} />
       </div>
 
       {/* Map view button */}
@@ -118,7 +116,7 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
       <div className="relative grid place-items-center" ref={accountRef}>
         <button
           type="button"
-          className="grid size-9 place-items-center rounded-full bg-[linear-gradient(135deg,#c4b5fd,#7c3aed)] text-[13px] font-semibold text-white"
+          className="grid size-9 place-items-center rounded-full bg-[linear-gradient(135deg,#FB7A1E,#E11D48)] text-[13px] font-semibold text-white"
           aria-label={t('auth.account')}
           aria-haspopup="menu"
           aria-expanded={menuOpen}

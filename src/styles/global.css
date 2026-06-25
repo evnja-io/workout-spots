@@ -12,10 +12,10 @@
   --text-2: #374151;
   --text-3: #6b7280;
   --text-4: #9ca3af;
-  --accent: #4c1d95; /* violet-900 */
-  --accent-2: #6d28d9; /* violet-700 */
-  --accent-soft: #ede9fe; /* violet-100 */
-  --accent-softer: #f5f3ff; /* violet-50 */
+  --accent: #e11d48; /* rose-600 */
+  --accent-2: #c20e3c; /* rose-700 */
+  --accent-soft: #ffe4e6; /* rose-100 */
+  --accent-softer: #fff1f2; /* rose-50 */
   --accent-fg: #ffffff;
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
   --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
@@ -27,15 +27,15 @@
 }
 
 [data-theme='dark'] {
-  --bg: #0b0d10;
-  --surface: #14171c;
-  --surface-2: #1b1f26;
-  --border: #262b33;
-  --border-strong: #323842;
-  --text: #f3f4f6;
-  --text-2: #d1d5db;
-  --text-3: #9ca3af;
-  --text-4: #6b7280;
+  --bg: #150a1b;
+  --surface: #211029;
+  --surface-2: #2c1636;
+  --border: #3a2145;
+  --border-strong: #4c2d58;
+  --text: #f6f0f4;
+  --text-2: #d8cedb;
+  --text-3: #a99cb0;
+  --text-4: #76697d;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -187,7 +187,7 @@
   border-radius: 50%;
   background: var(--accent);
   border: 3px solid white;
-  box-shadow: 0 2px 6px rgba(76, 29, 149, 0.35);
+  box-shadow: 0 2px 6px rgba(225, 29, 72, 0.4);
   transition: all 0.2s;
 }
 .wp-pin:hover {
@@ -197,8 +197,8 @@
   width: 22px;
   height: 22px;
   box-shadow:
-    0 0 0 6px rgba(76, 29, 149, 0.18),
-    0 2px 10px rgba(76, 29, 149, 0.45);
+    0 0 0 6px rgba(225, 29, 72, 0.18),
+    0 2px 10px rgba(225, 29, 72, 0.45);
 }
 [data-theme='dark'] .wp-pin .dot {
   border-color: var(--surface);

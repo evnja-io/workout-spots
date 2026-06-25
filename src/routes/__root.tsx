@@ -43,11 +43,41 @@ function RootError({ error }: { error: Error; reset: () => void }) {
   )
 }
 
+// Absolute origin for canonical / Open Graph URLs (see design: spots.evnja.gg).
+export const SITE_URL = 'https://spots.evnja.gg'
+const SITE_DESCRIPTION =
+  'Discover outdoor calisthenics & workout spots near you on an interactive map. Find pull-up bars, parks, and street-workout spots, rate them, and add your own.'
+const OG_IMAGE = `${SITE_URL}/og-image.png`
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
+      { charSet: 'utf-8' },
       { title: 'Workout Spots' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+      { name: 'description', content: SITE_DESCRIPTION },
+      { name: 'theme-color', content: '#E11D48' },
+      { name: 'apple-mobile-web-app-title', content: 'Spots' },
+      // Open Graph
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: 'Workout Spots' },
+      { property: 'og:title', content: 'Workout Spots — Find outdoor training spots near you' },
+      { property: 'og:description', content: SITE_DESCRIPTION },
+      { property: 'og:url', content: `${SITE_URL}/spots` },
+      { property: 'og:image', content: OG_IMAGE },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      // Twitter
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Workout Spots — Find outdoor training spots near you' },
+      { name: 'twitter:description', content: SITE_DESCRIPTION },
+      { name: 'twitter:image', content: OG_IMAGE },
+    ],
+    links: [
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+      { rel: 'icon', href: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
+      { rel: 'apple-touch-icon', href: '/favicon-180.png', sizes: '180x180' },
+      { rel: 'manifest', href: '/site.webmanifest' },
     ],
   }),
   errorComponent: RootError,

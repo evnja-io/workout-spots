@@ -29,7 +29,7 @@ function readCurrentAccent(): AccentKey {
       return key
     }
   }
-  return 'violet'
+  return 'rose'
 }
 
 export function SettingsPanel({ open, onClose, mapStyle, onMapStyleChange }: SettingsPanelProps) {
@@ -40,7 +40,7 @@ export function SettingsPanel({ open, onClose, mapStyle, onMapStyleChange }: Set
     typeof document !== 'undefined' ? readCurrentTheme() : 'light',
   )
   const [accent, setAccent] = useState<AccentKey>(() =>
-    typeof document !== 'undefined' ? readCurrentAccent() : 'violet',
+    typeof document !== 'undefined' ? readCurrentAccent() : 'rose',
   )
   const isMobile = useIsMobile()
 

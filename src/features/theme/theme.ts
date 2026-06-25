@@ -53,18 +53,18 @@ export const ACCENTS: Record<AccentKey, Record<Theme, Palette>> = {
   },
   rose: {
     light: {
-      accent: '#9F1239',
-      accent2: '#BE123C',
+      accent: '#E11D48',
+      accent2: '#C20E3C',
       soft: '#FFE4E6',
       softer: '#FFF1F2',
       fg: '#FFFFFF',
     },
     dark: {
-      accent: '#FB7185',
-      accent2: '#F43F5E',
-      soft: '#3B1522',
-      softer: '#260E18',
-      fg: '#0B0D10',
+      accent: '#F4374F',
+      accent2: '#FB7A1E',
+      soft: '#3A1430',
+      softer: '#2A0E24',
+      fg: '#FFFFFF',
     },
   },
 }

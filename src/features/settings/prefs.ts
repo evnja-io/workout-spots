@@ -20,7 +20,7 @@ export const VALID_LANGS: Locale[] = ['en', 'fr']
 
 const DEFAULT_PREFS: Prefs = {
   theme: 'light',
-  accent: 'violet',
+  accent: 'rose',
   mapStyle: 'light',
   lang: 'en',
 }
