@@ -15,6 +15,7 @@
     "sendLink": "Envoyer le lien de connexion",
     "checkInbox": "Vérifiez votre boîte mail pour le lien de connexion.",
     "signingIn": "Connexion en cours…",
+    "signInFailed": "Le lien de connexion est invalide ou a expiré. Veuillez en demander un nouveau.",
     "required": "Connectez-vous pour enregistrer des spots, laisser des avis et en ajouter.",
     "signOut": "Se déconnecter",
     "account": "Compte",

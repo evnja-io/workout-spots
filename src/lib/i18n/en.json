@@ -7,6 +7,7 @@
     "sendLink": "Send sign-in link",
     "checkInbox": "Check your inbox for a sign-in link.",
     "signingIn": "Signing you in…",
+    "signInFailed": "Sign-in link is invalid or has expired. Please request a new one.",
     "required": "Sign in to save spots, leave reviews and add new spots.",
     "signOut": "Sign out",
     "account": "Account",

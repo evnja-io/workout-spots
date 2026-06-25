@@ -14,22 +14,42 @@ function AuthCallbackComponent() {
 
   useEffect(() => {
     const supabase = getBrowserSupabase()
-    // PKCE flow: exchange the ?code= parameter for a session.
-    // exchangeCodeForSession accepts the full URL (reads the code query param).
-    void supabase.auth
-      .exchangeCodeForSession(window.location.href)
-      .then(({ error: err }) => {
-        if (err) {
-          setError(err.message)
-        } else {
-          // Redirect to /spots (the main app destination after sign-in)
-          void navigate({ to: '/spots' })
-        }
-      })
-  }, [navigate])
+    let settled = false
+
+    const goHome = () => {
+      if (settled) return
+      settled = true
+      void navigate({ to: '/spots' })
+    }
+
+    // The @supabase/ssr browser client has `detectSessionInUrl` enabled, so it
+    // automatically exchanges the `?code=` (PKCE) on load and establishes the
+    // session. We must NOT also call exchangeCodeForSession manually — that races
+    // the auto-exchange, loses (the code is single-use), and errors even though
+    // sign-in succeeded. Instead, redirect as soon as a session exists.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) goHome()
+    })
+
+    void supabase.auth.getSession().then(({ data }) => {
+      if (data.session) goHome()
+    })
+
+    // If no session materialises, the link was invalid or expired.
+    const timer = setTimeout(() => {
+      if (!settled) setError(t('auth.signInFailed'))
+    }, 6000)
+
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timer)
+    }
+  }, [navigate, t])
 
   if (error) {
-    return <p>Sign-in failed: {error}</p>
+    return <p>{error}</p>
   }
 
   return <p>{t('auth.signingIn')}</p>
