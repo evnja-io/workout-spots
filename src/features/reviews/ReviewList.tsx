@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Stars } from '~/components/ui/Stars'
 import { Icon } from '~/components/ui/Icon'
 import { useSession } from '~/features/auth/session'
+import { ReportDialog } from '~/features/reports/ReportDialog'
 import { useDeleteComment } from './mutations'
 import type { SpotComment } from '~/features/spots/domain'
 
@@ -19,6 +21,7 @@ export function ReviewList({ spotId, comments }: { spotId: string; comments: Spo
   const { t, i18n } = useTranslation()
   const { userId } = useSession()
   const { remove, pending } = useDeleteComment(spotId)
+  const [reportingId, setReportingId] = useState<string | null>(null)
 
   if (comments.length === 0) {
     return (
@@ -45,20 +48,32 @@ export function ReviewList({ spotId, comments }: { spotId: string; comments: Spo
                 <strong className="font-semibold text-text">{c.user}</strong>
                 {c.date && <span> · {formatCommentDate(c.date, i18n.language)}</span>}
               </div>
-              {isOwn && (
+              <div className="ml-auto flex items-center gap-1">
                 <button
                   type="button"
-                  className="ml-auto grid h-6 w-6 place-items-center rounded-md text-text-3 transition-colors hover:bg-accent-soft hover:text-accent disabled:opacity-50"
-                  aria-label={t('review.delete')}
-                  title={t('review.delete')}
-                  disabled={pending}
-                  onClick={() => {
-                    if (window.confirm(t('review.deleteConfirm'))) remove(c.id)
-                  }}
+                  className="grid size-[24px] place-items-center rounded-[6px] text-text-3 transition-colors duration-150 hover:bg-surface-2 hover:text-text"
+                  aria-label={t('report.button')}
+                  title={t('report.button')}
+                  data-testid="comment-report-button"
+                  onClick={() => setReportingId(c.id)}
                 >
-                  <Icon name="trash" size={14} />
+                  <Icon name="flag" size={13} />
                 </button>
-              )}
+                {isOwn && (
+                  <button
+                    type="button"
+                    className="grid h-6 w-6 place-items-center rounded-md text-text-3 transition-colors hover:bg-accent-soft hover:text-accent disabled:opacity-50"
+                    aria-label={t('review.delete')}
+                    title={t('review.delete')}
+                    disabled={pending}
+                    onClick={() => {
+                      if (window.confirm(t('review.deleteConfirm'))) remove(c.id)
+                    }}
+                  >
+                    <Icon name="trash" size={14} />
+                  </button>
+                )}
+              </div>
             </div>
             {c.rating != null && (
               <div style={{ marginBottom: 4 }}>
@@ -71,6 +86,13 @@ export function ReviewList({ spotId, comments }: { spotId: string; comments: Spo
           </div>
         )
       })}
+
+      <ReportDialog
+        open={reportingId != null}
+        onClose={() => setReportingId(null)}
+        targetType="comment"
+        targetId={reportingId ?? ''}
+      />
     </div>
   )
 }

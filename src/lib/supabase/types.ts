@@ -412,6 +412,33 @@ export interface Database {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          id: string
+          target_type: string
+          target_id: string
+          reporter_id: string
+          reason: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          target_type: string
+          target_id: string
+          reporter_id: string
+          reason?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          target_type?: string
+          target_id?: string
+          reporter_id?: string
+          reason?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>

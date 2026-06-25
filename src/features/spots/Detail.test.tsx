@@ -19,6 +19,10 @@ vi.mock('~/features/reviews/mutations', () => ({
   useDeleteComment: () => ({ remove: vi.fn(), pending: false }),
 }))
 
+vi.mock('~/features/reports/mutations', () => ({
+  useReport: () => ({ report: vi.fn(), pending: false, success: false, reset: vi.fn() }),
+}))
+
 vi.mock('~/features/auth/useAuthGate', () => ({
   useAuthGate: () => (fn: () => void) => fn(),
 }))

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from '@tanstack/react-query'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
 import { Logo } from '~/features/spots/Logo'
 import { useSessionContext } from '~/features/auth/session'
+import { currentUserProfileQueryOptions } from '~/features/auth/profile'
 
 export interface RailProps {
   onOpenSettings?: () => void
@@ -23,8 +25,16 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
   const isListActive = pathname === '/spots' && view === 'list'
   const isSavedActive = pathname.startsWith('/saved')
 
-  // Use first char of userId as avatar initial; fall back to icon for anon
-  const initial = userId ? userId.charAt(0).toUpperCase() : null
+  const { data: profile } = useQuery({
+    ...currentUserProfileQueryOptions(userId),
+    enabled: status === 'authed' && !!userId,
+  })
+
+  const pseudo = profile?.pseudo ?? null
+  const avatarUrl = profile?.profilePictureUrl ?? null
+  // Avatar initial derives from the nickname (never the userId UUID); the icon
+  // is the fallback when there's no pseudo yet.
+  const initial = pseudo ? pseudo.trim().charAt(0).toUpperCase() : null
 
   // Close the account menu on outside click / Escape.
   useEffect(() => {
@@ -116,13 +126,17 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
       <div className="relative grid place-items-center" ref={accountRef}>
         <button
           type="button"
-          className="grid size-9 place-items-center rounded-full bg-[linear-gradient(135deg,#FB7A1E,#E11D48)] text-[13px] font-semibold text-white"
+          className="grid size-9 place-items-center overflow-hidden rounded-full bg-[linear-gradient(135deg,#FB7A1E,#E11D48)] text-[13px] font-semibold text-white"
           aria-label={t('auth.account')}
           aria-haspopup="menu"
           aria-expanded={menuOpen}
           onClick={handleAccountClick}
         >
-          {initial ?? <Icon name="user" size={16} />}
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="" className="size-full object-cover" />
+          ) : (
+            (initial ?? <Icon name="user" size={16} />)
+          )}
         </button>
 
         {menuOpen && status === 'authed' && (
@@ -131,8 +145,19 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
             role="menu"
           >
             <div className="px-2.5 pt-1.5 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-4">
-              {t('auth.signedInAs')}
+              {pseudo
+                ? t('auth.signedInAsName', { name: pseudo })
+                : t('auth.signedInAs')}
             </div>
+            <Link
+              to="/profile"
+              className="flex w-full items-center gap-2 rounded-[8px] px-2.5 py-2 text-left text-[13px] text-text transition-colors duration-150 hover:bg-surface-2"
+              role="menuitem"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Icon name="edit" size={16} />
+              {t('profile.menuItem')}
+            </Link>
             <button
               type="button"
               className="flex w-full items-center gap-2 rounded-[8px] px-2.5 py-2 text-left text-[13px] text-text transition-colors duration-150 hover:bg-surface-2"

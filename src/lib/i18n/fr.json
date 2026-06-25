@@ -19,7 +19,8 @@
     "required": "Connectez-vous pour enregistrer des spots, laisser des avis et en ajouter.",
     "signOut": "Se déconnecter",
     "account": "Compte",
-    "signedInAs": "Connecté"
+    "signedInAs": "Connecté",
+    "signedInAsName": "Connecté en tant que {{name}}"
   },
   "detail": {
     "about": "À propos",
@@ -48,6 +49,16 @@
     "title": "Spots enregistrés",
     "empty": "Vous n'avez pas encore enregistré de spots."
   },
+  "profile": {
+    "title": "Profil",
+    "menuItem": "Profil",
+    "nicknameLabel": "Pseudo",
+    "changeAvatar": "Changer la photo",
+    "avatarHint": "JPG, PNG, WebP ou GIF, jusqu'à 5 Mo.",
+    "avatarInvalid": "Choisissez une image de moins de 5 Mo.",
+    "saved": "Profil enregistré.",
+    "saveError": "Impossible d'enregistrer votre profil. Veuillez réessayer."
+  },
   "review": {
     "ratingLabel": "Votre note",
     "placeholder": "Partagez votre expérience (optionnel)…",
@@ -55,6 +66,13 @@
     "noReviews": "Aucun avis pour le moment.",
     "delete": "Supprimer l'avis",
     "deleteConfirm": "Supprimer cet avis ?"
+  },
+  "report": {
+    "button": "Signaler",
+    "title": "Signaler",
+    "reasonPlaceholder": "Dites-nous ce qui ne va pas (optionnel)…",
+    "submit": "Envoyer le signalement",
+    "success": "Merci — nous avons bien reçu votre signalement."
   },
   "settings": {
     "title": "Paramètres",

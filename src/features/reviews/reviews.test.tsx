@@ -439,8 +439,8 @@ describe('ReviewList delete button', () => {
 
     // The control belongs to the owned comment card (the one containing "My review").
     const ownButton = screen.getByRole('button', { name: /delete review/i })
-    const ownCard = ownButton.closest('div')?.parentElement
-    expect(ownCard?.textContent).toContain('My review')
+    const ownCard = screen.getByText('My review').closest('div')
+    expect(ownCard?.contains(ownButton)).toBe(true)
   })
 
   it('renders no delete control when the viewer is anonymous', () => {

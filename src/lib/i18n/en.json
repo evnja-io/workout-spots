@@ -11,7 +11,8 @@
     "required": "Sign in to save spots, leave reviews and add new spots.",
     "signOut": "Sign out",
     "account": "Account",
-    "signedInAs": "Signed in"
+    "signedInAs": "Signed in",
+    "signedInAsName": "Signed in as {{name}}"
   },
   "detail": {
     "about": "About",
@@ -40,6 +41,16 @@
     "title": "Saved spots",
     "empty": "You haven't saved any spots yet."
   },
+  "profile": {
+    "title": "Profile",
+    "menuItem": "Profile",
+    "nicknameLabel": "Nickname",
+    "changeAvatar": "Change photo",
+    "avatarHint": "JPG, PNG, WebP or GIF, up to 5 MB.",
+    "avatarInvalid": "Pick an image under 5 MB.",
+    "saved": "Profile saved.",
+    "saveError": "Couldn't save your profile. Please try again."
+  },
   "review": {
     "ratingLabel": "Your rating",
     "placeholder": "Share your experience (optional)…",
@@ -47,6 +58,13 @@
     "noReviews": "No reviews yet.",
     "delete": "Delete review",
     "deleteConfirm": "Delete this review?"
+  },
+  "report": {
+    "button": "Report",
+    "title": "Report this",
+    "reasonPlaceholder": "Tell us what's wrong (optional)…",
+    "submit": "Submit report",
+    "success": "Thanks — we've received your report."
   },
   "settings": {
     "title": "Settings",
