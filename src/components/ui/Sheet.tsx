@@ -45,7 +45,7 @@ export function Sheet({ open, onClose, title, children, className }: SheetProps)
           ) : (
             <Drawer.Title className="sr-only">Sheet</Drawer.Title>
           )}
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
+          <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
             {children}
           </div>
         </Drawer.Content>

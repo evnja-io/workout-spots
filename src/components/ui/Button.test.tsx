@@ -25,3 +25,12 @@ test('merges extra className', () => {
   const btn = screen.getByRole('button', { name: 'Merge' })
   expect(btn).toHaveClass('extra')
 })
+
+// Regression: the primary variant must not bake in `flex-1`. Growth/sizing is a
+// parent-layout decision — hardcoding it stretched buttons in vertical forms and
+// caused uneven sizing in mobile sheet button rows (horizontal overflow).
+test('primary variant does not force flex-1 growth', () => {
+  render(<Button variant="primary">Go</Button>)
+  const btn = screen.getByRole('button', { name: 'Go' })
+  expect(btn).not.toHaveClass('flex-1')
+})
