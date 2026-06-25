@@ -28,6 +28,14 @@ export type SpotDetail = SpotListItem & {
   region: string
   country: string
   contributor: string
+  /** True when an app user created this spot (locations.created_by is set). */
+  addedByUser: boolean
+  /** Display name of the app contributor (pseudo ?? name); null when none set or scraped. */
+  contributorName: string | null
+  /** Scraped source domain (metadata.source); only set when NOT addedByUser. */
+  source: string | null
+  /** Deep link back to the original scraped listing; only set when NOT addedByUser. */
+  sourceUrl: string | null
   openingHours: Record<string, string> | null
   images: SpotImage[]
   equipment: Equipment[]

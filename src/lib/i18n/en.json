@@ -18,12 +18,23 @@
     "disciplines": "Disciplines",
     "equipment": "Equipment",
     "contributor": "Added by",
+    "sourceThanks": "Thanks to {{source}}",
+    "addedBy": "Added by {{name}}",
+    "addedByMember": "Added by a member",
     "reviews": "Reviews",
     "getDirections": "Get directions",
     "save": "Save",
     "saved": "Saved",
     "rating": "Rating",
     "notFound": "Spot not found"
+  },
+  "onboarding": {
+    "title": "Pick a nickname",
+    "subtitle": "Choose a nickname so we can credit you on the spots you add. You can skip this for now.",
+    "nicknameLabel": "Nickname",
+    "nicknamePlaceholder": "e.g. street_athlete",
+    "save": "Save nickname",
+    "skip": "Skip for now"
   },
   "saved": {
     "title": "Saved spots",

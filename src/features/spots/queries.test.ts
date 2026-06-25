@@ -43,6 +43,12 @@ describe('mapSpotDetailRow', () => {
     region: 'Île-de-France',
     country: 'France',
     contributor: 'alice',
+    created_by: null,
+    metadata: {
+      source: 'calisthenics-parks.com',
+      source_url: 'https://calisthenics-parks.com/spots/123',
+    },
+    creator: null,
     opening_hours: { mon: '09:00-18:00' },
     location_disciplines: [
       {
@@ -151,6 +157,42 @@ describe('mapSpotDetailRow', () => {
     const detail = mapSpotDetailRow(rowWithName)
     expect(detail.comments.at(0)?.user).toBe('charlie')
     expect(detail.comments.at(1)?.user).toBe('Anonymous')
+  })
+
+  test('scraped spot (no created_by) exposes source attribution, no contributor', () => {
+    const detail = mapSpotDetailRow(detailRow)
+    expect(detail.addedByUser).toBe(false)
+    expect(detail.source).toBe('calisthenics-parks.com')
+    expect(detail.sourceUrl).toBe('https://calisthenics-parks.com/spots/123')
+    expect(detail.contributorName).toBeNull()
+  })
+
+  test('user-added spot credits the contributor and suppresses source', () => {
+    const userRow = {
+      ...detailRow,
+      created_by: 'user-1',
+      creator: { pseudo: 'David', name: 'David Venin' },
+    }
+    const detail = mapSpotDetailRow(userRow)
+    expect(detail.addedByUser).toBe(true)
+    expect(detail.contributorName).toBe('David')
+    // "if not added by a new contributor" — scraped source must not show.
+    expect(detail.source).toBeNull()
+    expect(detail.sourceUrl).toBeNull()
+  })
+
+  test('user-added spot with no pseudo falls back to name then null', () => {
+    const namedRow = {
+      ...detailRow,
+      created_by: 'user-2',
+      creator: { pseudo: null, name: 'Sam' },
+    }
+    expect(mapSpotDetailRow(namedRow).contributorName).toBe('Sam')
+
+    const anonRow = { ...detailRow, created_by: 'user-3', creator: null }
+    const anon = mapSpotDetailRow(anonRow)
+    expect(anon.addedByUser).toBe(true)
+    expect(anon.contributorName).toBeNull()
   })
 })
 

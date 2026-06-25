@@ -39,6 +39,10 @@ const mockSpot: SpotDetail = {
   ratingCount: 120,
   description: 'Great outdoor spot',
   contributor: 'alice',
+  addedByUser: false,
+  contributorName: null,
+  source: 'calisthenics-parks.com',
+  sourceUrl: 'https://calisthenics-parks.com/spots/123',
   images: [],
   equipment: [
     { id: 'e1', name: 'Pull-up Bar', localeKey: 'equipment.pullupbar', category: 'upper' },

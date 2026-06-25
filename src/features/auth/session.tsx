@@ -95,8 +95,56 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       {children}
       {/* SignInModal is rendered here (lazy import to avoid circular deps) */}
       <SignInModalSlot open={modalOpen} onClose={closeSignIn} />
+      {/* One-time nickname prompt for freshly-authed users without a pseudo. */}
+      <OnboardingGate />
     </SessionContext.Provider>
   )
+}
+
+// ── Onboarding gate ───────────────────────────────────────────────────────────
+// Prompts a signed-in user to pick a nickname the first time, so spots they add
+// can be credited by name. Shown once per user (a localStorage flag is set on
+// save OR skip), and only while their profile has no pseudo yet.
+
+function onboardingFlagKey(userId: string) {
+  return `onboarding:${userId}`
+}
+
+function OnboardingGate() {
+  const { userId, status } = useSession()
+  const [dismissed, setDismissed] = useState(false)
+
+  const { data: profile } = useQuery({
+    ...currentUserProfileQueryOptions(userId),
+    enabled: status === 'authed' && !!userId,
+  })
+
+  // Reset the per-session dismissal when the user changes (e.g. switch accounts).
+  useEffect(() => {
+    setDismissed(false)
+  }, [userId])
+
+  const alreadyPrompted =
+    typeof window !== 'undefined' &&
+    !!userId &&
+    window.localStorage.getItem(onboardingFlagKey(userId)) === '1'
+
+  const open =
+    status === 'authed' &&
+    !!userId &&
+    !dismissed &&
+    !alreadyPrompted &&
+    profile != null &&
+    !profile.pseudo
+
+  const finish = useCallback(() => {
+    if (userId && typeof window !== 'undefined') {
+      window.localStorage.setItem(onboardingFlagKey(userId), '1')
+    }
+    setDismissed(true)
+  }, [userId])
+
+  return <OnboardingModal open={open} onClose={finish} onSaved={finish} />
 }
 
 // ── Slot placeholder (filled by SignInModal export) ───────────────────────────
@@ -104,6 +152,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 // manages its open state.  The import is inside the module (no circular dep).
 
 import { SignInModal } from './SignInModal'
+import { useQuery } from '@tanstack/react-query'
+import { currentUserProfileQueryOptions } from './profile'
+import { OnboardingModal } from './OnboardingModal'
 
 function SignInModalSlot({
   open,
