@@ -46,6 +46,13 @@
     "submit": "Post review",
     "noReviews": "No reviews yet."
   },
+  "report": {
+    "button": "Report",
+    "title": "Report this",
+    "reasonPlaceholder": "Tell us what's wrong (optional)…",
+    "submit": "Submit report",
+    "success": "Thanks — we've received your report."
+  },
   "settings": {
     "title": "Settings",
     "theme": "Theme",

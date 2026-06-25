@@ -54,6 +54,13 @@
     "submit": "Publier l'avis",
     "noReviews": "Aucun avis pour le moment."
   },
+  "report": {
+    "button": "Signaler",
+    "title": "Signaler",
+    "reasonPlaceholder": "Dites-nous ce qui ne va pas (optionnel)…",
+    "submit": "Envoyer le signalement",
+    "success": "Merci — nous avons bien reçu votre signalement."
+  },
   "settings": {
     "title": "Paramètres",
     "theme": "Thème",

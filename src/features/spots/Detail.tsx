@@ -16,11 +16,13 @@ import { ReviewList } from '~/features/reviews/ReviewList'
 import { ReviewForm } from '~/features/reviews/ReviewForm'
 import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
 import type { AddSpotInput } from '~/features/add-spot/schema'
+import { ReportDialog } from '~/features/reports/ReportDialog'
 
 export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => void }) {
   const { t } = useTranslation()
   const [imgIdx, setImgIdx] = useState(0)
   const [editOpen, setEditOpen] = useState(false)
+  const [reportOpen, setReportOpen] = useState(false)
   const { liked, toggle, pending } = useSaveSpot(spot.id)
   const gate = useAuthGate()
 
@@ -204,6 +206,14 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
             <Icon name="edit" size={14} />
             {t('editSpot.title')}
           </Button>
+          <Button
+            variant="secondary"
+            onClick={() => setReportOpen(true)}
+            data-testid="report-button"
+          >
+            <Icon name="flag" size={14} />
+            {t('report.button')}
+          </Button>
         </div>
       </div>
     </>
@@ -229,6 +239,13 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
         initialValues={editInitialValues}
         initialImages={spot.images}
         onSaved={() => setEditOpen(false)}
+      />
+
+      <ReportDialog
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        targetType="spot"
+        targetId={spot.id}
       />
     </>
   )
