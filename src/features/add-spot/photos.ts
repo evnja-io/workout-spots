@@ -40,11 +40,12 @@ export async function uploadSpotImages(
   spotId: string,
   files: File[],
   userId: string,
+  startOrder = 1,
 ): Promise<SpotImage[]> {
   const supabase = getBrowserSupabase()
   const clamped = files.slice(0, MAX_IMAGES)
   const results: SpotImage[] = []
-  let order = 0
+  let order = startOrder - 1
 
   for (const file of clamped) {
     order += 1
@@ -91,4 +92,21 @@ export async function uploadSpotImages(
   }
 
   return results
+}
+
+// ── deleteSpotImages ──────────────────────────────────────────────────────────
+
+export async function deleteSpotImages(images: { id: string; path?: string }[]): Promise<void> {
+  if (images.length === 0) return
+  const supabase = getBrowserSupabase()
+  const paths = images.map((i) => i.path).filter((p): p is string => Boolean(p))
+  if (paths.length > 0) {
+    const { error: storageError } = await supabase.storage.from(SPOT_IMAGES_BUCKET).remove(paths)
+    if (storageError) throw new Error(`Failed to delete image files: ${storageError.message}`)
+  }
+  const { error: dbError } = await supabase
+    .from('location_images')
+    .delete()
+    .in('id', images.map((i) => i.id))
+  if (dbError) throw new Error(`Failed to delete image records: ${dbError.message}`)
 }

@@ -8,7 +8,7 @@ import { LocationStep } from './steps/LocationStep'
 import { BasicsStep } from './steps/BasicsStep'
 import { TaxonomyStep } from './steps/TaxonomyStep'
 import { ReviewStep } from './steps/ReviewStep'
-import { useCreateSpot } from './mutations'
+import { useCreateSpot, useUpdateSpot, type UpdateArgs } from './mutations'
 import {
   addSpotSchema,
   canAdvanceStep0,
@@ -17,6 +17,7 @@ import {
   canAdvanceStep3,
   type AddSpotInput,
 } from './schema'
+import type { SpotImage } from '~/features/spots/domain'
 
 const STEP_COUNT = 4
 
@@ -36,15 +37,35 @@ const EMPTY: AddSpotInput = {
 interface AddSpotWizardProps {
   open: boolean
   onClose: () => void
+  mode?: 'create' | 'edit'
+  spotId?: string
+  initialValues?: AddSpotInput
+  initialImages?: SpotImage[]
+  onSaved?: () => void
 }
 
-export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
+export function AddSpotWizard({
+  open,
+  onClose,
+  mode = 'create',
+  spotId,
+  initialValues,
+  initialImages,
+  onSaved,
+}: AddSpotWizardProps) {
   const { t } = useTranslation()
   const [step, setStep] = useState(0)
-  const [values, setValues] = useState<AddSpotInput>(EMPTY)
+  const [values, setValues] = useState<AddSpotInput>(initialValues ?? EMPTY)
   const [files, setFiles] = useState<File[]>([])
-  const { create, pending } = useCreateSpot()
+  const [removedImageIds, setRemovedImageIds] = useState<string[]>([])
+  const { create, pending: createPending } = useCreateSpot()
+  const { save, pending: savePending } = useUpdateSpot(spotId ?? '', () => {
+    onSaved?.()
+    handleClose()
+  })
   const mapStyle = getPrefs().mapStyle
+
+  const pending = mode === 'edit' ? savePending : createPending
 
   function patch(p: Partial<AddSpotInput>) {
     setValues((prev) => ({ ...prev, ...p }))
@@ -55,8 +76,9 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
     // Reset after a short delay so the close animation can play
     setTimeout(() => {
       setStep(0)
-      setValues(EMPTY)
+      setValues(initialValues ?? EMPTY)
       setFiles([])
+      setRemovedImageIds([])
     }, 300)
   }
 
@@ -78,12 +100,41 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
     create(parsed.data, files)
   }
 
-  const stepTitles = [
-    t('addSpot.stepLocation'),
-    t('addSpot.stepBasics'),
-    t('addSpot.stepTaxonomy'),
-    t('addSpot.stepReview'),
-  ]
+  function handleSave() {
+    const parsed = addSpotSchema.safeParse(values)
+    if (!parsed.success) return
+    const currentImages = initialImages ?? []
+    const removedImages = currentImages
+      .filter((img) => removedImageIds.includes(img.id))
+      .map((img) => ({ id: img.id, path: img.path }))
+    const keptImages = currentImages.filter((img) => !removedImageIds.includes(img.id))
+    const maxExistingOrder = keptImages.reduce((max, img) => Math.max(max, img.order), 0)
+
+    const args: UpdateArgs = {
+      values: parsed.data,
+      currentDisciplineIds: initialValues?.disciplines ?? [],
+      currentEquipmentIds: initialValues?.equipment ?? [],
+      newFiles: files,
+      removedImages,
+      maxExistingOrder,
+    }
+    save(args)
+  }
+
+  const stepTitles =
+    mode === 'edit'
+      ? [
+          t('editSpot.title'),
+          t('editSpot.title'),
+          t('addSpot.stepTaxonomy'),
+          t('addSpot.stepReview'),
+        ]
+      : [
+          t('addSpot.stepLocation'),
+          t('addSpot.stepBasics'),
+          t('addSpot.stepTaxonomy'),
+          t('addSpot.stepReview'),
+        ]
 
   const parsedForReview =
     step === 3 ? addSpotSchema.safeParse(values) : null
@@ -101,10 +152,30 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
       {/* Body */}
       <div className="modal-body">
         {step === 0 && (
-          <LocationStep values={values} onChange={patch} mapStyle={mapStyle} />
+          <LocationStep
+            values={values}
+            onChange={patch}
+            mapStyle={mapStyle}
+            readOnly={mode === 'edit'}
+          />
         )}
         {step === 1 && (
-          <BasicsStep values={values} onChange={patch} files={files} onFilesChange={setFiles} />
+          <BasicsStep
+            values={values}
+            onChange={patch}
+            files={files}
+            onFilesChange={setFiles}
+            existingImages={mode === 'edit' ? (initialImages ?? []) : undefined}
+            removedImageIds={mode === 'edit' ? removedImageIds : undefined}
+            onPhotosChange={
+              mode === 'edit'
+                ? ({ removedIds, files: newFiles }) => {
+                    setRemovedImageIds(removedIds)
+                    setFiles(newFiles)
+                  }
+                : undefined
+            }
+          />
         )}
         {step === 2 && (
           <Suspense fallback={<span>{t('addSpot.loading')}</span>}>
@@ -145,6 +216,15 @@ export function AddSpotWizard({ open, onClose }: AddSpotWizardProps) {
               disabled={!canAdvance}
             >
               {t('common.continue')}
+            </Button>
+          ) : mode === 'edit' ? (
+            <Button
+              variant="primary"
+              type="button"
+              onClick={handleSave}
+              disabled={!canAdvance || pending}
+            >
+              {pending ? t('editSpot.saving') : t('editSpot.save')}
             </Button>
           ) : (
             <Button

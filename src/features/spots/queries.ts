@@ -76,7 +76,7 @@ type SpotDetailRow = {
   country: string | null
   contributor: string | null
   opening_hours: Record<string, string> | null
-  location_images: { id?: string; image_url: string; image_order: number }[]
+  location_images: { id?: string; image_url: string; image_path?: string; image_order: number }[]
   location_equipments: SpotDetailEquipmentRow[]
   location_disciplines: SpotDetailDisciplineRow[]
   location_comments: SpotDetailCommentRow[]
@@ -112,6 +112,7 @@ export function mapSpotDetailRow(row: SpotDetailRow): SpotDetail {
     id: img.id ?? `img-${i}`,
     url: img.image_url,
     order: img.image_order,
+    path: img.image_path,
   }))
 
   const equipment: Equipment[] = row.location_equipments.map((le) => ({
@@ -231,7 +232,7 @@ export function spotDetailQueryOptions(id: string) {
           description,region,country,contributor,opening_hours,
           location_disciplines(discipline_id,disciplines(id,name,discipline_locale_key,category)),
           location_equipments(equipment_id,equipments(id,name,equipment_locale_key,category)),
-          location_images(id,image_url,image_order),
+          location_images(id,image_url,image_path,image_order),
           location_comments(id,content,created_at,users(pseudo,name))`,
         )
         .eq('id', id)

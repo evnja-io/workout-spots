@@ -10,9 +10,10 @@ interface LocationStepProps {
   values: AddSpotInput
   onChange: (patch: Partial<AddSpotInput>) => void
   mapStyle: MapStyle
+  readOnly?: boolean
 }
 
-export function LocationStep({ values, onChange, mapStyle }: LocationStepProps) {
+export function LocationStep({ values, onChange, mapStyle, readOnly }: LocationStepProps) {
   const { t } = useTranslation()
 
   async function handleMapClick(pos: { lng: number; lat: number }) {
@@ -46,21 +47,32 @@ export function LocationStep({ values, onChange, mapStyle }: LocationStepProps) 
     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div>
         <label className="field-label">{t('addSpot.addressLabel')}</label>
-        <AddressAutocomplete value={values.address} onSelect={handleSelect} />
-        <p className="field-hint">{t('addSpot.addressHint')}</p>
+        {readOnly ? (
+          <p className="field-hint">{values.address || '—'}</p>
+        ) : (
+          <>
+            <AddressAutocomplete value={values.address} onSelect={handleSelect} />
+            <p className="field-hint">{t('addSpot.addressHint')}</p>
+          </>
+        )}
+        {readOnly && (
+          <p className="field-hint" style={{ fontStyle: 'italic', color: 'var(--text-3)' }}>
+            {t('editSpot.locationReadOnly')}
+          </p>
+        )}
       </div>
       <div className="mini-map">
         <MapView
           spots={[]}
           activeSpotId={null}
           onSelectSpot={() => undefined}
-          onMapClick={(pos) => { void handleMapClick(pos) }}
-          addMode
+          {...(readOnly ? {} : { onMapClick: (pos: { lng: number; lat: number }) => { void handleMapClick(pos) } })}
+          addMode={!readOnly}
           newSpotPosition={values.position?.lng != null ? values.position : null}
           mapStyle={mapStyle}
           theme="light"
         />
-        {!values.position && (
+        {!readOnly && !values.position && (
           <div className="mini-map-hint">{t('addSpot.mapHint')}</div>
         )}
       </div>

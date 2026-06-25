@@ -1,16 +1,21 @@
 import { useTranslation } from 'react-i18next'
 import { Switch } from '~/components/ui/Switch'
 import { PhotoPicker } from '../PhotoPicker'
+import { SpotPhotoManager } from '../SpotPhotoManager'
 import type { AddSpotInput } from '../schema'
+import type { SpotImage } from '~/features/spots/domain'
 
 interface BasicsStepProps {
   values: AddSpotInput
   onChange: (patch: Partial<AddSpotInput>) => void
   files: File[]
   onFilesChange: (files: File[]) => void
+  existingImages?: SpotImage[]
+  removedImageIds?: string[]
+  onPhotosChange?: (next: { removedIds: string[]; files: File[] }) => void
 }
 
-export function BasicsStep({ values, onChange, files, onFilesChange }: BasicsStepProps) {
+export function BasicsStep({ values, onChange, files, onFilesChange, existingImages, removedImageIds, onPhotosChange }: BasicsStepProps) {
   const { t } = useTranslation()
 
   return (
@@ -51,7 +56,16 @@ export function BasicsStep({ values, onChange, files, onFilesChange }: BasicsSte
         />
       </div>
 
-      <PhotoPicker files={files} onChange={onFilesChange} />
+      {existingImages != null && onPhotosChange != null ? (
+        <SpotPhotoManager
+          existing={existingImages}
+          removedIds={removedImageIds ?? []}
+          files={files}
+          onChange={onPhotosChange}
+        />
+      ) : (
+        <PhotoPicker files={files} onChange={onFilesChange} />
+      )}
     </div>
   )
 }

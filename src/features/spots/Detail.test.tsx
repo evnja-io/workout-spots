@@ -18,6 +18,14 @@ vi.mock('~/features/reviews/mutations', () => ({
   useSubmitReview: () => ({ submit: vi.fn(), pending: false }),
 }))
 
+vi.mock('~/features/auth/useAuthGate', () => ({
+  useAuthGate: () => (fn: () => void) => fn(),
+}))
+
+vi.mock('~/features/add-spot/AddSpotWizard', () => ({
+  AddSpotWizard: () => null,
+}))
+
 const mockSpot: SpotDetail = {
   id: 'spot-bercy',
   name: 'Bercy',

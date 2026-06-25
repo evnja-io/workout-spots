@@ -94,5 +94,13 @@
     "styleLight": "Light",
     "styleMinimal": "Minimal",
     "styleSatellite": "Satellite"
+  },
+  "editSpot": {
+    "title": "Edit spot",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "photosLabel": "Photos",
+    "removePhoto": "Remove photo",
+    "locationReadOnly": "Location can't be changed."
   }
 }

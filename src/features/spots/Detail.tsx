@@ -6,13 +6,31 @@ import { Icon } from '~/components/ui/Icon'
 import { Button } from '~/components/ui/Button'
 import { resolveLabel } from '~/features/taxonomy/queries'
 import { useSaveSpot } from '~/features/likes/useSaveSpot'
+import { useAuthGate } from '~/features/auth/useAuthGate'
 import { ReviewList } from '~/features/reviews/ReviewList'
 import { ReviewForm } from '~/features/reviews/ReviewForm'
+import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
+import type { AddSpotInput } from '~/features/add-spot/schema'
 
 export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => void }) {
   const { t } = useTranslation()
   const [imgIdx, setImgIdx] = useState(0)
+  const [editOpen, setEditOpen] = useState(false)
   const { liked, toggle, pending } = useSaveSpot(spot.id)
+  const gate = useAuthGate()
+
+  const editInitialValues: AddSpotInput = {
+    position: { lng: spot.longitude, lat: spot.latitude },
+    address: spot.address,
+    city: spot.city,
+    region: spot.region,
+    country: spot.country,
+    name: spot.name,
+    description: spot.description ?? '',
+    isOpen24h: spot.isOpen24h,
+    disciplines: spot.disciplines.map((d) => d.id),
+    equipment: spot.equipment.map((e) => e.id),
+  }
 
   const hasImages = spot.images.length > 0
   const currentImg = spot.images[imgIdx]
@@ -148,8 +166,26 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
             <Icon name="heart" size={14} />
             {liked ? t('detail.saved') : t('detail.save')}
           </Button>
+          <Button
+            variant="secondary"
+            onClick={() => gate(() => setEditOpen(true))}
+            data-testid="edit-button"
+          >
+            <Icon name="edit" size={14} />
+            {t('editSpot.title')}
+          </Button>
         </div>
       </div>
+
+      <AddSpotWizard
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        mode="edit"
+        spotId={spot.id}
+        initialValues={editInitialValues}
+        initialImages={spot.images}
+        onSaved={() => setEditOpen(false)}
+      />
     </div>
   )
 }

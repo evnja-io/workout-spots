@@ -1,6 +1,6 @@
 export type Equipment = { id: string; name: string; localeKey: string; category: string }
 export type Discipline = { id: string; name: string; localeKey: string; category: string }
-export type SpotImage = { id: string; url: string; order: number }
+export type SpotImage = { id: string; url: string; order: number; path?: string }
 export type SpotComment = {
   id: string
   user: string

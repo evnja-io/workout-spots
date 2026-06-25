@@ -102,5 +102,13 @@
     "styleLight": "Clair",
     "styleMinimal": "Minimal",
     "styleSatellite": "Satellite"
+  },
+  "editSpot": {
+    "title": "Modifier le spot",
+    "save": "Enregistrer les modifications",
+    "saving": "Enregistrement…",
+    "photosLabel": "Photos",
+    "removePhoto": "Supprimer la photo",
+    "locationReadOnly": "La localisation ne peut pas être modifiée."
   }
 }

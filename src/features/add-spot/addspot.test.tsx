@@ -377,7 +377,7 @@ describe('useCreateSpot', () => {
     )
 
     await waitFor(() => expect(mockDiscInsert).toHaveBeenCalledTimes(1))
-    expect(mockDiscInsert).toHaveBeenCalledWith([{ location_id: 'new-spot-id', discipline_id: 'disc-1' }])
+    expect(mockDiscInsert).toHaveBeenCalledWith([{ location_id: 'new-spot-id', discipline_id: 'disc-1', added_by: userId }])
   })
 
   it('anon: opens sign-in modal, does not call insert', async () => {
