@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
+import { trackEvent } from '~/features/analytics/gtag'
 
 export const Route = createFileRoute('/auth/callback')({
   component: AuthCallbackComponent,
@@ -19,6 +20,7 @@ function AuthCallbackComponent() {
     const goHome = () => {
       if (settled) return
       settled = true
+      trackEvent('login')
       void navigate({ to: '/spots' })
     }
 

@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import { useTranslation } from 'react-i18next'
 import { Stars } from '~/components/ui/Stars'
 import { Button } from '~/components/ui/Button'
+import { trackEvent } from '~/features/analytics/gtag'
 import { useSubmitReview } from './mutations'
 import { reviewSchema } from './schema'
 
@@ -19,6 +20,7 @@ export function ReviewForm({ spotId }: { spotId: string }) {
       const parsed = reviewSchema.safeParse(value)
       if (!parsed.success) return
       submit(parsed.data)
+      trackEvent('post_review', { spot_id: spotId })
       form.reset()
     },
   })
