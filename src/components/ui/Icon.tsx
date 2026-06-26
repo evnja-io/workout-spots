@@ -36,6 +36,8 @@ type IconProps = {
   size?: number
   color?: string
   strokeWidth?: number
+  /** SVG fill — defaults to `none` (outline). Pass `currentColor` for a solid glyph. */
+  fill?: string
 }
 
 const paths: Record<IconName, ReactNode> = {
@@ -194,13 +196,19 @@ const paths: Record<IconName, ReactNode> = {
   ),
 }
 
-export function Icon({ name, size = 16, color = 'currentColor', strokeWidth = 2 }: IconProps) {
+export function Icon({
+  name,
+  size = 16,
+  color = 'currentColor',
+  strokeWidth = 2,
+  fill = 'none',
+}: IconProps) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
+      fill={fill}
       stroke={color}
       strokeWidth={strokeWidth}
       strokeLinecap="round"

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { I18nextProvider } from 'react-i18next'
 import { createI18n } from '~/lib/i18n/config'
 import { Detail } from './Detail'
@@ -10,8 +10,9 @@ vi.mock('~/lib/supabase/browser', () => ({
   getBrowserSupabase: vi.fn(),
 }))
 
+const mockLike = { liked: false }
 vi.mock('~/features/likes/useSaveSpot', () => ({
-  useSaveSpot: () => ({ liked: false, toggle: vi.fn(), pending: false }),
+  useSaveSpot: () => ({ liked: mockLike.liked, toggle: vi.fn(), pending: false }),
 }))
 
 vi.mock('~/features/reviews/mutations', () => ({
@@ -83,6 +84,26 @@ function renderDetail(onClose = vi.fn()) {
 }
 
 describe('Detail', () => {
+  beforeEach(() => {
+    mockLike.liked = false
+  })
+
+  it('save button shows the unsaved state by default', () => {
+    renderDetail()
+    const save = screen.getByTestId('save-button')
+    expect(save).toHaveTextContent(/save/i)
+    expect(save).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('save button shows an active state when the spot is liked', () => {
+    mockLike.liked = true
+    renderDetail()
+    const save = screen.getByTestId('save-button')
+    expect(save).toHaveTextContent(/saved/i)
+    expect(save).toHaveAttribute('aria-pressed', 'true')
+    expect(save.className).toContain('text-accent')
+  })
+
   it('renders spot name', () => {
     renderDetail()
     expect(screen.getByText('Bercy')).toBeInTheDocument()

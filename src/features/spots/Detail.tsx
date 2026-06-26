@@ -164,8 +164,9 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
             disabled={pending}
             aria-pressed={liked}
             data-testid="save-button"
+            className={liked ? 'border-accent bg-accent-soft text-accent hover:bg-accent-soft' : undefined}
           >
-            <Icon name="heart" size={14} />
+            <Icon name="heart" size={14} fill={liked ? 'currentColor' : 'none'} />
             {liked ? t('detail.saved') : t('detail.save')}
           </Button>
           <Button

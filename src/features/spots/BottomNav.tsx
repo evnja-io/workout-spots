@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link, useLocation } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Icon, type IconName } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
@@ -10,6 +9,9 @@ export interface BottomNavProps {
   onOpenList: () => void
   onOpenAdd: () => void
   onOpenSettings: () => void
+  onOpenSaved: () => void
+  /** Highlight the Saved tab while its overlay is open. */
+  savedActive?: boolean
 }
 
 const tab = 'flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium'
@@ -18,11 +20,14 @@ function TabButton({
   icon,
   label,
   active,
+  iconFilled,
   onClick,
 }: {
   icon: IconName
   label: string
   active?: boolean
+  /** Render the icon solid (used for the Saved heart when active). */
+  iconFilled?: boolean
   onClick: () => void
 }) {
   return (
@@ -33,7 +38,7 @@ function TabButton({
       aria-label={label}
       aria-current={active || undefined}
     >
-      <Icon name={icon} size={22} />
+      <Icon name={icon} size={22} fill={iconFilled ? 'currentColor' : 'none'} />
       {label}
     </button>
   )
@@ -44,13 +49,16 @@ function TabButton({
  * Replaces the Rail's actions: List sheet, Saved, a center Add FAB, Settings,
  * and Account (sign-in / sign-out).
  */
-export function BottomNav({ onOpenList, onOpenAdd, onOpenSettings }: BottomNavProps) {
+export function BottomNav({
+  onOpenList,
+  onOpenAdd,
+  onOpenSettings,
+  onOpenSaved,
+  savedActive = false,
+}: BottomNavProps) {
   const { t } = useTranslation()
-  const { pathname } = useLocation()
   const { status, openSignIn, signOut } = useSessionContext()
   const [accountOpen, setAccountOpen] = useState(false)
-
-  const isSaved = pathname.startsWith('/saved')
 
   function handleAccount() {
     if (status === 'authed') setAccountOpen(true)
@@ -65,15 +73,13 @@ export function BottomNav({ onOpenList, onOpenAdd, onOpenSettings }: BottomNavPr
       >
         <TabButton icon="list" label={t('discover.title')} onClick={onOpenList} />
 
-        <Link
-          to="/saved"
-          className={cx(tab, isSaved ? 'text-accent' : 'text-text-3')}
-          aria-label={t('saved.title')}
-          aria-current={isSaved || undefined}
-        >
-          <Icon name="heart" size={22} />
-          {t('saved.title')}
-        </Link>
+        <TabButton
+          icon="heart"
+          label={t('saved.title')}
+          active={savedActive}
+          iconFilled={savedActive}
+          onClick={onOpenSaved}
+        />
 
         {/* Center Add FAB — lifted above the bar */}
         <div className="flex flex-1 justify-center">

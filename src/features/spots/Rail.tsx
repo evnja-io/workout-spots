@@ -10,11 +10,20 @@ import { currentUserProfileQueryOptions } from '~/features/auth/profile'
 
 export interface RailProps {
   onOpenSettings?: () => void
+  onOpenSaved?: () => void
+  /** Highlight the Saved button while its overlay is open. */
+  savedActive?: boolean
   view?: 'map' | 'list'
   onViewChange?: (v: 'map' | 'list') => void
 }
 
-export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) {
+export function Rail({
+  onOpenSettings,
+  onOpenSaved,
+  savedActive = false,
+  view = 'map',
+  onViewChange,
+}: RailProps) {
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const { userId, status, openSignIn, signOut } = useSessionContext()
@@ -23,7 +32,6 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
 
   const isMapActive = pathname === '/spots' && view === 'map'
   const isListActive = pathname === '/spots' && view === 'list'
-  const isSavedActive = pathname.startsWith('/saved')
 
   const { data: profile } = useQuery({
     ...currentUserProfileQueryOptions(userId),
@@ -104,14 +112,16 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
       </button>
 
       {/* Saved */}
-      <Link
-        to="/saved"
-        className={cx(railBtn, isSavedActive && railBtnActive)}
+      <button
+        type="button"
+        className={cx(railBtn, savedActive && railBtnActive)}
         aria-label="Saved"
+        aria-pressed={savedActive}
         title="Saved"
+        onClick={() => onOpenSaved?.()}
       >
-        <Icon name="heart" size={20} />
-      </Link>
+        <Icon name="heart" size={20} fill={savedActive ? 'currentColor' : 'none'} />
+      </button>
 
       <div className="flex-1" />
 
