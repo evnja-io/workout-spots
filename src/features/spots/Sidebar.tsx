@@ -9,19 +9,25 @@ import { spotSearchSchema, applyFilters } from './filters'
 import type { SpotSearch } from './filters'
 import type { SpotListItem } from './domain'
 import { SpotCard } from './SpotCard'
+import { SpotCardSkeleton } from './SpotCardSkeleton'
 import { Filters } from './Filters'
 import { Icon } from '~/components/ui/Icon'
 import { trackEvent } from '~/features/analytics/gtag'
 
 const VIRTUALIZE_THRESHOLD = 30
 
+const SKELETON_COUNT = 6
+
 export function Sidebar({
   spots,
   onSpotClick,
+  loading = false,
 }: {
   /** In-viewport spots from the route's bbox query — single source of truth. */
   spots: SpotListItem[]
   onSpotClick?: (id: string) => void
+  /** First load with no cached spots yet — show skeleton cards instead of the empty state. */
+  loading?: boolean
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate({ from: '/spots' })
@@ -161,7 +167,13 @@ export function Sidebar({
         />
       </div>
 
-      {filtered.length === 0 ? (
+      {filtered.length === 0 && loading ? (
+        <div className="flex-[1.7] md:flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
+          {Array.from({ length: SKELETON_COUNT }, (_, i) => (
+            <SpotCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="flex-[1.7] md:flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
           <div className="text-center px-5 py-10 text-text-3 text-[13px]">
             {t('discover.empty')}

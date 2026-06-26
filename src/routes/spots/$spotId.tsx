@@ -6,6 +6,7 @@ import { trackEvent } from '~/features/analytics/gtag'
 import { spotDetailQueryOptions } from '~/features/spots/queries'
 import type { SpotDetail } from '~/features/spots/domain'
 import { Detail } from '~/features/spots/Detail'
+import { DetailSkeleton } from '~/features/spots/DetailSkeleton'
 import { ErrorState } from '~/components/ErrorState'
 import { SITE_URL } from '~/routes/__root'
 
@@ -52,6 +53,7 @@ export const Route = createFileRoute('/spots/$spotId')({
       links: [{ rel: 'canonical', href: url }],
     }
   },
+  pendingComponent: DetailSkeleton,
   notFoundComponent: SpotNotFound,
   errorComponent: SpotError,
   component: SpotDetailPage,

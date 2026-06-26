@@ -14,13 +14,13 @@ import { useAuthGate } from '~/features/auth/useAuthGate'
 import { trackEvent } from '~/features/analytics/gtag'
 import { ReviewList } from '~/features/reviews/ReviewList'
 import { ReviewForm } from '~/features/reviews/ReviewForm'
+import { SpotGallery } from './SpotGallery'
 import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
 import type { AddSpotInput } from '~/features/add-spot/schema'
 import { ReportDialog } from '~/features/reports/ReportDialog'
 
 export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => void }) {
   const { t } = useTranslation()
-  const [imgIdx, setImgIdx] = useState(0)
   const [editOpen, setEditOpen] = useState(false)
   const [reportOpen, setReportOpen] = useState(false)
   const { liked, toggle, pending } = useSaveSpot(spot.id)
@@ -39,26 +39,12 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
     equipment: spot.equipment.map((e) => e.id),
   }
 
-  const hasImages = spot.images.length > 0
-  const currentImg = spot.images[imgIdx]
   const isMobile = useIsMobile()
 
   const content = (
     <>
       <div className="relative h-[210px] shrink-0 overflow-hidden bg-surface-2">
-        {hasImages && currentImg ? (
-          <img
-            src={currentImg.url}
-            alt={spot.name}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        ) : (
-          <div
-            className="h-full w-full bg-[repeating-linear-gradient(135deg,var(--c1)_0_10px,var(--c2)_10px_20px)]"
-            style={{ '--c1': '#6366f1', '--c2': '#8b5cf6' } as React.CSSProperties}
-          />
-        )}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.15)_0%,transparent_40%,transparent_70%,rgba(0,0,0,0.35))]" />
+        <SpotGallery images={spot.images} alt={spot.name} />
         <button
           className="absolute top-3 right-3 grid h-8 w-8 place-items-center rounded-full bg-[rgba(255,255,255,0.95)] text-text shadow-[var(--shadow-sm)] transition-[background-color] duration-150 hover:bg-white [[data-theme=dark]_&]:bg-[rgba(20,23,28,0.92)] [[data-theme=dark]_&]:text-text [[data-theme=dark]_&]:hover:bg-surface"
           type="button"
@@ -67,22 +53,6 @@ export function Detail({ spot, onClose }: { spot: SpotDetail; onClose: () => voi
         >
           <Icon name="close" size={16} />
         </button>
-        {hasImages && spot.images.length > 1 && (
-          <div className="absolute right-3 bottom-2.5 left-3 flex gap-1.5">
-            {spot.images.map((img, i) => (
-              <button
-                key={img.id}
-                className={
-                  'h-1 flex-1 rounded-[2px] ' +
-                  (i === imgIdx ? 'bg-white' : 'bg-[rgba(255,255,255,0.4)]')
-                }
-                type="button"
-                onClick={() => setImgIdx(i)}
-                aria-label={`Image ${i + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="flex-1 overflow-y-auto px-5 pt-4.5 pb-5">

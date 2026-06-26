@@ -2,6 +2,7 @@ import type { SpotListItem } from './domain'
 import { Icon } from '~/components/ui/Icon'
 import { Tag } from '~/components/ui/Tag'
 import { RatingBadge } from '~/components/ui/RatingBadge'
+import { ImageWithShimmer } from '~/components/ui/ImageWithShimmer'
 import { cx } from '~/components/ui/cx'
 
 type SpotCardProps = {
@@ -33,13 +34,14 @@ export function SpotCard({ spot, active, onClick }: SpotCardProps) {
       <div
         className={cx(
           'relative size-[72px] overflow-hidden rounded-[10px]',
-          "after:absolute after:inset-0 after:content-[''] after:bg-[linear-gradient(180deg,transparent_40%,rgba(0,0,0,0.15))]",
-          spot.thumbnailUrl
-            ? 'bg-cover bg-center'
-            : 'bg-[repeating-linear-gradient(135deg,#e5e7eb_0_8px,#eef0f3_8px_16px)]',
+          "after:absolute after:inset-0 after:z-10 after:content-[''] after:bg-[linear-gradient(180deg,transparent_40%,rgba(0,0,0,0.15))]",
+          !spot.thumbnailUrl && 'bg-[repeating-linear-gradient(135deg,#e5e7eb_0_8px,#eef0f3_8px_16px)]',
         )}
-        style={spot.thumbnailUrl ? { backgroundImage: `url(${spot.thumbnailUrl})` } : undefined}
-      />
+      >
+        {spot.thumbnailUrl && (
+          <ImageWithShimmer src={spot.thumbnailUrl} alt={spot.name} className="h-full w-full" />
+        )}
+      </div>
       <div>
         <h3 className="m-0 mb-0.5 text-[14px] font-semibold tracking-[-0.005em] line-clamp-1">
           {spot.name}

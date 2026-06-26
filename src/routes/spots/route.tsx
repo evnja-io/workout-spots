@@ -74,7 +74,7 @@ function SpotsLayout() {
   // ── Spots query — non-suspense so bounds changes don't unmount the layout ───
   // keepPreviousData: the list keeps showing the previous viewport's spots while
   // the new bbox fetch is in flight, avoiding a flash to empty on every pan.
-  const { data: spots = [] } = useQuery({
+  const { data: spots = [], isPending } = useQuery({
     ...spotsInBoundsQueryOptions(bounds),
     placeholderData: keepPreviousData,
   })
@@ -96,7 +96,7 @@ function SpotsLayout() {
         <Suspense fallback={null}>
           {/* NOTE: text search only matches spots in the current viewport (Task 24).
               Global name search would require server-side full-text query. */}
-          <Sidebar spots={spots} onSpotClick={handleSelectSpot} />
+          <Sidebar spots={spots} onSpotClick={handleSelectSpot} loading={isPending} />
         </Suspense>
       </aside>
       <div className="relative h-full bg-surface-2">
@@ -133,7 +133,7 @@ function SpotsLayout() {
       <Sheet open={listSheetOpen} onClose={() => setListSheetOpen(false)}>
         <div className="flex h-[80dvh] flex-col">
           <Suspense fallback={null}>
-            <Sidebar spots={spots} onSpotClick={handleSelectSpot} />
+            <Sidebar spots={spots} onSpotClick={handleSelectSpot} loading={isPending} />
           </Suspense>
         </div>
       </Sheet>

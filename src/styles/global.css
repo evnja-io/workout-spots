@@ -165,6 +165,20 @@
     opacity: 1;
   }
 }
+/*
+ * Shimmer sweep for skeleton placeholders (see components/ui/Skeleton).
+ * A gradient highlight slides across a solid `--surface-2` base. The
+ * `prefers-reduced-motion` rule below neutralizes the animation, leaving the
+ * solid base as a static placeholder.
+ */
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
 
 /*
  * ===== Imperative DOM styles =====
