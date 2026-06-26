@@ -124,7 +124,7 @@ describe('useAuthGate + SignInModal', () => {
     expect(actionSpy).not.toHaveBeenCalled()
   })
 
-  it('calls signInWithOtp with emailRedirectTo containing /auth/callback on submit', async () => {
+  it('sign-in mode: no consent shown, submits with just an email and shouldCreateUser false', async () => {
     const user = userEvent.setup()
 
     render(
@@ -133,25 +133,70 @@ describe('useAuthGate + SignInModal', () => {
       </Wrapper>,
     )
 
-    // Wait for anon
     await waitFor(() => expect(mockGetSession).toHaveBeenCalled())
-
-    // Open modal
     await user.click(screen.getByRole('button', { name: 'Protected action' }))
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument()
     })
 
-    // Fill in email — use fill() to set value directly (avoids focus-trap interference)
+    // Consent block is hidden in sign-in mode.
+    expect(screen.queryByRole('checkbox', { name: /i agree/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /product update emails/i })).not.toBeInTheDocument()
+
     const emailInput = screen.getByLabelText(/email address/i)
     await user.clear(emailInput)
     await user.type(emailInput, 'test@example.com', { skipClick: false })
 
-    // Accept the required terms so submit enables
-    await user.click(screen.getByRole('checkbox', { name: /i agree/i }))
+    // Submit enables with just a valid email — no terms gate.
+    const sendBtn = screen.getByRole('button', { name: /send sign-in link/i })
+    expect(sendBtn).toBeEnabled()
+    await user.click(sendBtn)
 
-    // Submit
-    await user.click(screen.getByRole('button', { name: /send sign-in link/i }))
+    await waitFor(() => {
+      const [callArg] = mockSignInWithOtp.mock.calls.at(-1) as [
+        { email: string; options: { emailRedirectTo: string; shouldCreateUser: boolean; data?: unknown } },
+      ]
+      expect(callArg.email).toBe('test@example.com')
+      expect(callArg.options.emailRedirectTo).toContain('/auth/callback')
+      // Sign-in must not create a new account (no terms accepted).
+      expect(callArg.options.shouldCreateUser).toBe(false)
+      expect(callArg.options.data).toBeUndefined()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText(/check your inbox/i)).toBeInTheDocument()
+    })
+    expect(actionSpy).not.toHaveBeenCalled()
+  })
+
+  it('sign-up mode: passes consent metadata and shouldCreateUser true on submit', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <Wrapper>
+        <GatedButton />
+      </Wrapper>,
+    )
+
+    await waitFor(() => expect(mockGetSession).toHaveBeenCalled())
+    await user.click(screen.getByRole('button', { name: 'Protected action' }))
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument()
+    })
+
+    // Switch to sign-up (exact name so it doesn't match the submit button label).
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /sign up/i })).toBeInTheDocument()
+    })
+
+    const emailInput = screen.getByLabelText(/email address/i)
+    await user.clear(emailInput)
+    await user.type(emailInput, 'test@example.com', { skipClick: false })
+
+    // Terms acceptance is required to create an account.
+    await user.click(screen.getByRole('checkbox', { name: /i agree/i }))
+    await user.click(screen.getByRole('button', { name: /send sign-up link/i }))
 
     await waitFor(() => {
       const [callArg] = mockSignInWithOtp.mock.calls.at(-1) as [
@@ -159,6 +204,7 @@ describe('useAuthGate + SignInModal', () => {
           email: string
           options: {
             emailRedirectTo: string
+            shouldCreateUser: boolean
             data: {
               terms_version: string
               marketing_email_opt_in: boolean
@@ -169,24 +215,20 @@ describe('useAuthGate + SignInModal', () => {
       ]
       expect(callArg.email).toBe('test@example.com')
       expect(callArg.options.emailRedirectTo).toContain('/auth/callback')
+      expect(callArg.options.shouldCreateUser).toBe(true)
       expect(callArg.options.data.terms_version).toBeTruthy()
       // Marketing opt-ins default off (GDPR: unticked by default)
       expect(callArg.options.data.marketing_email_opt_in).toBe(false)
       expect(callArg.options.data.partner_offers_opt_in).toBe(false)
     })
 
-    // After submit, "check inbox" message shown
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your inbox/i),
-      ).toBeInTheDocument()
+      expect(screen.getByText(/check your inbox/i)).toBeInTheDocument()
     })
-
-    // Gated action still NOT called (user not authed yet)
     expect(actionSpy).not.toHaveBeenCalled()
   })
 
-  it('keeps submit disabled until terms are accepted; marketing boxes start unchecked', async () => {
+  it('sign-up mode: keeps submit disabled until terms are accepted; marketing boxes start unchecked', async () => {
     const user = userEvent.setup()
     render(
       <Wrapper>
@@ -199,9 +241,10 @@ describe('useAuthGate + SignInModal', () => {
       expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument()
     })
 
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
     await user.type(screen.getByLabelText(/email address/i), 'test@example.com')
 
-    const sendBtn = screen.getByRole('button', { name: /send sign-in link/i })
+    const sendBtn = screen.getByRole('button', { name: /send sign-up link/i })
     expect(sendBtn).toBeDisabled()
     expect(screen.getByRole('checkbox', { name: /product update emails/i })).not.toBeChecked()
     expect(screen.getByRole('checkbox', { name: /offers from our partners/i })).not.toBeChecked()
@@ -210,7 +253,7 @@ describe('useAuthGate + SignInModal', () => {
     expect(sendBtn).toBeEnabled()
   })
 
-  it('passes the chosen marketing opt-ins as signInWithOtp metadata', async () => {
+  it('sign-up mode: passes the chosen marketing opt-ins as signInWithOtp metadata', async () => {
     const user = userEvent.setup()
     render(
       <Wrapper>
@@ -223,10 +266,11 @@ describe('useAuthGate + SignInModal', () => {
       expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument()
     })
 
+    await user.click(screen.getByRole('button', { name: 'Sign up' }))
     await user.type(screen.getByLabelText(/email address/i), 'test@example.com')
     await user.click(screen.getByRole('checkbox', { name: /i agree/i }))
     await user.click(screen.getByRole('checkbox', { name: /product update emails/i }))
-    await user.click(screen.getByRole('button', { name: /send sign-in link/i }))
+    await user.click(screen.getByRole('button', { name: /send sign-up link/i }))
 
     await waitFor(() => {
       const [callArg] = mockSignInWithOtp.mock.calls.at(-1) as [
