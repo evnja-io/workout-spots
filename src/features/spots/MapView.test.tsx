@@ -8,6 +8,7 @@ import type { SpotListItem } from './domain'
 interface MarkerInstance {
   setLngLat: (coords: [number, number]) => MarkerInstance
   addTo: (map: MapInstance) => MarkerInstance
+  getElement: () => HTMLElement
   remove: () => void
 }
 
@@ -36,6 +37,7 @@ const MarkerMock = vi.fn(function (this: MarkerInstance, opts: { element?: HTMLE
   // Make the mock instance conform to MarkerInstance
   this.setLngLat = vi.fn().mockReturnThis()
   this.addTo = vi.fn().mockReturnThis()
+  this.getElement = () => opts.element ?? document.createElement('div')
   this.remove = vi.fn()
   // Attach element reference so tests can inspect it
   ;(this as MarkerInstance & { _opts: { element?: HTMLElement } })._opts = opts
