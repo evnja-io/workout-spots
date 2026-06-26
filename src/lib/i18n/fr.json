@@ -147,5 +147,180 @@
     "description": "Nous utilisons Google Analytics pour comprendre comment le site est utilisé. Pouvons-nous activer les cookies d'analyse ?",
     "accept": "Accepter",
     "decline": "Refuser"
+  },
+  "landing": {
+    "skip": "Aller au contenu",
+    "nav": {
+      "features": "Fonctionnalités",
+      "how": "Comment ça marche",
+      "spots": "Spots",
+      "faq": "FAQ",
+      "openMap": "Ouvrir la carte",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "homeAria": "Accueil Workout Spots",
+      "primaryAria": "Navigation principale"
+    },
+    "hero": {
+      "eyebrow": "La carte de l'entraînement en plein air",
+      "titleLead": "Trouvez votre prochain",
+      "titleHighlight": "spot d'entraînement.",
+      "sub": "Découvrez les structures de street workout, barres de traction, spots de parkour et pistes près de chez vous. Filtrez par équipement et discipline, consultez de vraies notes, et entraînez-vous partout, gratuitement.",
+      "explore": "Explorer la carte",
+      "how": "Comment ça marche",
+      "trustRating": "4,8 de moyenne sur plus de 1 100 athlètes",
+      "trustSpots": "133 spots à Paris et ça continue",
+      "mapAria": "Carte de Paris affichant les spots d'entraînement en plein air",
+      "mapCardName": "Quai de Bercy Street Bars",
+      "mapCardMeta": "Paris 12e · Ouvert 24/7"
+    },
+    "stats": {
+      "aria": "Chiffres clés",
+      "spots": "Spots cartographiés",
+      "equipment": "Types d'équipement",
+      "disciplines": "Disciplines",
+      "free": "Gratuit"
+    },
+    "features": {
+      "eyebrow": "Tout ce qu'il vous faut",
+      "title": "Conçu pour votre façon de vous entraîner",
+      "sub": "De votre première traction à votre série la plus dure, trouvez le bon endroit pour le faire — et les gens qui s'y entraînent aussi.",
+      "items": [
+        { "title": "Des spots près de vous", "desc": "Une carte en direct des spots d'entraînement en plein air, du parc de calisthénie complet à une simple barre au coin de la rue." },
+        { "title": "Filtrez par sport", "desc": "Calisthénie, street workout, parkour, course et plus encore. Ne voyez que les spots adaptés à votre pratique." },
+        { "title": "Connaissez l'équipement", "desc": "Barres de traction, barres parallèles, anneaux, échelles, pistes. Chaque spot indique exactement ce qui s'y trouve avant d'y aller." },
+        { "title": "De vraies notes et avis", "desc": "Des avis honnêtes de la communauté : état du sol, affluence, ombre, éclairage et meilleurs horaires pour venir." },
+        { "title": "Horaires et accès", "desc": "Voyez ce qui est ouvert 24/7 et ce qui a des horaires fixes, pour ne plus jamais tomber sur une grille fermée." },
+        { "title": "Une vraie communauté", "desc": "Ajoutez les spots où vous vous entraînez, partagez des photos et aidez le prochain athlète à trouver son terrain." }
+      ]
+    },
+    "how": {
+      "eyebrow": "Trois étapes",
+      "title": "Du canapé à la barre",
+      "sub": "Trouver où s'entraîner ne devrait pas être plus dur que la séance elle-même.",
+      "steps": [
+        { "title": "Ouvrez la carte", "desc": "Voyez instantanément tous les spots d'entraînement autour de vous. Aucune inscription nécessaire pour commencer à explorer." },
+        { "title": "Filtrez et choisissez", "desc": "Affinez par discipline et équipement, vérifiez les notes et horaires, et choisissez le spot adapté à votre séance." },
+        { "title": "Entraînez-vous et contribuez", "desc": "Allez bouger. Puis laissez un avis ou ajoutez un nouveau spot pour le mettre sur la carte pour tous les autres." }
+      ]
+    },
+    "spots": {
+      "eyebrow": "Spots populaires",
+      "title": "Les spots que la communauté adore",
+      "sub": "Un aperçu de ce qui est sur la carte en ce moment — touchez un spot pour voir photos, équipement et avis.",
+      "open24": "Ouvert 24/7",
+      "reviews_one": "{{count}} avis",
+      "reviews_other": "{{count}} avis",
+      "showcase": [
+        { "name": "Quai de Bercy Street Bars", "loc": "Quai de Bercy, Paris 12e", "badge": "Calisthénie", "open": true, "rating": 4.8, "reviews": 214, "tags": ["Barre de traction", "Barres parallèles", "Anneaux"] },
+        { "name": "Parc de Belleville Calisthenics", "loc": "Rue des Couronnes, Paris 20e", "badge": "Calisthénie", "open": true, "rating": 4.6, "reviews": 128, "tags": ["Barre de traction", "Station de dips", "Échelle horizontale"] },
+        { "name": "Stade Charléty Track", "loc": "Av. Pierre de Coubertin, Paris 13e", "badge": "Course", "open": false, "rating": 4.7, "reviews": 402, "tags": ["Piste 400m", "Banc", "Yoga"] },
+        { "name": "Trocadéro Ledges", "loc": "Place du Trocadéro, Paris 16e", "badge": "Parkour", "open": false, "rating": 4.4, "reviews": 193, "tags": ["Mur", "Rebords", "Street workout"] },
+        { "name": "Bois de Vincennes Rings", "loc": "Route de la Pyramide, Paris 12e", "badge": "Calisthénie", "open": true, "rating": 4.5, "reviews": 71, "tags": ["Anneaux", "Corde", "Escalade"] },
+        { "name": "Buttes-Chaumont Stairs", "loc": "Rue Botzaris, Paris 19e", "badge": "Escaliers", "open": false, "rating": 4.3, "reviews": 56, "tags": ["Escaliers", "Mur", "Parkour"] }
+      ]
+    },
+    "disciplines": {
+      "eyebrow": "Toutes les façons de bouger",
+      "title": "Une carte, toutes les disciplines",
+      "calisthenics": "Calisthénie",
+      "streetWorkout": "Street workout",
+      "parkour": "Parkour",
+      "running": "Course",
+      "crossfit": "Crossfit",
+      "yoga": "Yoga",
+      "boxing": "Boxe",
+      "climbing": "Escalade"
+    },
+    "cta": {
+      "title": "Vous connaissez un spot qui manque ?",
+      "sub": "Placez un repère, ajoutez l'équipement et quelques photos, et mettez-le sur la carte pour les athlètes du monde entier.",
+      "addSpot": "Ajouter un spot",
+      "explore": "Explorer la carte"
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "Questions fréquentes",
+      "items": [
+        { "q": "Workout Spots est-il gratuit ?", "a": "Oui. Parcourir, rechercher et noter les spots est entièrement gratuit. Nous pensons que l'entraînement en plein air doit être accessible à tous." },
+        { "q": "Quels types de spots puis-je trouver ?", "a": "Des structures de calisthénie en plein air, des barres de street workout, des spots de parkour, des pistes, des escaliers et plus — chacun étiqueté avec son équipement et les disciplines qui lui conviennent." },
+        { "q": "Puis-je ajouter un spot manquant ?", "a": "Absolument. Placez un repère, ajoutez des photos, étiquetez l'équipement et les disciplines, et il apparaît sur la carte pour toute la communauté." },
+        { "q": "Ai-je besoin d'un compte ?", "a": "Vous pouvez explorer la carte sans compte. Connectez-vous avec un lien magique pour noter les spots, laisser des avis et ajouter de nouveaux lieux." }
+      ]
+    },
+    "footer": {
+      "blurb": "La carte de l'entraînement en plein air. Trouvez des spots de calisthénie, de street workout et de parkour près de chez vous. Gratuit, pour toujours.",
+      "product": "Produit",
+      "popularSpots": "Spots populaires",
+      "disciplines": "Disciplines",
+      "company": "Entreprise",
+      "about": "À propos",
+      "contact": "Contact",
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "copyright": "© {{year}} Workout Spots · spots.evnja.gg"
+    },
+    "meta": {
+      "title": "Workout Spots — Spots de calisthénie et de street workout en plein air",
+      "description": "Découvrez, notez et partagez des spots de calisthénie, de street workout et de parkour près de chez vous. Filtrez par équipement et discipline, trouvez barres de traction, barres parallèles et pistes, et entraînez-vous partout — gratuitement."
+    }
+  },
+  "pages": {
+    "privacy": {
+      "meta": { "title": "Politique de confidentialité — Workout Spots", "description": "Comment Workout Spots collecte, utilise et protège vos données." },
+      "eyebrow": "Mentions légales",
+      "title": "Politique de confidentialité",
+      "lead": "Cette politique explique ce que nous collectons, pourquoi, et les choix dont vous disposez. Nous la gardons courte et en langage clair.",
+      "updated": "Dernière mise à jour : 26 juin 2026",
+      "sections": [
+        { "heading": "Qui sommes-nous", "body": ["Workout Spots (« nous ») exploite spots.evnja.gg, une carte gratuite des spots d'entraînement en plein air. Vous pouvez nous joindre à hello@evnja.gg."] },
+        { "heading": "Ce que nous collectons", "bullets": ["Compte : votre adresse e-mail, utilisée uniquement pour envoyer les liens de connexion magiques.", "Profil : un pseudo et un avatar facultatifs que vous choisissez, affichés sur les spots et avis que vous publiez.", "Contenu : les spots, photos, notes et avis que vous soumettez.", "Utilisation : des statistiques anonymes (Google Analytics) sur l'usage du site — seulement après acceptation des cookies d'analyse.", "Technique : des données de requête de base comme le type de navigateur, nécessaires pour servir le site en toute sécurité."] },
+        { "heading": "Comment nous l'utilisons", "body": ["Pour faire fonctionner le service : vous authentifier, attribuer vos contributions et afficher les spots sur la carte. Pour améliorer le produit grâce à des statistiques agrégées et anonymes. Nous ne vendons pas vos données personnelles."] },
+        { "heading": "Tiers", "body": ["Nous nous appuyons sur quelques sous-traitants : Supabase (base de données, authentification et stockage des images), Mapbox (la carte interactive) et Google Analytics (statistiques d'usage, sur consentement). Chacun ne traite les données que pour fournir son service."] },
+        { "heading": "Cookies", "body": ["Nous utilisons un petit nombre de cookies essentiels pour vous garder connecté et mémoriser vos préférences (thème, langue). Les cookies d'analyse sont facultatifs et ne sont déposés que si vous les acceptez dans la bannière."] },
+        { "heading": "Vos droits", "body": ["Vous pouvez consulter et modifier votre profil à tout moment, et demander la suppression de votre compte et de vos contributions en écrivant à hello@evnja.gg. Selon votre lieu de résidence, vous pouvez disposer de droits supplémentaires au titre de lois telles que le RGPD."] },
+        { "heading": "Conservation des données", "body": ["Nous conservons vos données tant que votre compte est actif. Lorsque vous demandez leur suppression, nous effaçons vos données personnelles et anonymisons les contributions qui restent utiles à la communauté."] }
+      ],
+      "note": ""
+    },
+    "terms": {
+      "meta": { "title": "Conditions d'utilisation — Workout Spots", "description": "Les conditions d'utilisation de Workout Spots." },
+      "eyebrow": "Mentions légales",
+      "title": "Conditions d'utilisation",
+      "lead": "En utilisant Workout Spots, vous acceptez ces conditions. Elles visent à garder la communauté utile et sûre.",
+      "updated": "Dernière mise à jour : 26 juin 2026",
+      "sections": [
+        { "heading": "Utilisation du service", "body": ["Workout Spots est fourni gratuitement pour un usage personnel et non commercial. Vous devez avoir l'âge requis pour accepter ces conditions dans votre pays."] },
+        { "heading": "Vos contributions", "body": ["Vous êtes responsable des spots, photos, notes et avis que vous ajoutez. Ne soumettez que du contenu que vous avez le droit de partager, et gardez-le exact et respectueux. En contribuant, vous nous accordez une licence pour afficher et distribuer ce contenu au sein du service."] },
+        { "heading": "Usage acceptable", "bullets": ["Ne publiez pas d'informations fausses, trompeuses ou dangereuses sur les spots.", "Ne téléversez pas de contenu dont vous n'êtes pas propriétaire ou qui enfreint les droits d'autrui.", "Ne harcelez pas les autres utilisateurs et ne publiez pas de contenu offensant.", "Ne tentez pas de perturber, d'extraire ou d'abuser du service."] },
+        { "heading": "Modération", "body": ["Nous pouvons modifier, masquer ou supprimer du contenu et suspendre des comptes qui enfreignent ces conditions, afin de protéger la communauté. Vous pouvez signaler des spots ou avis problématiques depuis l'application."] },
+        { "heading": "Avertissement de sécurité", "body": ["L'entraînement en plein air comporte des risques. Les informations sur les spots proviennent de la communauté et peuvent être inexactes ou obsolètes. Évaluez toujours vous-même l'équipement et l'environnement avant de vous entraîner — vous vous entraînez à vos propres risques."] },
+        { "heading": "Absence de garantie", "body": ["Le service est fourni « tel quel », sans garantie d'aucune sorte. Nous ne garantissons pas qu'il sera toujours disponible, exact ou exempt d'erreurs."] },
+        { "heading": "Modifications", "body": ["Nous pouvons mettre à jour ces conditions à mesure que le produit évolue. Nous mettrons à jour la date ci-dessus le cas échéant ; une utilisation continue vaut acceptation des modifications."] }
+      ],
+      "note": ""
+    },
+    "about": {
+      "meta": { "title": "À propos — Workout Spots", "description": "Pourquoi nous avons créé Workout Spots — la carte de l'entraînement en plein air." },
+      "eyebrow": "Entreprise",
+      "title": "À propos de Workout Spots",
+      "lead": "Nous construisons la carte dont nous avons toujours rêvé en tant qu'athlètes : tous les spots d'entraînement en plein air, au même endroit, gratuits pour tous.",
+      "sections": [
+        { "heading": "Notre mission", "body": ["L'entraînement en plein air devrait être accessible à tous. Une barre de traction dans un parc, des anneaux en forêt, une piste ouverte à l'aube — ce sont des salles de sport gratuites, à condition de savoir où elles sont. Workout Spots les réunit toutes sur une seule carte."] },
+        { "heading": "Construit par la communauté", "body": ["Chaque spot, photo et avis vient d'athlètes comme vous. Plus les gens contribuent, meilleure devient la carte pour la personne suivante en quête d'un lieu où s'entraîner."] },
+        { "heading": "Gratuit, tant qu'il reste possible", "body": ["Parcourir, rechercher et noter les spots est entièrement gratuit, sans publicité qui vous gêne. Nous préférons faire grandir une communauté plutôt que vendre votre attention."] },
+        { "heading": "La suite", "body": ["Nous commençons par les spots. Les clubs et les événements viendront ensuite."] }
+      ]
+    },
+    "contact": {
+      "meta": { "title": "Contact — Workout Spots", "description": "Contactez l'équipe Workout Spots." },
+      "eyebrow": "Entreprise",
+      "title": "Nous contacter",
+      "lead": "Une question, un retour, un bug ou une idée de partenariat ? Nous serions ravis de vous lire.",
+      "emailHeading": "Écrivez-nous",
+      "emailBody": "Le moyen le plus rapide de joindre l'équipe. Nous répondons généralement sous quelques jours.",
+      "socialHeading": "Suivez-nous",
+      "socialBody": "Retrouvez-nous sur les réseaux pour les nouveaux spots et les actualités."
+    }
   }
 }

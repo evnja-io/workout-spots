@@ -238,6 +238,26 @@ export function spotsInBoundsQueryOptions(bounds: Bounds) {
   })
 }
 
+/**
+ * Total number of mappable spots (has coordinates). Uses a head-only `count`
+ * query so it doesn't pull rows. Mocks-first: returns 0 when unconfigured.
+ */
+export function spotsCountQueryOptions() {
+  return queryOptions({
+    queryKey: ['spots', 'count'] as const,
+    queryFn: async (): Promise<number> => {
+      if (!isSupabaseConfigured()) return 0
+      const { count, error } = await getBrowserSupabase()
+        .from('locations')
+        .select('id', { count: 'exact', head: true })
+        .not('latitude', 'is', null)
+        .not('longitude', 'is', null)
+      if (error) throw error
+      return count ?? 0
+    },
+  })
+}
+
 export function spotDetailQueryOptions(id: string) {
   return queryOptions({
     queryKey: ['spot', id] as const,
