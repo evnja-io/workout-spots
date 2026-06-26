@@ -15,6 +15,17 @@ npm test             # vitest run (single pass)
 npm run test:watch   # vitest watch
 ```
 
+Local Supabase stack (requires Docker; Docker Desktop WSL integration must be ON):
+```bash
+npm run db:start     # start local stack (API :54321, DB :54322, Studio :54323)
+npm run db:stop      # stop the local stack
+npm run db:reset     # recreate DB, apply all migrations, then load supabase/seed.sql
+npm run db:types     # regenerate src/lib/supabase/types.ts from the local DB
+npm run db:diff      # diff local DB vs migrations (scaffold a new migration body)
+npm run db:pull      # pull remote schema changes (rarely; see Database notes)
+npm run db:push      # push local migrations to the linked remote (prod)
+```
+
 Run a single test file or by name:
 ```bash
 npx vitest run src/features/spots/filters.test.ts
@@ -50,7 +61,19 @@ Full-stack React 19 app for discovering outdoor workout spots on a map. No custo
 
 ## Database
 
-Schema dump is `db.sql` (incomplete — some objects exist only in the live DB). Migrations live in `supabase/migrations/`. The app's anon key **cannot run DDL** — apply migrations manually via the Supabase SQL Editor (see `supabase/README.md`).
+**Local dev cycle (preferred).** Develop against a local Supabase stack via the CLI (a devDependency — use `npx supabase` / the `db:*` scripts). `npm run db:reset` rebuilds the local DB from `supabase/migrations/` + `supabase/seed.sql`. Workflow for a schema change: edit/create a migration → `npm run db:reset` (verify it applies) → `npm run db:types` (regenerate types) → `npm test`/`npm run typecheck` → `npm run db:push` to apply to prod. Point local dev at the stack via `.env.local` (gitignored; `VITE_SUPABASE_URL=http://127.0.0.1:54321` + the local demo anon key). `.env` keeps prod values for builds.
+
+**Migrations.** `supabase/migrations/` holds exactly two files that reproduce production:
+- `…_remote_baseline.sql` — a `supabase db dump` snapshot of the prod `public` schema (58 tables, functions, RLS). Built with `db dump`, **not** `db pull`: the remote has an old migration-history table with no local files, which makes `db pull` fail. Don't run `db pull` to re-baseline without handling that.
+- `…_local_infra.sql` — what the public-only dump omits (auth/storage are excluded from the dump): the `auth.users → public.users` mirror trigger and the `location-images`/`avatars` storage buckets + their `storage.objects` policies.
+
+New migrations go **after** these via `supabase migration new <name>`. The 7 original hand-written migrations live in `supabase/migrations_archive/` — already applied in prod, kept for reference only, never re-run. `db.sql` is a stale, incomplete schema dump (context only). The app's anon key **cannot run DDL**; production DDL goes through `db push` (or the SQL Editor — see `supabase/README.md`).
+
+**Seed.** `supabase/seed.sql` is a `db dump --data-only --schema public` of prod data, loaded automatically by `db reset`. It's **gitignored** (real user PII). Regenerate with `supabase db dump --linked --data-only --schema public -x public.spatial_ref_sys -f supabase/seed.sql` — **not** `--use-copy` (the CLI seeder can't parse COPY's `\.` terminators); INSERT format is required.
+
+**Types.** `src/lib/supabase/types.ts` is **generated** (`npm run db:types`), not hand-edited, and is excluded from eslint. Regenerate it whenever the schema changes. jsonb columns (e.g. `locations.metadata`, `opening_hours`) come back as `Json` — narrow them at the read site (see `features/spots/queries.ts`).
+
+**Known issue:** `npm run lint` can OOM under type-aware ESLint when the local stack is consuming RAM; `npm run typecheck` and `npm test` are unaffected.
 
 Ratings have two sources: scraped data in `locations.external_*` columns vs. user submissions in `location_ratings`, which a DB trigger aggregates into `locations.average_rating`/`rating_count`. Don't conflate them.
 

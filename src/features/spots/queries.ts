@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import { getBrowserSupabase, isSupabaseConfigured } from '~/lib/supabase/browser'
+import type { Json } from '~/lib/supabase/types'
 import type { SpotListItem, SpotDetail, SpotImage, Equipment, Discipline, SpotComment } from './domain'
 
 // ─── Bounds types ─────────────────────────────────────────────────────────────
@@ -77,8 +78,10 @@ type SpotDetailRow = {
   country: string | null
   contributor: string | null
   created_by: string | null
-  metadata: { source?: string | null; source_url?: string | null } | null
-  opening_hours: Record<string, string> | null
+  // metadata / opening_hours are untyped jsonb columns (Json in the generated
+  // types). The expected shapes are narrowed where they're read in the mapper.
+  metadata: Json | null
+  opening_hours: Json | null
   location_images: { id?: string; image_url: string; image_path?: string; image_order: number }[]
   location_equipments: SpotDetailEquipmentRow[]
   location_disciplines: SpotDetailDisciplineRow[]
@@ -148,8 +151,9 @@ export function mapSpotDetailRow(row: SpotDetailRow): SpotDetail {
   // here means the "if not added by a new contributor" rule lives in one place.
   const addedByUser = row.created_by != null
   const contributorName = addedByUser ? (row.creator?.pseudo ?? row.creator?.name ?? null) : null
-  const source = addedByUser ? null : (row.metadata?.source ?? null)
-  const sourceUrl = addedByUser ? null : (row.metadata?.source_url ?? null)
+  const metadata = (row.metadata ?? null) as { source?: string | null; source_url?: string | null } | null
+  const source = addedByUser ? null : (metadata?.source ?? null)
+  const sourceUrl = addedByUser ? null : (metadata?.source_url ?? null)
 
   return {
     id: row.id,
@@ -172,7 +176,7 @@ export function mapSpotDetailRow(row: SpotDetailRow): SpotDetail {
     contributorName,
     source,
     sourceUrl,
-    openingHours: row.opening_hours ?? null,
+    openingHours: (row.opening_hours ?? null) as Record<string, string> | null,
     images,
     equipment,
     disciplines,

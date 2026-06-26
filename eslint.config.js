@@ -3,7 +3,10 @@ import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 export default tseslint.config(
-  { ignores: ['.output', 'dist', 'src/routeTree.gen.ts'] },
+  // src/lib/supabase/types.ts is `supabase gen types` output (regenerated, not
+  // hand-edited); like routeTree.gen.ts it's excluded from type-aware linting,
+  // whose heavy generics otherwise exhaust the heap on the generated file.
+  { ignores: ['.output', 'dist', 'src/routeTree.gen.ts', 'src/lib/supabase/types.ts'] },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
