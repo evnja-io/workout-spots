@@ -72,10 +72,14 @@ export function Rail({ onOpenSettings, view = 'map', onViewChange }: RailProps) 
       className="hidden flex-col items-center gap-1 border-r border-border bg-surface py-3.5 md:flex"
       aria-label="Main navigation"
     >
-      {/* Logo */}
-      <div className="mb-2.5 grid size-9 place-items-center" aria-label="Workout Spots">
+      {/* Logo → landing page */}
+      <Link
+        to="/"
+        className="mb-2.5 grid size-9 place-items-center rounded-[10px] transition-colors duration-150 hover:bg-surface-2"
+        aria-label="Workout Spots — home"
+      >
         <Logo size={32} />
-      </div>
+      </Link>
 
       {/* Map view button */}
       <button

@@ -14,6 +14,7 @@ const DEFAULT_ZOOM = 11.5
 interface MapboxMarker {
   setLngLat: (coords: [number, number]) => MapboxMarker
   addTo: (map: MapboxMap) => MapboxMarker
+  getElement: () => HTMLElement
   remove: () => void
 }
 
@@ -74,7 +75,10 @@ export function MapView({
   const mapHostRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapboxMap | null>(null)
   const mapboxglRef = useRef<MapboxGLStatic | null>(null)
-  const markersRef = useRef<MapboxMarker[]>([])
+  // Markers keyed by spot id so refetches reconcile incrementally (only add the
+  // newly-revealed spots, remove the departed ones) instead of tearing down and
+  // recreating the whole pin layer — which would flicker on every pan.
+  const markersRef = useRef<Map<string, MapboxMarker>>(new Map())
   const newSpotMarkerRef = useRef<MapboxMarker | null>(null)
   // Tracks the spot we last flew to, so refetching spots (e.g. after panning)
   // never re-centers the map — we only fly when the *selection* changes.
@@ -100,6 +104,8 @@ export function MapView({
     if (!mapHostRef.current) return
 
     let cancelled = false
+    // Stable Map reference (never reassigned), captured for use in cleanup.
+    const markers = markersRef.current
 
     void (async () => {
       const mapboxgl = ((await import('mapbox-gl')).default as unknown) as MapboxGLStatic
@@ -144,6 +150,10 @@ export function MapView({
         mapRef.current.remove()
         mapRef.current = null
       }
+      // map.remove() detaches marker DOM; drop our references too so a remount
+      // reconciles from a clean slate rather than against stale markers.
+      markers.clear()
+      newSpotMarkerRef.current = null
       mapboxglRef.current = null
       setMapReady(false)
     }
@@ -156,53 +166,73 @@ export function MapView({
     mapRef.current.setStyle(mapStyleUrl(mapStyle, theme))
   }, [mapStyle, theme, mapReady])
 
-  // ── Rebuild markers whenever spots / activeSpotId / mapReady changes ──────
-  const rebuildMarkers = useCallback(() => {
+  // ── Reconcile spot markers incrementally (add new, remove departed) ───────
+  // Keyed by spot id so panning/refetching leaves existing pins untouched
+  // (no destroy/recreate flicker). The active highlight is a class toggle, not
+  // a rebuild, so selecting a spot never churns the pin layer.
+  const reconcileMarkers = useCallback(() => {
     const map = mapRef.current
     const mapboxgl = mapboxglRef.current
     if (!map || !mapboxgl) return
 
-    // Remove previous markers
-    markersRef.current.forEach((m) => m.remove())
-    markersRef.current = []
+    const markers = markersRef.current
+    const nextIds = new Set(spots.map((s) => s.id))
+
+    // Remove markers for spots no longer in view
+    for (const [id, marker] of markers) {
+      if (!nextIds.has(id)) {
+        marker.remove()
+        markers.delete(id)
+      }
+    }
 
     for (const spot of spots) {
-      const el = document.createElement('div')
-      el.className = 'wp-pin' + (spot.id === activeSpotId ? ' active' : '')
+      let marker = markers.get(spot.id)
+      if (!marker) {
+        const el = document.createElement('div')
+        el.className = 'wp-pin'
 
-      const dot = document.createElement('div')
-      dot.className = 'dot'
-      el.appendChild(dot)
+        const dot = document.createElement('div')
+        dot.className = 'dot'
+        el.appendChild(dot)
 
-      const spotId = spot.id
-      el.addEventListener('click', () => onSelectSpotRef.current(spotId))
+        const spotId = spot.id
+        el.addEventListener('click', () => onSelectSpotRef.current(spotId))
 
-      const marker = new mapboxgl.Marker({ element: el })
-        .setLngLat([spot.longitude, spot.latitude])
-        .addTo(map)
+        marker = new mapboxgl.Marker({ element: el })
+          .setLngLat([spot.longitude, spot.latitude])
+          .addTo(map)
 
-      markersRef.current.push(marker)
+        markers.set(spot.id, marker)
+      }
+      marker.getElement().classList.toggle('active', spot.id === activeSpotId)
     }
-
-    // New spot position marker
-    newSpotMarkerRef.current?.remove()
-    newSpotMarkerRef.current = null
-    if (newSpotPosition) {
-      const el = document.createElement('div')
-      el.className = 'wp-pin active'
-      const dot = document.createElement('div')
-      dot.className = 'dot'
-      el.appendChild(dot)
-      newSpotMarkerRef.current = new mapboxgl.Marker({ element: el })
-        .setLngLat([newSpotPosition.lng, newSpotPosition.lat])
-        .addTo(map)
-    }
-  }, [spots, activeSpotId, newSpotPosition])
+  }, [spots, activeSpotId])
 
   useEffect(() => {
     if (!mapReady) return
-    rebuildMarkers()
-  }, [mapReady, rebuildMarkers])
+    reconcileMarkers()
+  }, [mapReady, reconcileMarkers])
+
+  // ── New-spot position marker (add-spot flow) — isolated from the pin layer ──
+  useEffect(() => {
+    const map = mapRef.current
+    const mapboxgl = mapboxglRef.current
+    if (!mapReady || !map || !mapboxgl) return
+
+    newSpotMarkerRef.current?.remove()
+    newSpotMarkerRef.current = null
+    if (!newSpotPosition) return
+
+    const el = document.createElement('div')
+    el.className = 'wp-pin active'
+    const dot = document.createElement('div')
+    dot.className = 'dot'
+    el.appendChild(dot)
+    newSpotMarkerRef.current = new mapboxgl.Marker({ element: el })
+      .setLngLat([newSpotPosition.lng, newSpotPosition.lat])
+      .addTo(map)
+  }, [newSpotPosition, mapReady])
 
   // ── Fly to the active spot ONLY when the selection changes ────────────────
   // Decoupled from marker rebuilds so panning (which refetches spots) never

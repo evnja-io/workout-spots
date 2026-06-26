@@ -172,14 +172,19 @@
  * `el.className = 'wp-pin'` in MapView) or third-party Mapbox controls, so they
  * cannot use inline utility classes and must stay as CSS.
  */
+/*
+ * NOTE: `.wp-pin` is the element Mapbox positions by writing an inline
+ * `transform: translate(...)` every render frame. Do NOT put `transform` or
+ * `transition: transform` here — a transition would animate each per-frame
+ * position update, making pins lag/trail the map while panning. All visual
+ * animation lives on the inner `.dot`, which Mapbox never touches.
+ */
 .wp-pin {
   width: 34px;
   height: 34px;
   display: grid;
   place-items: center;
   cursor: pointer;
-  transform: translate(-50%, -50%);
-  transition: transform 0.2s;
 }
 .wp-pin .dot {
   width: 16px;
@@ -190,8 +195,8 @@
   box-shadow: 0 2px 6px rgba(225, 29, 72, 0.4);
   transition: all 0.2s;
 }
-.wp-pin:hover {
-  transform: translate(-50%, -50%) scale(1.15);
+.wp-pin:hover .dot {
+  transform: scale(1.15);
 }
 .wp-pin.active .dot {
   width: 22px;

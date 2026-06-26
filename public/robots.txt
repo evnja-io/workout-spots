@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spots.evnja.gg/sitemap.xml

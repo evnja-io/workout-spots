@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
 import { ErrorState } from '~/components/ErrorState'
 
-const BOUNDS_DEBOUNCE_MS = 400
+const BOUNDS_DEBOUNCE_MS = 200
 
 function SpotsPending() {
   return <div className="px-5 py-10 text-center text-[13px] text-text-3" aria-busy="true" />
