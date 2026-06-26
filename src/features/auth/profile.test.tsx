@@ -61,18 +61,24 @@ describe('currentUserProfileQueryOptions', () => {
         pseudo: 'street_athlete',
         name: null,
         profile_picture_url: 'https://cdn/avatar.png',
+        marketing_email_opt_in: true,
+        partner_offers_opt_in: false,
       },
       error: null,
     })
 
     const result = await currentUserProfileQueryOptions('user-1').queryFn!({} as never)
 
-    expect(mockSelect).toHaveBeenCalledWith('id,pseudo,name,profile_picture_url')
+    expect(mockSelect).toHaveBeenCalledWith(
+      'id,pseudo,name,profile_picture_url,marketing_email_opt_in,partner_offers_opt_in',
+    )
     expect(result).toEqual({
       id: 'user-1',
       pseudo: 'street_athlete',
       name: null,
       profilePictureUrl: 'https://cdn/avatar.png',
+      marketingEmailOptIn: true,
+      partnerOffersOptIn: false,
     })
   })
 
@@ -118,6 +124,30 @@ describe('useUpdateProfile', () => {
       pseudo: 'a',
       profile_picture_url: 'https://cdn/x.png',
     })
+  })
+
+  it('updates the marketing opt-in column and stamps its timestamp', async () => {
+    mockEqUpdate.mockResolvedValue({ error: null })
+    const { result } = renderHook(() => useUpdateProfile(), { wrapper })
+
+    await result.current.updateProfile({ marketingEmailOptIn: true })
+
+    const calls = mockUpdate.mock.calls as unknown as Array<[Record<string, unknown>]>
+    const patch = calls[calls.length - 1]![0]
+    expect(patch.marketing_email_opt_in).toBe(true)
+    expect(typeof patch.marketing_email_opt_in_at).toBe('string')
+  })
+
+  it('updates the partner offers opt-in column and stamps its timestamp', async () => {
+    mockEqUpdate.mockResolvedValue({ error: null })
+    const { result } = renderHook(() => useUpdateProfile(), { wrapper })
+
+    await result.current.updateProfile({ partnerOffersOptIn: false })
+
+    const calls = mockUpdate.mock.calls as unknown as Array<[Record<string, unknown>]>
+    const patch = calls[calls.length - 1]![0]
+    expect(patch.partner_offers_opt_in).toBe(false)
+    expect(typeof patch.partner_offers_opt_in_at).toBe('string')
   })
 })
 

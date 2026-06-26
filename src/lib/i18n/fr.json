@@ -20,7 +20,12 @@
     "signOut": "Se déconnecter",
     "account": "Compte",
     "signedInAs": "Connecté",
-    "signedInAsName": "Connecté en tant que {{name}}"
+    "signedInAsName": "Connecté en tant que {{name}}",
+    "consent": {
+      "terms": "J'accepte les <terms>Conditions générales d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>.",
+      "marketingEmail": "Je souhaite recevoir les e-mails d'actualité de Workout Spots.",
+      "partnerOffers": "Je souhaite recevoir les offres de nos partenaires."
+    }
   },
   "detail": {
     "about": "À propos",
@@ -57,7 +62,23 @@
     "avatarHint": "JPG, PNG, WebP ou GIF, jusqu'à 5 Mo.",
     "avatarInvalid": "Choisissez une image de moins de 5 Mo.",
     "saved": "Profil enregistré.",
-    "saveError": "Impossible d'enregistrer votre profil. Veuillez réessayer."
+    "saveError": "Impossible d'enregistrer votre profil. Veuillez réessayer.",
+    "communications": {
+      "title": "Communications",
+      "marketingEmail": "E-mails d'actualité",
+      "partnerOffers": "Offres des partenaires"
+    }
+  },
+  "unsubscribe": {
+    "workingTitle": "Désinscription…",
+    "working": "Mise à jour de vos préférences e-mail.",
+    "successTitle": "Vous êtes désinscrit",
+    "success": "Vous ne recevrez plus ces e-mails. Vous pouvez les réactiver à tout moment depuis votre profil.",
+    "invalidTitle": "Lien invalide",
+    "invalid": "Ce lien de désinscription est absent ou incorrect. Veuillez utiliser le lien d'un e-mail récent.",
+    "notFound": "Ce lien de désinscription n'est plus valide.",
+    "errorTitle": "Une erreur est survenue",
+    "error": "Impossible de mettre à jour vos préférences. Veuillez réessayer plus tard."
   },
   "review": {
     "ratingLabel": "Votre note",

@@ -11,6 +11,7 @@ import {
 import { validateImage } from '~/features/add-spot/photos'
 import { Button } from '~/components/ui/Button'
 import { Input, FieldLabel, FieldHint } from '~/components/ui/Field'
+import { Switch } from '~/components/ui/Switch'
 import { Icon } from '~/components/ui/Icon'
 import { ErrorState } from '~/components/ErrorState'
 
@@ -56,12 +57,31 @@ function ProfilePage() {
   const [saveError, setSaveError] = useState(false)
   const [saved, setSaved] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [marketingEmail, setMarketingEmail] = useState(false)
+  const [partnerOffers, setPartnerOffers] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Seed the nickname field once the profile loads.
   useEffect(() => {
     if (profile?.pseudo != null) setPseudo(profile.pseudo)
   }, [profile?.pseudo])
+
+  // Seed the communication toggles from the loaded profile.
+  useEffect(() => {
+    if (!profile) return
+    setMarketingEmail(profile.marketingEmailOptIn)
+    setPartnerOffers(profile.partnerOffersOptIn)
+  }, [profile])
+
+  // Toggles save immediately; revert local state if the write fails.
+  function handleToggleMarketing(value: boolean) {
+    setMarketingEmail(value)
+    void updateProfile({ marketingEmailOptIn: value }).catch(() => setMarketingEmail(!value))
+  }
+  function handleTogglePartners(value: boolean) {
+    setPartnerOffers(value)
+    void updateProfile({ partnerOffersOptIn: value }).catch(() => setPartnerOffers(!value))
+  }
 
   // Revoke object URLs to avoid leaks when the preview changes/unmounts.
   useEffect(() => {
@@ -185,6 +205,33 @@ function ProfilePage() {
               setSaved(false)
             }}
           />
+        </div>
+
+        {/* Communications */}
+        <div className="flex flex-col gap-3 border-t border-border pt-5">
+          <h2 className="text-[13px] font-semibold text-text-2">
+            {t('profile.communications.title')}
+          </h2>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-[13px] text-text-2">
+              {t('profile.communications.marketingEmail')}
+            </span>
+            <Switch
+              on={marketingEmail}
+              onChange={handleToggleMarketing}
+              label={t('profile.communications.marketingEmail')}
+            />
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-[13px] text-text-2">
+              {t('profile.communications.partnerOffers')}
+            </span>
+            <Switch
+              on={partnerOffers}
+              onChange={handleTogglePartners}
+              label={t('profile.communications.partnerOffers')}
+            />
+          </div>
         </div>
 
         <div className="flex items-center gap-3">

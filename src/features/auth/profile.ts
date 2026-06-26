@@ -7,6 +7,8 @@ export type UserProfile = {
   pseudo: string | null
   name: string | null
   profilePictureUrl: string | null
+  marketingEmailOptIn: boolean
+  partnerOffersOptIn: boolean
 }
 
 /** Storage bucket holding user profile pictures (see avatars_bucket migration). */
@@ -24,7 +26,7 @@ export function currentUserProfileQueryOptions(userId: string | null) {
       if (!isSupabaseConfigured() || !userId) return null
       const { data, error } = await getBrowserSupabase()
         .from('users')
-        .select('id,pseudo,name,profile_picture_url')
+        .select('id,pseudo,name,profile_picture_url,marketing_email_opt_in,partner_offers_opt_in')
         .eq('id', userId)
         .maybeSingle()
       if (error) throw error
@@ -34,6 +36,8 @@ export function currentUserProfileQueryOptions(userId: string | null) {
         pseudo: data.pseudo,
         name: data.name,
         profilePictureUrl: data.profile_picture_url,
+        marketingEmailOptIn: data.marketing_email_opt_in ?? false,
+        partnerOffersOptIn: data.partner_offers_opt_in ?? false,
       }
     },
   })
@@ -43,6 +47,8 @@ export function currentUserProfileQueryOptions(userId: string | null) {
 export type ProfileUpdate = {
   pseudo?: string
   profilePictureUrl?: string
+  marketingEmailOptIn?: boolean
+  partnerOffersOptIn?: boolean
 }
 
 /**
@@ -56,10 +62,25 @@ export function useUpdateProfile() {
   const mutation = useMutation({
     mutationFn: async (update: ProfileUpdate) => {
       if (!userId) throw new Error('Not authenticated')
-      const patch: { pseudo?: string; profile_picture_url?: string } = {}
+      const patch: {
+        pseudo?: string
+        profile_picture_url?: string
+        marketing_email_opt_in?: boolean
+        marketing_email_opt_in_at?: string
+        partner_offers_opt_in?: boolean
+        partner_offers_opt_in_at?: string
+      } = {}
       if (update.pseudo !== undefined) patch.pseudo = update.pseudo
       if (update.profilePictureUrl !== undefined)
         patch.profile_picture_url = update.profilePictureUrl
+      if (update.marketingEmailOptIn !== undefined) {
+        patch.marketing_email_opt_in = update.marketingEmailOptIn
+        patch.marketing_email_opt_in_at = new Date().toISOString()
+      }
+      if (update.partnerOffersOptIn !== undefined) {
+        patch.partner_offers_opt_in = update.partnerOffersOptIn
+        patch.partner_offers_opt_in_at = new Date().toISOString()
+      }
       const { error } = await getBrowserSupabase().from('users').update(patch).eq('id', userId)
       if (error) throw error
     },
