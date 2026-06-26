@@ -16,6 +16,8 @@ import { equipmentsQueryOptions, disciplinesQueryOptions } from '~/features/taxo
 import { getPrefs } from '~/features/settings/prefs'
 import { SettingsPanel } from '~/features/settings/SettingsPanel'
 import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
+import { SavedSheet } from '~/features/likes/SavedSheet'
+import { useAuthGate } from '~/features/auth/useAuthGate'
 import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
 import { ErrorState } from '~/components/ErrorState'
@@ -56,8 +58,14 @@ function SpotsLayout() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [addSpotOpen, setAddSpotOpen] = useState(false)
   const [listSheetOpen, setListSheetOpen] = useState(false)
+  const [savedOpen, setSavedOpen] = useState(false)
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
   const navigate = useNavigate()
+  const gate = useAuthGate()
+
+  // Saved spots require auth — the gate opens sign-in for anon users and replays
+  // the open once they authenticate.
+  const handleOpenSaved = () => gate(() => setSavedOpen(true))
 
   // ── Bounds state (starts at world, tightens as the map reports its viewport) ─
   const [bounds, setBounds] = useState<Bounds>(WORLD_BOUNDS)
@@ -90,7 +98,11 @@ function SpotsLayout() {
 
   return (
     <div className="h-screen overflow-hidden bg-bg md:grid md:grid-cols-[64px_380px_1fr]">
-      <Rail onOpenSettings={() => setSettingsOpen(true)} />
+      <Rail
+        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenSaved={handleOpenSaved}
+        savedActive={savedOpen}
+      />
       {/* Sidebar column — desktop only; on mobile the list lives in a bottom sheet */}
       <aside className="hidden min-h-0 flex-col border-r border-border bg-surface md:flex">
         <Suspense fallback={null}>
@@ -127,6 +139,8 @@ function SpotsLayout() {
         onOpenList={() => setListSheetOpen(true)}
         onOpenAdd={() => setAddSpotOpen(true)}
         onOpenSettings={() => setSettingsOpen(true)}
+        onOpenSaved={handleOpenSaved}
+        savedActive={savedOpen}
       />
 
       {/* Mobile list/filters sheet — hosts the same Sidebar shown on desktop */}
@@ -145,6 +159,11 @@ function SpotsLayout() {
         onMapStyleChange={setMapStyle}
       />
       <AddSpotWizard open={addSpotOpen} onClose={() => setAddSpotOpen(false)} />
+      <SavedSheet
+        open={savedOpen}
+        onClose={() => setSavedOpen(false)}
+        onSelectSpot={handleSelectSpot}
+      />
       <Outlet />
     </div>
   )

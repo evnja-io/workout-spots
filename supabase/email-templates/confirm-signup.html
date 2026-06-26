@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark only">
+<meta name="supported-color-schemes" content="dark">
+<title>Confirm your email</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background:#140A18;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;opacity:0;color:#140A18;">Confirm your email to finish setting up Workout Spots</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#140A18;"><tr><td align="center" style="padding:40px 16px;">
+
+    <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="width:480px;max-width:480px;background:#211029;border:1px solid #3A2145;border-radius:16px;overflow:hidden;">
+      <tr><td style="height:6px;background:#E11D48;background:linear-gradient(120deg,#E11D48,#FB7A1E);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:34px 40px 0;">
+        <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+          <td style="vertical-align:middle;"><img src="https://spots.evnja.gg/favicon-512.png" width="42" height="42" alt="Workout Spots" style="display:block;border-radius:10px;background:#1A0A20;"></td>
+          <td style="vertical-align:middle;padding-left:12px;font-family:'Poppins',Arial,sans-serif;font-weight:700;font-size:20px;color:#FBF7FA;letter-spacing:-0.01em;">Workout Spots</td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="padding:26px 40px 0;font-family:'Poppins',Arial,sans-serif;font-weight:700;font-size:25px;line-height:1.25;color:#FBF7FA;">Confirm your email</td></tr>
+      <tr><td style="padding:14px 40px 0;font-family:'Inter',Arial,sans-serif;font-size:15px;line-height:1.65;color:#C5BACE;">Welcome to Workout Spots. Confirm this address to start discovering and adding training spots near you.</td></tr>
+      <tr><td style="padding:28px 40px 0;">
+        <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#E11D48;background:linear-gradient(120deg,#E11D48,#FB7A1E);color:#ffffff;text-decoration:none;font-family:'Inter',Arial,sans-serif;font-weight:600;font-size:16px;line-height:1;padding:16px 30px;border-radius:10px;">Confirm my email</a>
+      </td></tr>
+
+        <tr><td style="padding:26px 40px 0;">
+          <div style="font-family:'Inter',Arial,sans-serif;font-size:13px;color:#9A8EA4;margin-bottom:10px;">Or enter this code to confirm:</div>
+          <div style="font-family:'Poppins',Consolas,monospace;font-weight:700;font-size:30px;letter-spacing:8px;color:#FBF7FA;background:#2C1636;border:1px solid #3A2145;border-radius:10px;padding:18px 20px;text-align:center;">{{ .Token }}</div>
+        </td></tr>
+      <tr><td style="padding:28px 40px 0;"><div style="height:1px;background:#3A2145;font-size:0;line-height:0;">&nbsp;</div></td></tr>
+      <tr><td style="padding:18px 40px 32px;font-family:'Inter',Arial,sans-serif;font-size:13px;line-height:1.6;color:#8E8298;">Didn&rsquo;t create a Workout Spots account? You can ignore this email.<br><br>Workout Spots &middot; <a href="https://spots.evnja.gg" style="color:#FB7A1E;text-decoration:none;">spots.evnja.gg</a></td></tr>
+    </table>
+    <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="width:480px;max-width:480px;"><tr><td style="padding:16px 40px;font-family:'Inter',Arial,sans-serif;font-size:12px;line-height:1.6;color:#5C5366;text-align:center;">If the button doesn&rsquo;t work, paste this link into your browser:<br><a href="{{ .ConfirmationURL }}" style="color:#7C7088;text-decoration:underline;word-break:break-all;">{{ .ConfirmationURL }}</a></td></tr></table>
+</td></tr></table>
+</body>
+</html>

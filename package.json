@@ -11,7 +11,14 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:diff": "supabase db diff",
+    "db:types": "supabase gen types typescript --local > src/lib/supabase/types.ts",
+    "db:pull": "supabase db pull",
+    "db:push": "supabase db push"
   },
   "keywords": [],
   "author": "",
@@ -56,6 +63,7 @@
     "jsdom": "^29.1.1",
     "msw": "^2.14.6",
     "prettier": "^3.8.4",
+    "supabase": "^2.108.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.62.0",
     "vite": "^8.1.0",

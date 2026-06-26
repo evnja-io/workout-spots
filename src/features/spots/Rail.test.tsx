@@ -50,12 +50,12 @@ vi.mock('@tanstack/react-router', () => ({
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const i18n = createI18n('en')
 
-function renderRail() {
+function renderRail(props: Partial<React.ComponentProps<typeof Rail>> = {}) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
   return render(
     <QueryClientProvider client={queryClient}>
       <I18nextProvider i18n={i18n}>
-        <Rail />
+        <Rail {...props} />
       </I18nextProvider>
     </QueryClientProvider>,
   )
@@ -74,7 +74,22 @@ describe('Rail', () => {
     renderRail()
     expect(screen.getByRole('button', { name: /map/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /list/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /saved/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /saved/i })).toBeInTheDocument()
+  })
+
+  it('calls onOpenSaved when the Saved button is clicked', async () => {
+    const user = userEvent.setup()
+    const onOpenSaved = vi.fn()
+    renderRail({ onOpenSaved })
+    await user.click(screen.getByRole('button', { name: /saved/i }))
+    expect(onOpenSaved).toHaveBeenCalledOnce()
+  })
+
+  it('marks Saved as active (pressed) when its overlay is open', () => {
+    renderRail({ savedActive: true })
+    const savedBtn = screen.getByRole('button', { name: /saved/i })
+    expect(savedBtn).toHaveAttribute('aria-pressed', 'true')
+    expect(savedBtn.className).toContain('active')
   })
 
   it('does NOT render a Community button', () => {
