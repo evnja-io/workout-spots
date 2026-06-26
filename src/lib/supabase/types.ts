@@ -28,6 +28,13 @@ export interface Database {
           fitness_level: string | null
           unread_notifications_count: number | null
           last_notification_read_at: string | null
+          terms_accepted_at: string | null
+          terms_version: string | null
+          marketing_email_opt_in: boolean
+          marketing_email_opt_in_at: string | null
+          partner_offers_opt_in: boolean
+          partner_offers_opt_in_at: string | null
+          unsubscribe_token: string
         }
         Insert: {
           id?: string
@@ -44,6 +51,13 @@ export interface Database {
           fitness_level?: string | null
           unread_notifications_count?: number | null
           last_notification_read_at?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
+          marketing_email_opt_in?: boolean
+          marketing_email_opt_in_at?: string | null
+          partner_offers_opt_in?: boolean
+          partner_offers_opt_in_at?: string | null
+          unsubscribe_token?: string
         }
         Update: {
           id?: string
@@ -60,6 +74,13 @@ export interface Database {
           fitness_level?: string | null
           unread_notifications_count?: number | null
           last_notification_read_at?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
+          marketing_email_opt_in?: boolean
+          marketing_email_opt_in_at?: string | null
+          partner_offers_opt_in?: boolean
+          partner_offers_opt_in_at?: string | null
+          unsubscribe_token?: string
         }
         Relationships: []
       }

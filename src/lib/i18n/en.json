@@ -12,7 +12,12 @@
     "signOut": "Sign out",
     "account": "Account",
     "signedInAs": "Signed in",
-    "signedInAsName": "Signed in as {{name}}"
+    "signedInAsName": "Signed in as {{name}}",
+    "consent": {
+      "terms": "I agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+      "marketingEmail": "Send me product update emails about Workout Spots.",
+      "partnerOffers": "Send me offers from our partners."
+    }
   },
   "detail": {
     "about": "About",
@@ -49,7 +54,23 @@
     "avatarHint": "JPG, PNG, WebP or GIF, up to 5 MB.",
     "avatarInvalid": "Pick an image under 5 MB.",
     "saved": "Profile saved.",
-    "saveError": "Couldn't save your profile. Please try again."
+    "saveError": "Couldn't save your profile. Please try again.",
+    "communications": {
+      "title": "Communications",
+      "marketingEmail": "Product update emails",
+      "partnerOffers": "Partner offers"
+    }
+  },
+  "unsubscribe": {
+    "workingTitle": "Unsubscribing…",
+    "working": "Updating your email preferences.",
+    "successTitle": "You're unsubscribed",
+    "success": "You won't receive these emails anymore. You can re-enable them anytime from your profile.",
+    "invalidTitle": "Invalid link",
+    "invalid": "This unsubscribe link is missing or malformed. Please use the link from a recent email.",
+    "notFound": "This unsubscribe link is no longer valid.",
+    "errorTitle": "Something went wrong",
+    "error": "We couldn't update your preferences. Please try again later."
   },
   "review": {
     "ratingLabel": "Your rating",

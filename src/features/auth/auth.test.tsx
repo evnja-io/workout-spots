@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { I18nextProvider } from 'react-i18next'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createI18n } from '~/lib/i18n/config'
@@ -60,6 +60,12 @@ function GatedButton() {
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
+
+// Clear call history between tests (keeps the mockResolvedValue defaults) so
+// each submit assertion reads its own signInWithOtp call.
+beforeEach(() => {
+  vi.clearAllMocks()
+})
 
 describe('SessionProvider', () => {
   it('starts in loading state then resolves to anon when no session', async () => {
@@ -141,15 +147,32 @@ describe('useAuthGate + SignInModal', () => {
     await user.clear(emailInput)
     await user.type(emailInput, 'test@example.com', { skipClick: false })
 
+    // Accept the required terms so submit enables
+    await user.click(screen.getByRole('checkbox', { name: /i agree/i }))
+
     // Submit
     await user.click(screen.getByRole('button', { name: /send sign-in link/i }))
 
     await waitFor(() => {
-      const [callArg] = mockSignInWithOtp.mock.calls[0] as [
-        { email: string; options: { emailRedirectTo: string } },
+      const [callArg] = mockSignInWithOtp.mock.calls.at(-1) as [
+        {
+          email: string
+          options: {
+            emailRedirectTo: string
+            data: {
+              terms_version: string
+              marketing_email_opt_in: boolean
+              partner_offers_opt_in: boolean
+            }
+          }
+        },
       ]
       expect(callArg.email).toBe('test@example.com')
       expect(callArg.options.emailRedirectTo).toContain('/auth/callback')
+      expect(callArg.options.data.terms_version).toBeTruthy()
+      // Marketing opt-ins default off (GDPR: unticked by default)
+      expect(callArg.options.data.marketing_email_opt_in).toBe(false)
+      expect(callArg.options.data.partner_offers_opt_in).toBe(false)
     })
 
     // After submit, "check inbox" message shown
@@ -161,5 +184,60 @@ describe('useAuthGate + SignInModal', () => {
 
     // Gated action still NOT called (user not authed yet)
     expect(actionSpy).not.toHaveBeenCalled()
+  })
+
+  it('keeps submit disabled until terms are accepted; marketing boxes start unchecked', async () => {
+    const user = userEvent.setup()
+    render(
+      <Wrapper>
+        <GatedButton />
+      </Wrapper>,
+    )
+    await waitFor(() => expect(mockGetSession).toHaveBeenCalled())
+    await user.click(screen.getByRole('button', { name: 'Protected action' }))
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument()
+    })
+
+    await user.type(screen.getByLabelText(/email address/i), 'test@example.com')
+
+    const sendBtn = screen.getByRole('button', { name: /send sign-in link/i })
+    expect(sendBtn).toBeDisabled()
+    expect(screen.getByRole('checkbox', { name: /product update emails/i })).not.toBeChecked()
+    expect(screen.getByRole('checkbox', { name: /offers from our partners/i })).not.toBeChecked()
+
+    await user.click(screen.getByRole('checkbox', { name: /i agree/i }))
+    expect(sendBtn).toBeEnabled()
+  })
+
+  it('passes the chosen marketing opt-ins as signInWithOtp metadata', async () => {
+    const user = userEvent.setup()
+    render(
+      <Wrapper>
+        <GatedButton />
+      </Wrapper>,
+    )
+    await waitFor(() => expect(mockGetSession).toHaveBeenCalled())
+    await user.click(screen.getByRole('button', { name: 'Protected action' }))
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument()
+    })
+
+    await user.type(screen.getByLabelText(/email address/i), 'test@example.com')
+    await user.click(screen.getByRole('checkbox', { name: /i agree/i }))
+    await user.click(screen.getByRole('checkbox', { name: /product update emails/i }))
+    await user.click(screen.getByRole('button', { name: /send sign-in link/i }))
+
+    await waitFor(() => {
+      const [callArg] = mockSignInWithOtp.mock.calls.at(-1) as [
+        {
+          options: {
+            data: { marketing_email_opt_in: boolean; partner_offers_opt_in: boolean }
+          }
+        },
+      ]
+      expect(callArg.options.data.marketing_email_opt_in).toBe(true)
+      expect(callArg.options.data.partner_offers_opt_in).toBe(false)
+    })
   })
 })
