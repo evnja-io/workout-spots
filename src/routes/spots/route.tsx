@@ -113,19 +113,20 @@ function SpotsLayout() {
             + {t('discover.addSpot')}
           </button>
         </div>
-        {/* Mobile-only floating List pill — opens the Discover list sheet.
-            Bottom-left, clear of the map-style toggle (top), zoom controls
-            (right) and the bottom-nav create FAB (center). */}
-        <button
-          type="button"
-          onClick={() => setListSheetOpen(true)}
-          data-testid="map-list-pill"
-          className="absolute bottom-[calc(68px+env(safe-area-inset-bottom))] left-3 z-[3] inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-medium text-text shadow-[var(--shadow-md)] md:hidden"
-        >
-          <Icon name="list" size={16} />
-          {t('discover.title')}
-        </button>
       </div>
+
+      {/* Mobile floating List pill — opens the Discover list sheet. Fixed (like
+          the bottom nav) so it shares the visual-viewport anchor and clears the
+          bar on iOS Safari; bottom-left, clear of the map controls and FAB. */}
+      <button
+        type="button"
+        onClick={() => setListSheetOpen(true)}
+        data-testid="map-list-pill"
+        className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 z-40 inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-medium text-text shadow-[var(--shadow-md)] md:hidden"
+      >
+        <Icon name="list" size={16} />
+        {t('discover.title')}
+      </button>
 
       {/* Mobile bottom navigation (hidden on md+) */}
       <MobileNav
