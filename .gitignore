@@ -11,3 +11,5 @@ supabase/seed.sql
 src/routeTree.gen.ts
 .claude/worktrees/
 .playwright-mcp/
+# TanStack build cache
+.tanstack
