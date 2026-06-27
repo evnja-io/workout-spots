@@ -1,16 +1,26 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { eventsListQueryOptions } from '~/features/events/queries'
+import { EventsBrowse } from '~/features/events/components/EventsBrowse'
 
 export const Route = createFileRoute('/events/')({
-  component: EventsBrowse,
+  loader: async ({ context }) => ({
+    events: await context.queryClient.ensureQueryData(eventsListQueryOptions()),
+  }),
+  component: EventsBrowsePage,
 })
 
-function EventsBrowse() {
-  const { t } = useTranslation()
+function EventsBrowsePage() {
+  const navigate = useNavigate()
+  const { events: initialEvents } = Route.useLoaderData()
+  const { data: events } = useQuery({ ...eventsListQueryOptions(), initialData: initialEvents })
+
   return (
-    <div className="mx-auto max-w-5xl px-5 py-8">
-      <h1 className="text-[22px] font-semibold text-text">{t('events.title')}</h1>
-      <p className="mt-2 text-[14px] text-text-3">{t('events.comingSoon')}</p>
-    </div>
+    <EventsBrowse
+      events={events}
+      loading={false}
+      onOpen={(id) => void navigate({ to: '/events/$eventId', params: { eventId: id } })}
+      onCreate={() => void navigate({ to: '/events/new' })}
+    />
   )
 }
