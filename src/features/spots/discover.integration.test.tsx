@@ -35,6 +35,14 @@ vi.mock('~/lib/supabase/browser', () => ({
   getBrowserSupabase: vi.fn(),
 }))
 
+// Sidebar reads the session + auth gate for the All/Saved toggle.
+vi.mock('~/features/auth/session', () => ({
+  useSession: () => ({ userId: null, status: 'anon' }),
+}))
+vi.mock('~/features/auth/useAuthGate', () => ({
+  useAuthGate: () => (action: () => void) => action(),
+}))
+
 const mockNavigate = vi.fn()
 let mockSearchState = {
   q: '',

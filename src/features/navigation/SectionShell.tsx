@@ -3,7 +3,7 @@ import { Rail } from '~/features/spots/Rail'
 import { SettingsPanel } from '~/features/settings/SettingsPanel'
 import { getPrefs } from '~/features/settings/prefs'
 import type { MapStyle } from '~/lib/mapbox/map'
-import { SectionBottomNav } from './SectionBottomNav'
+import { MobileNav } from './MobileNav'
 
 /**
  * App chrome for the dedicated, scrollable sections (Clubs, Events): the Rail on
@@ -25,7 +25,7 @@ export function SectionShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      <SectionBottomNav onOpenSettings={() => setSettingsOpen(true)} />
+      <MobileNav onOpenSettings={() => setSettingsOpen(true)} />
 
       <SettingsPanel
         open={settingsOpen}

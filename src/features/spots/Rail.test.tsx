@@ -77,29 +77,9 @@ describe('Rail', () => {
     expect(screen.getByRole('link', { name: 'Events' })).toHaveAttribute('href', '/events')
   })
 
-  it('hides the Saved button when no overlay is wired', () => {
+  it('no longer renders a Saved button (saved moved into the Discover list)', () => {
     renderRail()
     expect(screen.queryByRole('button', { name: /saved/i })).toBeNull()
-  })
-
-  it('shows the Saved button when its overlay is wired', () => {
-    renderRail({ onOpenSaved: () => {} })
-    expect(screen.getByRole('button', { name: /saved/i })).toBeInTheDocument()
-  })
-
-  it('calls onOpenSaved when the Saved button is clicked', async () => {
-    const user = userEvent.setup()
-    const onOpenSaved = vi.fn()
-    renderRail({ onOpenSaved })
-    await user.click(screen.getByRole('button', { name: /saved/i }))
-    expect(onOpenSaved).toHaveBeenCalledOnce()
-  })
-
-  it('marks Saved as active (pressed) when its overlay is open', () => {
-    renderRail({ onOpenSaved: () => {}, savedActive: true })
-    const savedBtn = screen.getByRole('button', { name: /saved/i })
-    expect(savedBtn).toHaveAttribute('aria-pressed', 'true')
-    expect(savedBtn.className).toContain('active')
   })
 
   it('does NOT render a Community button', () => {

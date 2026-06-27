@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useTranslation } from 'react-i18next'
 import { Route } from '~/routes/spots/route'
@@ -12,7 +12,11 @@ import { SpotCard } from './SpotCard'
 import { SpotCardSkeleton } from './SpotCardSkeleton'
 import { Filters } from './Filters'
 import { Icon } from '~/components/ui/Icon'
+import { cx } from '~/components/ui/cx'
 import { trackEvent } from '~/features/analytics/gtag'
+import { useSession } from '~/features/auth/session'
+import { useAuthGate } from '~/features/auth/useAuthGate'
+import { savedSpotsQueryOptions } from '~/features/likes/queries'
 
 const VIRTUALIZE_THRESHOLD = 30
 
@@ -36,12 +40,22 @@ export function Sidebar({
 
   // Get the active spotId param if we're on a spot detail page
   const params = useParams({ strict: false })
-  const activeSpotId = (params).spotId
+  const activeSpotId = params.spotId
 
   const { data: disciplines } = useSuspenseQuery(disciplinesQueryOptions())
   const { data: equipment } = useSuspenseQuery(equipmentsQueryOptions())
 
-  const filtered = applyFilters(spots, search)
+  // All / Saved toggle. Saved is a separate (auth-gated) query, so switching to
+  // "Saved" swaps the list source; the same search/filters apply on top.
+  const { userId } = useSession()
+  const gate = useAuthGate()
+  const [mode, setMode] = useState<'all' | 'saved'>('all')
+  const { data: savedSpots = [] } = useQuery({
+    ...savedSpotsQueryOptions(userId),
+    enabled: mode === 'saved' && !!userId,
+  })
+  const source = mode === 'saved' ? savedSpots : spots
+  const filtered = applyFilters(source, search)
 
   // Debounced search input
   const [inputValue, setInputValue] = useState(search.q)
@@ -150,6 +164,32 @@ export function Sidebar({
             className="w-full border-0 bg-transparent text-[13.5px] placeholder:text-text-4"
           />
         </div>
+
+        {/* All / Saved toggle */}
+        <div className="mt-3 flex gap-1 rounded-[10px] bg-surface-2 p-0.5">
+          <button
+            type="button"
+            onClick={() => setMode('all')}
+            className={cx(
+              'flex flex-1 items-center justify-center gap-1 rounded-[8px] py-1.5 text-[12.5px] font-medium transition-colors',
+              mode === 'all' ? 'bg-surface text-text shadow-sm' : 'text-text-3',
+            )}
+          >
+            {t('discover.all')}
+          </button>
+          <button
+            type="button"
+            onClick={() => gate(() => setMode('saved'))}
+            aria-pressed={mode === 'saved'}
+            className={cx(
+              'flex flex-1 items-center justify-center gap-1 rounded-[8px] py-1.5 text-[12.5px] font-medium transition-colors',
+              mode === 'saved' ? 'bg-surface text-text shadow-sm' : 'text-text-3',
+            )}
+          >
+            <Icon name="heart" size={13} fill={mode === 'saved' ? 'currentColor' : 'none'} />
+            {t('discover.saved')}
+          </button>
+        </div>
       </div>
 
       {/* On mobile the sheet is height-constrained: cap the filters into their own
@@ -176,7 +216,7 @@ export function Sidebar({
       ) : filtered.length === 0 ? (
         <div className="flex-[1.7] md:flex-1 min-h-0 overflow-y-auto px-2.5 pt-1.5 pb-5">
           <div className="text-center px-5 py-10 text-text-3 text-[13px]">
-            {t('discover.empty')}
+            {mode === 'saved' ? t('saved.empty') : t('discover.empty')}
           </div>
         </div>
       ) : shouldVirtualize ? (

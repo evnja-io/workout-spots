@@ -10,13 +10,9 @@ import { currentUserProfileQueryOptions } from '~/features/auth/profile'
 
 export interface RailProps {
   onOpenSettings?: () => void
-  /** When provided, the spots-only Saved button is shown. */
-  onOpenSaved?: () => void
-  /** Highlight the Saved button while its overlay is open. */
-  savedActive?: boolean
 }
 
-export function Rail({ onOpenSettings, onOpenSaved, savedActive = false }: RailProps) {
+export function Rail({ onOpenSettings }: RailProps) {
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const { userId, status, openSignIn, signOut } = useSessionContext()
@@ -117,20 +113,6 @@ export function Rail({ onOpenSettings, onOpenSaved, savedActive = false }: RailP
         <Icon name="clock" size={20} />
       </Link>
 
-      {/* Saved — spots-only, shown when the host wires its overlay */}
-      {onOpenSaved && (
-        <button
-          type="button"
-          className={cx(railBtn, savedActive && railBtnActive)}
-          aria-label={t('saved.title')}
-          aria-pressed={savedActive}
-          title={t('saved.title')}
-          onClick={() => onOpenSaved()}
-        >
-          <Icon name="heart" size={20} fill={savedActive ? 'currentColor' : 'none'} />
-        </button>
-      )}
-
       <div className="flex-1" />
 
       {/* Settings button */}
@@ -167,9 +149,7 @@ export function Rail({ onOpenSettings, onOpenSaved, savedActive = false }: RailP
             role="menu"
           >
             <div className="px-2.5 pt-1.5 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-text-4">
-              {pseudo
-                ? t('auth.signedInAsName', { name: pseudo })
-                : t('auth.signedInAs')}
+              {pseudo ? t('auth.signedInAsName', { name: pseudo }) : t('auth.signedInAs')}
             </div>
             <Link
               to="/profile"
