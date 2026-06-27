@@ -86,7 +86,7 @@ export function EventDetail({
   )
 
   return (
-    <div className="pb-24 md:pb-8">
+    <div className="md:pb-8">
       {/* Cover */}
       <div
         className="relative h-52 text-white md:h-64"
