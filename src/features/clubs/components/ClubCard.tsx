@@ -22,7 +22,7 @@ export function ClubCard({ club, onOpen }: { club: ClubListItem; onOpen: (id: st
       onKeyDown={handleKeyDown}
     >
       <div
-        className={cx('relative h-28 w-full', !club.coverImageUrl && 'text-white')}
+        className={cx('relative h-36 w-full', !club.coverImageUrl && 'text-white')}
         style={!club.coverImageUrl ? { backgroundImage: coverGradient(club.id) } : undefined}
       >
         {club.coverImageUrl && (

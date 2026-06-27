@@ -44,54 +44,56 @@ export function ClubDetail({
   )
 
   return (
-    <div className="mx-auto max-w-5xl pb-24 md:pb-8">
-      {/* Cover */}
+    <div className="pb-24 md:pb-8">
+      {/* Cover — full-bleed banner across the content column */}
       <div
-        className="relative flex h-48 flex-col justify-between p-4 text-white md:h-60"
+        className="relative h-52 text-white md:h-64"
         style={club.coverImageUrl ? undefined : { backgroundImage: coverGradient(club.id) }}
       >
         {club.coverImageUrl && (
           <>
-            <ImageWithShimmer
-              src={club.coverImageUrl}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.25),rgba(0,0,0,0.55))]" />
+            <div className="absolute inset-0">
+              <ImageWithShimmer src={club.coverImageUrl} alt="" className="h-full w-full" />
+            </div>
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.25),rgba(0,0,0,0.6))]" />
           </>
         )}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label={t('clubs.backToClubs')}
-            className="grid size-9 place-items-center rounded-full bg-black/35 text-white backdrop-blur-sm transition-colors hover:bg-black/50"
-          >
-            <Icon name="chevronL" size={18} />
-          </button>
-        </div>
-        <div className="relative">
-          <div className="flex items-center gap-2">
-            <CategoryChip category={club.category} onCover />
-            <PrivacyBadge privacy={club.privacy} onCover />
+        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-between p-4 md:p-6">
+          <div>
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label={t('clubs.backToClubs')}
+              className="grid size-9 place-items-center rounded-full bg-black/35 text-white backdrop-blur-sm transition-colors hover:bg-black/50"
+            >
+              <Icon name="chevronL" size={18} />
+            </button>
           </div>
-          <h1 className="mt-2 text-[26px] font-semibold leading-tight">{club.name}</h1>
-          <div className="mt-1.5 flex items-center gap-2 text-[13px] opacity-95">
-            <span className="inline-flex items-center gap-1">
-              <Icon name="users" size={15} />
-              {t('clubs.members', { count: club.memberCount })}
-            </span>
-            <span className="opacity-60">·</span>
-            <span className="inline-flex items-center gap-1">
-              <Icon name="mappin" size={15} />
-              {t('clubs.spots', { count: club.linkedSpots.length })}
-            </span>
+          <div>
+            <div className="flex items-center gap-2">
+              <CategoryChip category={club.category} onCover />
+              <PrivacyBadge privacy={club.privacy} onCover />
+            </div>
+            <h1 className="mt-2 text-[26px] font-semibold leading-tight md:text-[30px]">
+              {club.name}
+            </h1>
+            <div className="mt-1.5 flex items-center gap-2 text-[13px] opacity-95">
+              <span className="inline-flex items-center gap-1">
+                <Icon name="users" size={15} />
+                {t('clubs.members', { count: club.memberCount })}
+              </span>
+              <span className="opacity-60">·</span>
+              <span className="inline-flex items-center gap-1">
+                <Icon name="mappin" size={15} />
+                {t('clubs.spots', { count: club.linkedSpots.length })}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Body */}
-      <div className="grid gap-6 px-5 py-6 md:grid-cols-[1fr_300px]">
+      <div className="mx-auto grid max-w-6xl gap-6 px-5 py-6 md:grid-cols-[1fr_320px]">
         <div className="flex min-w-0 flex-col gap-5">
           <div className="flex gap-1 border-b border-border">
             <TabButton

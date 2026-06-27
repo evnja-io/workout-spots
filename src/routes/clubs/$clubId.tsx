@@ -11,13 +11,14 @@ import { SITE_URL } from '~/routes/__root'
 
 export const Route = createFileRoute('/clubs/$clubId')({
   loader: async ({ context, params }) => {
+    let club
     try {
-      const data = await context.queryClient.ensureQueryData(clubDetailQueryOptions(params.clubId))
-      if (!data) throw notFound()
-    } catch (e) {
-      if (e && typeof e === 'object' && 'isNotFound' in e) throw e
+      club = await context.queryClient.ensureQueryData(clubDetailQueryOptions(params.clubId))
+    } catch {
       throw notFound()
     }
+    if (!club) throw notFound()
+    return { club }
   },
   head: ({ params, match }) => {
     const club = match.context.queryClient.getQueryData<ClubDetailType | null>(
@@ -49,7 +50,11 @@ export const Route = createFileRoute('/clubs/$clubId')({
 function ClubDetailPage() {
   const { clubId } = Route.useParams()
   const navigate = useNavigate()
-  const { data: club } = useSuspenseQuery(clubDetailQueryOptions(clubId))
+  const { club: initialClub } = Route.useLoaderData()
+  const { data: club } = useSuspenseQuery({
+    ...clubDetailQueryOptions(clubId),
+    initialData: initialClub,
+  })
 
   useEffect(() => {
     trackEvent('view_club', { club_id: clubId })
@@ -69,9 +74,9 @@ function ClubDetailPage() {
 
 function ClubDetailPending() {
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="h-48 w-full animate-pulse bg-surface-2 md:h-60" />
-      <div className="grid gap-6 px-5 py-6 md:grid-cols-[1fr_300px]">
+    <div>
+      <div className="h-52 w-full animate-pulse bg-surface-2 md:h-64" />
+      <div className="mx-auto grid max-w-6xl gap-6 px-5 py-6 md:grid-cols-[1fr_320px]">
         <div className="flex flex-col gap-3">
           <div className="h-5 w-2/3 animate-pulse rounded bg-surface-2" />
           <div className="h-4 w-full animate-pulse rounded bg-surface-2" />

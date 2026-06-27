@@ -4,20 +4,24 @@ import { clubsListQueryOptions } from '~/features/clubs/queries'
 import { ClubsBrowse } from '~/features/clubs/components/ClubsBrowse'
 
 export const Route = createFileRoute('/clubs/')({
-  loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(clubsListQueryOptions())
-  },
+  // Return the data from the loader (and seed useQuery with it) so the client's
+  // first render matches SSR — the query cache itself isn't dehydrated to the
+  // client (see the no-query-ssr-dehydration project note).
+  loader: async ({ context }) => ({
+    clubs: await context.queryClient.ensureQueryData(clubsListQueryOptions()),
+  }),
   component: ClubsBrowsePage,
 })
 
 function ClubsBrowsePage() {
   const navigate = useNavigate()
-  const { data: clubs = [], isPending } = useQuery(clubsListQueryOptions())
+  const { clubs: initialClubs } = Route.useLoaderData()
+  const { data: clubs } = useQuery({ ...clubsListQueryOptions(), initialData: initialClubs })
 
   return (
     <ClubsBrowse
       clubs={clubs}
-      loading={isPending}
+      loading={false}
       onOpen={(id) => void navigate({ to: '/clubs/$clubId', params: { clubId: id } })}
       onCreate={() => void navigate({ to: '/clubs/new' })}
     />

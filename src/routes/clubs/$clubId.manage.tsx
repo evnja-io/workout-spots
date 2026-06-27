@@ -5,8 +5,9 @@ import { ClubManage } from '~/features/clubs/components/ClubManage'
 
 export const Route = createFileRoute('/clubs/$clubId/manage')({
   loader: async ({ context, params }) => {
-    const data = await context.queryClient.ensureQueryData(clubDetailQueryOptions(params.clubId))
-    if (!data) throw notFound()
+    const club = await context.queryClient.ensureQueryData(clubDetailQueryOptions(params.clubId))
+    if (!club) throw notFound()
+    return { club }
   },
   component: ClubManagePage,
 })
@@ -14,7 +15,11 @@ export const Route = createFileRoute('/clubs/$clubId/manage')({
 function ClubManagePage() {
   const { clubId } = Route.useParams()
   const navigate = useNavigate()
-  const { data: club } = useSuspenseQuery(clubDetailQueryOptions(clubId))
+  const { club: initialClub } = Route.useLoaderData()
+  const { data: club } = useSuspenseQuery({
+    ...clubDetailQueryOptions(clubId),
+    initialData: initialClub,
+  })
   if (!club) return null
   return (
     <ClubManage

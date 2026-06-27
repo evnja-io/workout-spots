@@ -60,7 +60,7 @@ export function ClubsBrowse({
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-6">
+    <div className="mx-auto max-w-6xl px-5 py-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-[22px] font-semibold text-text">{t('clubs.title')}</h1>
@@ -142,7 +142,7 @@ export function ClubsBrowse({
 
       {/* Grid / states */}
       {loading ? (
-        <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+        <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <ClubCardSkeleton key={i} />
           ))}
@@ -154,7 +154,7 @@ export function ClubsBrowse({
           <p className="mt-5 text-[13px] text-text-3">
             {t('clubs.count', { count: filtered.length })}
           </p>
-          <div className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4">
+          <div className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4">
             {filtered.map((c) => (
               <ClubCard key={c.id} club={c} onOpen={onOpen} />
             ))}
