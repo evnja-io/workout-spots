@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
@@ -10,6 +11,14 @@ import type { SpotListItem } from './domain'
 vi.mock('~/lib/supabase/browser', () => ({
   isSupabaseConfigured: () => false,
   getBrowserSupabase: vi.fn(),
+}))
+
+// Sidebar reads the session + auth gate for the All/Saved toggle.
+vi.mock('~/features/auth/session', () => ({
+  useSession: () => ({ userId: null, status: 'anon' }),
+}))
+vi.mock('~/features/auth/useAuthGate', () => ({
+  useAuthGate: () => (action: () => void) => action(),
 }))
 
 // ── TanStack Router mock ──────────────────────────────────────────────────────
@@ -25,7 +34,13 @@ vi.mock('@tanstack/react-router', () => ({
 // Mock the Route import used inside Sidebar.tsx
 vi.mock('~/routes/spots/route', () => ({
   Route: {
-    useSearch: () => ({ q: 'bercy', disciplines: [], equipment: [], open24h: false, sort: 'rating' }),
+    useSearch: () => ({
+      q: 'bercy',
+      disciplines: [],
+      equipment: [],
+      open24h: false,
+      sort: 'rating',
+    }),
   },
 }))
 
@@ -92,5 +107,25 @@ describe('Sidebar', () => {
 
     // The other spot is NOT present
     expect(screen.queryByText('Fontaine du Trocadéro')).toBeNull()
+  })
+
+  it('switching to the Saved toggle swaps the list source', async () => {
+    const user = userEvent.setup()
+    const client = makeClient()
+    render(
+      <QueryClientProvider client={client}>
+        <I18nextProvider i18n={i18n}>
+          <Sidebar spots={twoSpots} />
+        </I18nextProvider>
+      </QueryClientProvider>,
+    )
+
+    expect(screen.getByText('Bercy Bars')).toBeInTheDocument()
+
+    // Switch to Saved (mocked gate runs immediately; anon → no saved spots)
+    await user.click(screen.getByRole('button', { name: /saved/i }))
+
+    expect(screen.queryByText('Bercy Bars')).toBeNull()
+    expect(screen.getByText(/haven't saved any spots/i)).toBeInTheDocument()
   })
 })

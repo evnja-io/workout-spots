@@ -1,5 +1,5 @@
 {
-  "nav": { "spots": "Spots", "clubs": "Clubs", "events": "Events" },
+  "nav": { "spots": "Spots", "clubs": "Clubs", "events": "Events", "create": "Create" },
   "clubs": {
     "title": "Clubs",
     "subtitle": "Communities training near you",
@@ -328,6 +328,8 @@
   },
   "discover": {
     "title": "Discover",
+    "all": "All",
+    "saved": "Saved",
     "searchPlaceholder": "Search by name, city or address…",
     "spotsCount": "{{count}} spots",
     "results": "{{count}} results",

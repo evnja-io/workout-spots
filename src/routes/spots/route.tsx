@@ -4,20 +4,15 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { spotRouteSearchSchema } from '~/features/spots/filters'
 import { Rail } from '~/features/spots/Rail'
 import { Sidebar } from '~/features/spots/Sidebar'
-import { BottomNav } from '~/features/spots/BottomNav'
+import { MobileNav } from '~/features/navigation/MobileNav'
 import { MapView } from '~/features/spots/MapView'
 import { Sheet } from '~/components/ui/Sheet'
-import {
-  spotsInBoundsQueryOptions,
-  WORLD_BOUNDS,
-  type Bounds,
-} from '~/features/spots/queries'
+import { Icon } from '~/components/ui/Icon'
+import { spotsInBoundsQueryOptions, WORLD_BOUNDS, type Bounds } from '~/features/spots/queries'
 import { equipmentsQueryOptions, disciplinesQueryOptions } from '~/features/taxonomy/queries'
 import { getPrefs } from '~/features/settings/prefs'
 import { SettingsPanel } from '~/features/settings/SettingsPanel'
 import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
-import { SavedSheet } from '~/features/likes/SavedSheet'
-import { useAuthGate } from '~/features/auth/useAuthGate'
 import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
 import { ErrorState } from '~/components/ErrorState'
@@ -31,11 +26,7 @@ function SpotsPending() {
 function SpotsError({ reset }: { reset: () => void }) {
   const { t } = useTranslation()
   return (
-    <ErrorState
-      title={t('common.errorTitle')}
-      message={t('common.errorMessage')}
-      onRetry={reset}
-    />
+    <ErrorState title={t('common.errorTitle')} message={t('common.errorMessage')} onRetry={reset} />
   )
 }
 
@@ -58,14 +49,8 @@ function SpotsLayout() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [addSpotOpen, setAddSpotOpen] = useState(false)
   const [listSheetOpen, setListSheetOpen] = useState(false)
-  const [savedOpen, setSavedOpen] = useState(false)
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
   const navigate = useNavigate()
-  const gate = useAuthGate()
-
-  // Saved spots require auth — the gate opens sign-in for anon users and replays
-  // the open once they authenticate.
-  const handleOpenSaved = () => gate(() => setSavedOpen(true))
 
   // ── Bounds state (starts at world, tightens as the map reports its viewport) ─
   const [bounds, setBounds] = useState<Bounds>(WORLD_BOUNDS)
@@ -98,11 +83,7 @@ function SpotsLayout() {
 
   return (
     <div className="h-screen overflow-hidden bg-bg md:grid md:grid-cols-[64px_380px_1fr]">
-      <Rail
-        onOpenSettings={() => setSettingsOpen(true)}
-        onOpenSaved={handleOpenSaved}
-        savedActive={savedOpen}
-      />
+      <Rail onOpenSettings={() => setSettingsOpen(true)} />
       {/* Sidebar column — desktop only; on mobile the list lives in a bottom sheet */}
       <aside className="hidden min-h-0 flex-col border-r border-border bg-surface md:flex">
         <Suspense fallback={null}>
@@ -121,7 +102,7 @@ function SpotsLayout() {
           onChange={setMapStyle}
           theme="light"
         />
-        {/* Add-spot button — floating top-right of the map (desktop; mobile uses the BottomNav FAB) */}
+        {/* Add-spot button — floating top-right of the map (desktop; mobile uses the MobileNav FAB) */}
         <div className="pointer-events-auto absolute top-[14px] right-[14px] z-[3] hidden md:block">
           <button
             type="button"
@@ -132,15 +113,24 @@ function SpotsLayout() {
             + {t('discover.addSpot')}
           </button>
         </div>
+        {/* Mobile-only floating List pill — opens the Discover list sheet.
+            Bottom-left, clear of the map-style toggle (top), zoom controls
+            (right) and the bottom-nav create FAB (center). */}
+        <button
+          type="button"
+          onClick={() => setListSheetOpen(true)}
+          data-testid="map-list-pill"
+          className="absolute bottom-[calc(68px+env(safe-area-inset-bottom))] left-3 z-[3] inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-medium text-text shadow-[var(--shadow-md)] md:hidden"
+        >
+          <Icon name="list" size={16} />
+          {t('discover.title')}
+        </button>
       </div>
 
       {/* Mobile bottom navigation (hidden on md+) */}
-      <BottomNav
-        onOpenList={() => setListSheetOpen(true)}
-        onOpenAdd={() => setAddSpotOpen(true)}
+      <MobileNav
+        onCreateSpot={() => setAddSpotOpen(true)}
         onOpenSettings={() => setSettingsOpen(true)}
-        onOpenSaved={handleOpenSaved}
-        savedActive={savedOpen}
       />
 
       {/* Mobile list/filters sheet — hosts the same Sidebar shown on desktop */}
@@ -159,11 +149,6 @@ function SpotsLayout() {
         onMapStyleChange={setMapStyle}
       />
       <AddSpotWizard open={addSpotOpen} onClose={() => setAddSpotOpen(false)} />
-      <SavedSheet
-        open={savedOpen}
-        onClose={() => setSavedOpen(false)}
-        onSelectSpot={handleSelectSpot}
-      />
       <Outlet />
     </div>
   )
