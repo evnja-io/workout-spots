@@ -18,10 +18,10 @@ export function SectionShell({ children }: { children: ReactNode }) {
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
 
   return (
-    <div className="h-screen overflow-hidden bg-bg md:grid md:grid-cols-[64px_1fr]">
+    <div className="flex h-screen flex-col overflow-hidden bg-bg md:grid md:grid-cols-[64px_1fr]">
       <Rail onOpenSettings={() => setSettingsOpen(true)} />
 
-      <main className="min-h-0 overflow-y-auto pb-[calc(56px+env(safe-area-inset-bottom))] md:pb-0">
+      <main className="min-h-0 flex-1 overflow-y-auto pb-[calc(80px+env(safe-area-inset-bottom))] md:pb-0">
         {children}
       </main>
 

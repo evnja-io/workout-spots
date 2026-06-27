@@ -44,7 +44,7 @@ export function ClubDetail({
   )
 
   return (
-    <div className="pb-24 md:pb-8">
+    <div className="md:pb-8">
       {/* Cover — full-bleed banner across the content column */}
       <div
         className="relative h-52 text-white md:h-64"
