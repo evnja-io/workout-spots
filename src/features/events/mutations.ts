@@ -1,9 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
 import { useSession } from '~/features/auth/session'
 import { useAuthGate } from '~/features/auth/useAuthGate'
 import { trackEvent } from '~/features/analytics/gtag'
 import type { EventDetail, ParticipationStatus } from './domain'
+import type { CreateEventParsed } from './schema'
+import { uploadEventFeatured } from './photos'
 
 const detailKey = (eventId: string) => ['events', 'detail', eventId] as const
 const listKey = ['events', 'list'] as const
@@ -148,4 +151,93 @@ export function useCancelRsvp(eventId: string) {
   })
 
   return { cancel: () => mutation.mutate(), pending: mutation.isPending }
+}
+
+/**
+ * Create an event: insert the row, upload the featured image, then insert the
+ * event_locations and tag assignments (all under the creator RLS policies).
+ */
+export function useCreateEvent() {
+  const { userId } = useSession()
+  const gate = useAuthGate()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      values,
+      featured,
+    }: {
+      values: CreateEventParsed
+      featured: File | null
+    }) => {
+      if (!userId) throw new Error('Not authenticated')
+      const sb = getBrowserSupabase()
+
+      const { data, error } = await sb
+        .from('events')
+        .insert({
+          title: values.title,
+          description: values.description || null,
+          starts_at: values.startsAt,
+          ends_at: values.endsAt,
+          timezone: values.timezone,
+          min_participants: values.minParticipants,
+          max_participants: values.maxParticipants,
+          registration_deadline: values.registrationDeadline,
+          is_free: values.isFree,
+          price_amount: values.isFree ? null : values.priceAmount,
+          price_currency: values.priceCurrency,
+          visibility: values.visibility,
+          club_id: values.visibility === 'club_only' ? values.clubId : null,
+          requires_approval: values.requiresApproval,
+          organizer_name: values.organizerName || null,
+          organizer_contact: values.organizerContact || null,
+          created_by: userId,
+        })
+        .select('id')
+        .single()
+      if (error) throw error
+      const eventId = data.id
+
+      if (featured) {
+        const { url, path } = await uploadEventFeatured(eventId, featured)
+        const { error: updErr } = await sb
+          .from('events')
+          .update({ featured_image_url: url, featured_image_path: path })
+          .eq('id', eventId)
+        if (updErr) throw updErr
+      }
+
+      const locRows = values.locations.map((l, i) => ({
+        event_id: eventId,
+        location_id: l.locationId,
+        is_primary: l.isPrimary,
+        location_order: i + 1,
+        notes: l.note || null,
+      }))
+      const { error: locErr } = await sb.from('event_locations').insert(locRows)
+      if (locErr) throw locErr
+
+      if (values.tagIds.length > 0) {
+        const { error: tagErr } = await sb
+          .from('event_tag_assignments')
+          .insert(values.tagIds.map((tag_id) => ({ event_id: eventId, tag_id })))
+        if (tagErr) throw tagErr
+      }
+
+      return eventId
+    },
+    onSuccess: (eventId) => {
+      trackEvent('event_created', { event_id: eventId })
+      void queryClient.invalidateQueries({ queryKey: listKey })
+      void navigate({ to: '/events/$eventId', params: { eventId } })
+    },
+  })
+
+  return {
+    create: (values: CreateEventParsed, featured: File | null) =>
+      gate(() => mutation.mutate({ values, featured })),
+    pending: mutation.isPending,
+  }
 }

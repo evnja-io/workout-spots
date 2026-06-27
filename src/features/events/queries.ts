@@ -84,6 +84,43 @@ export function eventsListQueryOptions() {
   })
 }
 
+// ── Lookups for the create/edit form ─────────────────────────────────────────
+export function eventTagsQueryOptions() {
+  return queryOptions({
+    queryKey: ['events', 'tags'] as const,
+    queryFn: async (): Promise<EventTag[]> => {
+      if (!isSupabaseConfigured()) return []
+      const { data, error } = await getBrowserSupabase()
+        .from('event_tags')
+        .select('id,name,name_fr,color,icon')
+        .order('name')
+      if (error) throw error
+      return ((data ?? []) as TagJson[]).map(mapTag)
+    },
+  })
+}
+
+export type LinkableClub = { id: string; name: string }
+
+/** Clubs the viewer is an approved member of — for the club_only event picker. */
+export function userClubsQueryOptions(userId: string | null) {
+  return queryOptions({
+    queryKey: ['events', 'user-clubs', userId ?? 'anon'] as const,
+    queryFn: async (): Promise<LinkableClub[]> => {
+      if (!isSupabaseConfigured() || !userId) return []
+      const { data, error } = await getBrowserSupabase()
+        .from('club_members')
+        .select('club:clubs!club_members_club_id_fkey(id,name)')
+        .eq('user_id', userId)
+        .eq('status', 'approved')
+      if (error) throw error
+      return ((data ?? []) as unknown as { club: { id: string; name: string } | null }[])
+        .map((r) => r.club)
+        .filter((c): c is { id: string; name: string } => c !== null)
+    },
+  })
+}
+
 // ── Detail ───────────────────────────────────────────────────────────────────
 type EventDetailRpcRow = {
   id: string
