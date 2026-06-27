@@ -28,6 +28,30 @@ export type ClubLinkedSpot = {
   thumbnailUrl: string | null
 }
 
+export type ClubFeedAuthor = {
+  id: string
+  name: string
+  avatarUrl: string | null
+}
+
+export type ClubComment = {
+  id: string
+  author: ClubFeedAuthor
+  content: string
+  createdAt: string
+}
+
+export type ClubPost = {
+  id: string
+  author: ClubFeedAuthor
+  content: string
+  imageUrl: string | null
+  createdAt: string
+  likeCount: number
+  viewerLiked: boolean
+  comments: ClubComment[]
+}
+
 export type ClubDetail = {
   id: string
   name: string

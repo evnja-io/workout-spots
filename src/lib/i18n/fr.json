@@ -27,7 +27,18 @@
     "noMatchTitle": "Aucun club ne correspond à vos filtres",
     "noMatchBody": "Essayez de retirer un filtre ou de rechercher un autre nom.",
     "clearFilters": "Effacer les filtres",
-    "notFound": "Club introuvable"
+    "notFound": "Club introuvable",
+    "tabOverview": "Aperçu",
+    "tabFeed": "Fil",
+    "feedLocked": "Rejoignez ce club privé pour voir ses publications.",
+    "feedEmpty": "Aucune publication pour l'instant. Soyez le premier à partager.",
+    "composePlaceholder": "Partagez quelque chose avec le club…",
+    "commentPlaceholder": "Écrire un commentaire…",
+    "addPhoto": "Ajouter une photo",
+    "post": "Publier",
+    "send": "Envoyer",
+    "deletePost": "Supprimer la publication",
+    "deleteComment": "Supprimer le commentaire"
   },
   "events": { "title": "Événements", "comingSoon": "Les événements arrivent bientôt." },
   "common": {

@@ -10,6 +10,7 @@ import { coverGradient } from './visuals'
 import { Avatar } from './Avatar'
 import { CategoryChip, PrivacyBadge, RoleBadge } from './badges'
 import { JoinControl } from './JoinControl'
+import { ClubFeed } from './ClubFeed'
 
 export function ClubDetail({
   club,
@@ -21,6 +22,7 @@ export function ClubDetail({
   onOpenSpot: (spotId: string) => void
 }) {
   const { t } = useTranslation()
+  const [tab, setTab] = useState<'overview' | 'feed'>('overview')
   const state = resolveClubViewer(club.privacy, {
     role: club.viewerRole,
     status: club.viewerStatus,
@@ -87,53 +89,72 @@ export function ClubDetail({
 
       {/* Body */}
       <div className="grid gap-6 px-5 py-6 md:grid-cols-[1fr_300px]">
-        <div className="flex min-w-0 flex-col gap-7">
-          {club.description && (
-            <p className="text-[15px] leading-relaxed text-text-2">{club.description}</p>
+        <div className="flex min-w-0 flex-col gap-5">
+          <div className="flex gap-1 border-b border-border">
+            <TabButton
+              active={tab === 'overview'}
+              label={t('clubs.tabOverview')}
+              onClick={() => setTab('overview')}
+            />
+            <TabButton
+              active={tab === 'feed'}
+              label={t('clubs.tabFeed')}
+              onClick={() => setTab('feed')}
+            />
+          </div>
+
+          {tab === 'feed' ? (
+            <ClubFeed clubId={club.id} locked={state.locked} canCompose={state.isMember} />
+          ) : (
+            <div className="flex flex-col gap-7">
+              {club.description && (
+                <p className="text-[15px] leading-relaxed text-text-2">{club.description}</p>
+              )}
+
+              {club.rules && <Rules rules={club.rules} />}
+
+              {club.tags.length > 0 && (
+                <Section title={t('clubs.tags')}>
+                  <div className="flex flex-wrap gap-1.5">
+                    {club.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-surface-2 px-2.5 py-1 text-[12.5px] text-text-2"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </Section>
+              )}
+
+              <Section title={`${t('clubs.membersTitle')} · ${club.memberCount.toLocaleString()}`}>
+                {state.locked ? (
+                  <p className="text-[13px] text-text-3">{t('clubs.memberListLocked')}</p>
+                ) : club.members.length === 0 ? (
+                  <p className="text-[13px] text-text-3">{t('clubs.noMembers')}</p>
+                ) : (
+                  <div className="flex flex-col gap-1">
+                    {club.members.slice(0, 8).map((m) => (
+                      <MemberRow key={m.userId} member={m} />
+                    ))}
+                  </div>
+                )}
+              </Section>
+
+              <Section title={`${t('clubs.linkedSpots')} · ${club.linkedSpots.length}`}>
+                {club.linkedSpots.length === 0 ? (
+                  <p className="text-[13px] text-text-3">{t('clubs.noLinkedSpots')}</p>
+                ) : (
+                  <div className="flex flex-col gap-1.5">
+                    {club.linkedSpots.map((s) => (
+                      <LinkedSpotRow key={s.id} spot={s} onOpen={() => onOpenSpot(s.id)} />
+                    ))}
+                  </div>
+                )}
+              </Section>
+            </div>
           )}
-
-          {club.rules && <Rules rules={club.rules} />}
-
-          {club.tags.length > 0 && (
-            <Section title={t('clubs.tags')}>
-              <div className="flex flex-wrap gap-1.5">
-                {club.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-surface-2 px-2.5 py-1 text-[12.5px] text-text-2"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          <Section title={`${t('clubs.membersTitle')} · ${club.memberCount.toLocaleString()}`}>
-            {state.locked ? (
-              <p className="text-[13px] text-text-3">{t('clubs.memberListLocked')}</p>
-            ) : club.members.length === 0 ? (
-              <p className="text-[13px] text-text-3">{t('clubs.noMembers')}</p>
-            ) : (
-              <div className="flex flex-col gap-1">
-                {club.members.slice(0, 8).map((m) => (
-                  <MemberRow key={m.userId} member={m} />
-                ))}
-              </div>
-            )}
-          </Section>
-
-          <Section title={`${t('clubs.linkedSpots')} · ${club.linkedSpots.length}`}>
-            {club.linkedSpots.length === 0 ? (
-              <p className="text-[13px] text-text-3">{t('clubs.noLinkedSpots')}</p>
-            ) : (
-              <div className="flex flex-col gap-1.5">
-                {club.linkedSpots.map((s) => (
-                  <LinkedSpotRow key={s.id} spot={s} onOpen={() => onOpenSpot(s.id)} />
-                ))}
-              </div>
-            )}
-          </Section>
         </div>
 
         {/* Aside (desktop) */}
@@ -155,6 +176,29 @@ export function ClubDetail({
         {joinControl}
       </div>
     </div>
+  )
+}
+
+function TabButton({
+  active,
+  label,
+  onClick,
+}: {
+  active: boolean
+  label: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cx(
+        '-mb-px border-b-2 px-3 py-2 text-[14px] font-medium transition-colors',
+        active ? 'border-accent text-text' : 'border-transparent text-text-3 hover:text-text',
+      )}
+    >
+      {label}
+    </button>
   )
 }
 
@@ -233,7 +277,8 @@ function LinkedSpotRow({ spot, onOpen }: { spot: ClubLinkedSpot; onOpen: () => v
       <div
         className={cx(
           'size-11 shrink-0 overflow-hidden rounded-[9px]',
-          !spot.thumbnailUrl && 'bg-[repeating-linear-gradient(135deg,#e5e7eb_0_8px,#eef0f3_8px_16px)]',
+          !spot.thumbnailUrl &&
+            'bg-[repeating-linear-gradient(135deg,#e5e7eb_0_8px,#eef0f3_8px_16px)]',
         )}
       >
         {spot.thumbnailUrl && (

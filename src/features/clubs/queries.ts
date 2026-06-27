@@ -1,11 +1,14 @@
 import { queryOptions } from '@tanstack/react-query'
 import { getBrowserSupabase, isSupabaseConfigured } from '~/lib/supabase/browser'
 import type {
+  ClubComment,
   ClubDetail,
+  ClubFeedAuthor,
   ClubLinkedSpot,
   ClubListItem,
   ClubMember,
   ClubMemberStatus,
+  ClubPost,
   ClubPrivacy,
   ClubRole,
 } from './domain'
@@ -77,12 +80,42 @@ type RosterRow = {
   role: string | null
   status: string | null
   joined_at: string | null
-  user: { id: string; pseudo: string | null; name: string | null; profile_picture_url: string | null } | null
+  user: {
+    id: string
+    pseudo: string | null
+    name: string | null
+    profile_picture_url: string | null
+  } | null
 }
 
 function thumbnailOf(images: { image_url: string; image_order: number }[]): string | null {
   if (!images || images.length === 0) return null
   return [...images].sort((a, b) => a.image_order - b.image_order)[0]?.image_url ?? null
+}
+
+type FeedUser = {
+  id: string
+  pseudo: string | null
+  name: string | null
+  profile_picture_url: string | null
+}
+type FeedCommentRow = { id: string; content: string; created_at: string; author: FeedUser | null }
+type FeedPostRow = {
+  id: string
+  content: string
+  image_url: string | null
+  created_at: string
+  author: FeedUser | null
+  likes: { count: number }[]
+  comments: FeedCommentRow[]
+}
+
+function mapAuthor(user: FeedUser | null): ClubFeedAuthor {
+  return {
+    id: user?.id ?? '',
+    name: user?.pseudo ?? user?.name ?? 'Member',
+    avatarUrl: user?.profile_picture_url ?? null,
+  }
 }
 
 function mapMember(row: RosterRow): ClubMember | null {
@@ -163,6 +196,65 @@ export function clubDetailQueryOptions(clubId: string) {
         viewerRole: (row.current_user_role as ClubRole | null) ?? null,
         viewerStatus: (row.current_user_status as ClubMemberStatus | null) ?? null,
       }
+    },
+  })
+}
+
+// ── Feed ─────────────────────────────────────────────────────────────────────
+// userId is part of the key so viewerLiked is recomputed when auth changes.
+// Mutations invalidate by the ['clubs','feed',clubId] prefix to cover all viewers.
+export function clubFeedQueryOptions(clubId: string, userId: string | null) {
+  return queryOptions({
+    queryKey: ['clubs', 'feed', clubId, userId ?? 'anon'] as const,
+    queryFn: async (): Promise<ClubPost[]> => {
+      if (!isSupabaseConfigured()) return []
+      const sb = getBrowserSupabase()
+      const { data, error } = await sb
+        .from('club_posts')
+        .select(
+          'id,content,image_url,created_at,' +
+            'author:users!club_posts_author_id_fkey(id,pseudo,name,profile_picture_url),' +
+            'likes:club_post_likes(count),' +
+            'comments:club_post_comments(id,content,created_at,author:users!club_post_comments_author_id_fkey(id,pseudo,name,profile_picture_url))',
+        )
+        .eq('club_id', clubId)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      const rows = (data ?? []) as unknown as FeedPostRow[]
+
+      let likedIds = new Set<string>()
+      if (userId && rows.length > 0) {
+        const { data: mine, error: likeErr } = await sb
+          .from('club_post_likes')
+          .select('post_id')
+          .eq('user_id', userId)
+          .in(
+            'post_id',
+            rows.map((r) => r.id),
+          )
+        if (likeErr) throw likeErr
+        likedIds = new Set((mine ?? []).map((l) => l.post_id))
+      }
+
+      return rows.map((p) => ({
+        id: p.id,
+        author: mapAuthor(p.author),
+        content: p.content,
+        imageUrl: p.image_url,
+        createdAt: p.created_at,
+        likeCount: p.likes?.[0]?.count ?? 0,
+        viewerLiked: likedIds.has(p.id),
+        comments: ([...(p.comments ?? [])] as FeedCommentRow[])
+          .sort((a, b) => a.created_at.localeCompare(b.created_at))
+          .map(
+            (c): ClubComment => ({
+              id: c.id,
+              author: mapAuthor(c.author),
+              content: c.content,
+              createdAt: c.created_at,
+            }),
+          ),
+      }))
     },
   })
 }
