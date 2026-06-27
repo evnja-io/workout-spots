@@ -1,11 +1,14 @@
 import { queryOptions } from '@tanstack/react-query'
 import { getBrowserSupabase, isSupabaseConfigured } from '~/lib/supabase/browser'
 import type {
+  EventComment,
   EventDetail,
+  EventFeedAuthor,
   EventImage,
   EventListItem,
   EventLocation,
   EventParticipant,
+  EventPost,
   EventStatus,
   EventTag,
   EventVisibility,
@@ -259,6 +262,88 @@ export function eventDetailQueryOptions(eventId: string) {
         images,
         tags: (row.tags ?? []).map(mapTag),
       }
+    },
+  })
+}
+
+// ── Feed ─────────────────────────────────────────────────────────────────────
+type FeedUser = {
+  id: string
+  pseudo: string | null
+  name: string | null
+  profile_picture_url: string | null
+}
+type FeedCommentRow = { id: string; content: string; created_at: string; author: FeedUser | null }
+type FeedPostRow = {
+  id: string
+  content: string
+  image_url: string | null
+  created_at: string
+  author: FeedUser | null
+  likes: { count: number }[]
+  comments: FeedCommentRow[]
+}
+
+function mapFeedAuthor(user: FeedUser | null): EventFeedAuthor {
+  return {
+    id: user?.id ?? '',
+    name: user?.pseudo ?? user?.name ?? 'Member',
+    avatarUrl: user?.profile_picture_url ?? null,
+  }
+}
+
+export function eventFeedQueryOptions(eventId: string, userId: string | null) {
+  return queryOptions({
+    queryKey: ['events', 'feed', eventId, userId ?? 'anon'] as const,
+    queryFn: async (): Promise<EventPost[]> => {
+      if (!isSupabaseConfigured()) return []
+      const sb = getBrowserSupabase()
+      const { data, error } = await sb
+        .from('event_posts')
+        .select(
+          'id,content,image_url,created_at,' +
+            'author:users!event_posts_author_id_fkey(id,pseudo,name,profile_picture_url),' +
+            'likes:event_post_likes(count),' +
+            'comments:event_post_comments(id,content,created_at,author:users!event_post_comments_author_id_fkey(id,pseudo,name,profile_picture_url))',
+        )
+        .eq('event_id', eventId)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      const rows = (data ?? []) as unknown as FeedPostRow[]
+
+      let likedIds = new Set<string>()
+      if (userId && rows.length > 0) {
+        const { data: mine, error: likeErr } = await sb
+          .from('event_post_likes')
+          .select('post_id')
+          .eq('user_id', userId)
+          .in(
+            'post_id',
+            rows.map((r) => r.id),
+          )
+        if (likeErr) throw likeErr
+        likedIds = new Set((mine ?? []).map((l) => l.post_id))
+      }
+
+      return rows.map((p) => ({
+        id: p.id,
+        author: mapFeedAuthor(p.author),
+        content: p.content,
+        imageUrl: p.image_url,
+        createdAt: p.created_at,
+        likeCount: p.likes?.[0]?.count ?? 0,
+        viewerLiked: likedIds.has(p.id),
+        comments: ([...(p.comments ?? [])] as FeedCommentRow[])
+          .sort((a, b) => a.created_at.localeCompare(b.created_at))
+          .map(
+            (c): EventComment => ({
+              id: c.id,
+              author: mapFeedAuthor(c.author),
+              content: c.content,
+              createdAt: c.created_at,
+            }),
+          ),
+      }))
     },
   })
 }

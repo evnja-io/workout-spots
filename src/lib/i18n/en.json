@@ -168,7 +168,18 @@
     "cancelEvent": "Cancel event",
     "alreadyCancelled": "This event is already cancelled.",
     "cancelReasonPlaceholder": "Why are you cancelling? (shown to participants)",
-    "confirmCancel": "Cancel event"
+    "confirmCancel": "Cancel event",
+    "tabOverview": "Overview",
+    "tabFeed": "Feed",
+    "feedEmpty": "No posts yet. Be the first to share something.",
+    "feedJoinToPost": "Participants can post in the event feed.",
+    "composePlaceholder": "Share something with participants…",
+    "commentPlaceholder": "Write a comment…",
+    "addPhoto": "Add photo",
+    "post": "Post",
+    "send": "Send",
+    "deletePost": "Delete post",
+    "deleteComment": "Delete comment"
   },
   "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue", "retry": "Retry", "errorTitle": "Something went wrong", "errorMessage": "An unexpected error occurred. Please try again." },
   "auth": {

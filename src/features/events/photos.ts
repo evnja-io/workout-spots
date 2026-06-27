@@ -2,6 +2,7 @@ import { getBrowserSupabase } from '~/lib/supabase/browser'
 import { validateImage } from '~/features/add-spot/photos'
 
 export const EVENT_IMAGES_BUCKET = 'event-images'
+export const POST_IMAGES_BUCKET = 'post-images'
 
 function ext(filename: string): string {
   const i = filename.lastIndexOf('.')
@@ -35,4 +36,19 @@ export async function uploadEventGalleryImage(
   const { error } = await sb.storage.from(EVENT_IMAGES_BUCKET).upload(path, file)
   if (error) throw new Error(`Failed to upload image: ${error.message}`)
   return { url: sb.storage.from(EVENT_IMAGES_BUCKET).getPublicUrl(path).data.publicUrl, path }
+}
+
+/** Upload an event feed post image to post-images/<eventId>/<postId>/…; returns the public URL. */
+export async function uploadEventPostImage(
+  eventId: string,
+  postId: string,
+  file: File,
+): Promise<string> {
+  const check = validateImage(file)
+  if (!check.ok) throw new Error(check.reason)
+  const sb = getBrowserSupabase()
+  const path = `${eventId}/${postId}/${Date.now()}${ext(file.name)}`
+  const { error } = await sb.storage.from(POST_IMAGES_BUCKET).upload(path, file)
+  if (error) throw new Error(`Failed to upload image: ${error.message}`)
+  return sb.storage.from(POST_IMAGES_BUCKET).getPublicUrl(path).data.publicUrl
 }

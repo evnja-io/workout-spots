@@ -168,7 +168,18 @@
     "cancelEvent": "Annuler l'événement",
     "alreadyCancelled": "Cet événement est déjà annulé.",
     "cancelReasonPlaceholder": "Pourquoi annulez-vous ? (visible par les participants)",
-    "confirmCancel": "Annuler l'événement"
+    "confirmCancel": "Annuler l'événement",
+    "tabOverview": "Aperçu",
+    "tabFeed": "Fil",
+    "feedEmpty": "Aucune publication pour l'instant. Soyez le premier à partager.",
+    "feedJoinToPost": "Les participants peuvent publier dans le fil de l'événement.",
+    "composePlaceholder": "Partagez quelque chose avec les participants…",
+    "commentPlaceholder": "Écrire un commentaire…",
+    "addPhoto": "Ajouter une photo",
+    "post": "Publier",
+    "send": "Envoyer",
+    "deletePost": "Supprimer la publication",
+    "deleteComment": "Supprimer le commentaire"
   },
   "common": {
     "save": "Enregistrer",

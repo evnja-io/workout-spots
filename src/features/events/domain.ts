@@ -45,6 +45,30 @@ export type EventImage = {
   caption: string | null
 }
 
+export type EventFeedAuthor = {
+  id: string
+  name: string
+  avatarUrl: string | null
+}
+
+export type EventComment = {
+  id: string
+  author: EventFeedAuthor
+  content: string
+  createdAt: string
+}
+
+export type EventPost = {
+  id: string
+  author: EventFeedAuthor
+  content: string
+  imageUrl: string | null
+  createdAt: string
+  likeCount: number
+  viewerLiked: boolean
+  comments: EventComment[]
+}
+
 export type EventParticipant = {
   id: string
   user: { id: string; name: string; avatarUrl: string | null }

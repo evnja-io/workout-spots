@@ -10,6 +10,7 @@ import { coverGradient } from './visuals'
 import { EvTags, PriceBadge, StatusBadge } from './badges'
 import { CapacityMeter } from './CapacityMeter'
 import { RSVPControl } from './RSVPControl'
+import { EventFeed } from './EventFeed'
 
 export function EventDetail({
   event,
@@ -25,6 +26,8 @@ export function EventDetail({
 }) {
   const { t } = useTranslation()
   const [lightbox, setLightbox] = useState<number | null>(null)
+  const [tab, setTab] = useState<'overview' | 'feed'>('overview')
+  const canCompose = event.viewerType === 'participating' && event.viewerStatus === 'approved'
 
   const view = resolveRsvpView(
     {
@@ -136,39 +139,58 @@ export function EventDetail({
 
           <WhenBlock startsAt={event.startsAt} endsAt={event.endsAt} timezone={event.timezone} />
 
-          {event.description && (
-            <p className="whitespace-pre-line text-[15px] leading-relaxed text-text-2">
-              {event.description}
-            </p>
-          )}
-
-          <Section title={t('events.locations')}>
-            <div className="flex flex-col gap-2">
-              {event.locations.map((loc) => (
-                <LocationRow key={loc.id} location={loc} onOpen={() => onOpenSpot(loc.id)} />
-              ))}
-            </div>
-          </Section>
-
-          <Section title={t('events.organizer')}>
-            <OrganizerRow
-              name={event.organizerName || event.clubName || t('events.organizerUnknown')}
-              detail={event.clubName || event.organizerContact}
+          <div className="flex gap-1 border-b border-border">
+            <TabButton
+              active={tab === 'overview'}
+              label={t('events.tabOverview')}
+              onClick={() => setTab('overview')}
             />
-          </Section>
+            <TabButton
+              active={tab === 'feed'}
+              label={t('events.tabFeed')}
+              onClick={() => setTab('feed')}
+            />
+          </div>
 
-          {event.images.length > 0 && (
-            <Section title={t('events.gallery')}>
-              <Gallery images={event.images} onOpen={setLightbox} />
-            </Section>
-          )}
+          {tab === 'feed' ? (
+            <EventFeed eventId={event.id} canCompose={canCompose} />
+          ) : (
+            <div className="flex flex-col gap-6">
+              {event.description && (
+                <p className="whitespace-pre-line text-[15px] leading-relaxed text-text-2">
+                  {event.description}
+                </p>
+              )}
 
-          {event.tags.length > 0 && (
-            <Section title={t('events.tags')}>
-              <div className="flex flex-wrap gap-1.5">
-                <EvTags tags={event.tags} />
-              </div>
-            </Section>
+              <Section title={t('events.locations')}>
+                <div className="flex flex-col gap-2">
+                  {event.locations.map((loc) => (
+                    <LocationRow key={loc.id} location={loc} onOpen={() => onOpenSpot(loc.id)} />
+                  ))}
+                </div>
+              </Section>
+
+              <Section title={t('events.organizer')}>
+                <OrganizerRow
+                  name={event.organizerName || event.clubName || t('events.organizerUnknown')}
+                  detail={event.clubName || event.organizerContact}
+                />
+              </Section>
+
+              {event.images.length > 0 && (
+                <Section title={t('events.gallery')}>
+                  <Gallery images={event.images} onOpen={setLightbox} />
+                </Section>
+              )}
+
+              {event.tags.length > 0 && (
+                <Section title={t('events.tags')}>
+                  <div className="flex flex-wrap gap-1.5">
+                    <EvTags tags={event.tags} />
+                  </div>
+                </Section>
+              )}
+            </div>
           )}
         </div>
 
@@ -202,6 +224,29 @@ export function EventDetail({
         />
       )}
     </div>
+  )
+}
+
+function TabButton({
+  active,
+  label,
+  onClick,
+}: {
+  active: boolean
+  label: string
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cx(
+        '-mb-px border-b-2 px-3 py-2 text-[14px] font-medium transition-colors',
+        active ? 'border-accent text-text' : 'border-transparent text-text-3 hover:text-text',
+      )}
+    >
+      {label}
+    </button>
   )
 }
 
