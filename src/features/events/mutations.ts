@@ -7,6 +7,7 @@ import { trackEvent } from '~/features/analytics/gtag'
 import type { EventDetail, ParticipationStatus } from './domain'
 import type { CreateEventParsed } from './schema'
 import { uploadEventFeatured } from './photos'
+import { nextGalleryOrder, uploadAndInsertGallery } from './gallery'
 
 const detailKey = (eventId: string) => ['events', 'detail', eventId] as const
 const listKey = ['events', 'list'] as const
@@ -167,9 +168,11 @@ export function useCreateEvent() {
     mutationFn: async ({
       values,
       featured,
+      gallery,
     }: {
       values: CreateEventParsed
       featured: File | null
+      gallery: File[]
     }) => {
       if (!userId) throw new Error('Not authenticated')
       const sb = getBrowserSupabase()
@@ -226,6 +229,8 @@ export function useCreateEvent() {
         if (tagErr) throw tagErr
       }
 
+      if (gallery.length > 0) await uploadAndInsertGallery(eventId, gallery, 1)
+
       return eventId
     },
     onSuccess: (eventId) => {
@@ -236,8 +241,98 @@ export function useCreateEvent() {
   })
 
   return {
-    create: (values: CreateEventParsed, featured: File | null) =>
-      gate(() => mutation.mutate({ values, featured })),
+    create: (values: CreateEventParsed, featured: File | null, gallery: File[]) =>
+      gate(() => mutation.mutate({ values, featured, gallery })),
+    pending: mutation.isPending,
+  }
+}
+
+/**
+ * Full edit of an event the viewer owns: update scalar fields, replace the
+ * event_locations and tag assignments, optionally replace the featured image,
+ * and append any new gallery images.
+ */
+export function useEditEvent(eventId: string) {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      values,
+      featured,
+      gallery,
+    }: {
+      values: CreateEventParsed
+      featured: File | null
+      gallery: File[]
+    }) => {
+      const sb = getBrowserSupabase()
+
+      const featuredFields = featured
+        ? await uploadEventFeatured(eventId, featured).then((r) => ({
+            featured_image_url: r.url,
+            featured_image_path: r.path,
+          }))
+        : {}
+      const { error } = await sb
+        .from('events')
+        .update({
+          title: values.title,
+          description: values.description || null,
+          starts_at: values.startsAt,
+          ends_at: values.endsAt,
+          timezone: values.timezone,
+          min_participants: values.minParticipants,
+          max_participants: values.maxParticipants,
+          registration_deadline: values.registrationDeadline,
+          is_free: values.isFree,
+          price_amount: values.isFree ? null : values.priceAmount,
+          price_currency: values.priceCurrency,
+          visibility: values.visibility,
+          club_id: values.visibility === 'club_only' ? values.clubId : null,
+          requires_approval: values.requiresApproval,
+          organizer_name: values.organizerName || null,
+          ...featuredFields,
+        })
+        .eq('id', eventId)
+      if (error) throw error
+
+      // Replace locations
+      await sb.from('event_locations').delete().eq('event_id', eventId)
+      const locRows = values.locations.map((l, i) => ({
+        event_id: eventId,
+        location_id: l.locationId,
+        is_primary: l.isPrimary,
+        location_order: i + 1,
+        notes: l.note || null,
+      }))
+      const { error: locErr } = await sb.from('event_locations').insert(locRows)
+      if (locErr) throw locErr
+
+      // Replace tag assignments
+      await sb.from('event_tag_assignments').delete().eq('event_id', eventId)
+      if (values.tagIds.length > 0) {
+        const { error: tagErr } = await sb
+          .from('event_tag_assignments')
+          .insert(values.tagIds.map((tag_id) => ({ event_id: eventId, tag_id })))
+        if (tagErr) throw tagErr
+      }
+
+      // Append new gallery images
+      if (gallery.length > 0) {
+        const start = await nextGalleryOrder(eventId)
+        await uploadAndInsertGallery(eventId, gallery, start)
+      }
+    },
+    onSuccess: () => trackEvent('event_updated', { event_id: eventId }),
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: detailKey(eventId) })
+      void queryClient.invalidateQueries({ queryKey: listKey })
+    },
+  })
+
+  return {
+    edit: (values: CreateEventParsed, featured: File | null, gallery: File[]) =>
+      mutation.mutate({ values, featured, gallery }),
     pending: mutation.isPending,
   }
 }

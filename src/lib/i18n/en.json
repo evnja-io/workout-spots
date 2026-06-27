@@ -152,6 +152,10 @@
     "fieldOrganizerPlaceholder": "Who's hosting? (optional)",
     "fieldFeatured": "Featured image",
     "fieldFeaturedHint": "Add a featured image",
+    "fieldGallery": "Gallery",
+    "fieldGalleryHint": "Add gallery photos",
+    "galleryChosen": "{{count}} photo(s) selected",
+    "galleryExisting": "{{count}} already in the gallery — new photos are appended.",
     "manage": "Manage event",
     "manageParticipants": "Participants",
     "manageSettings": "Settings",
@@ -181,7 +185,15 @@
     "deletePost": "Delete post",
     "deleteComment": "Delete comment"
   },
-  "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue", "retry": "Retry", "errorTitle": "Something went wrong", "errorMessage": "An unexpected error occurred. Please try again." },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "continue": "Continue",
+    "retry": "Retry",
+    "errorTitle": "Something went wrong",
+    "errorMessage": "An unexpected error occurred. Please try again."
+  },
   "auth": {
     "signInTitle": "Sign in",
     "signUpTitle": "Sign up",
@@ -388,12 +400,30 @@
       "title": "Built for how you actually train",
       "sub": "From your first pull-up to your hardest set, find the right place to do it, and the people who train there too.",
       "items": [
-        { "title": "Spots near you", "desc": "A live map of outdoor training spots, from full calisthenics parks to a single set of bars down the street." },
-        { "title": "Filter by sport", "desc": "Calisthenics, street workout, parkour, running and more. See only the spots that fit how you train." },
-        { "title": "Know the equipment", "desc": "Pull-up bars, parallel bars, rings, monkey bars, tracks. Every spot lists exactly what's there before you go." },
-        { "title": "Real ratings & reviews", "desc": "Honest reviews from the community: surface conditions, crowd levels, shade, lighting and the best hours to come." },
-        { "title": "Hours & access", "desc": "See what's open 24/7 and what has set hours, so you never show up to a locked gate again." },
-        { "title": "A real community", "desc": "Add the spots you train at, share photos, and help the next athlete find their place to move." }
+        {
+          "title": "Spots near you",
+          "desc": "A live map of outdoor training spots, from full calisthenics parks to a single set of bars down the street."
+        },
+        {
+          "title": "Filter by sport",
+          "desc": "Calisthenics, street workout, parkour, running and more. See only the spots that fit how you train."
+        },
+        {
+          "title": "Know the equipment",
+          "desc": "Pull-up bars, parallel bars, rings, monkey bars, tracks. Every spot lists exactly what's there before you go."
+        },
+        {
+          "title": "Real ratings & reviews",
+          "desc": "Honest reviews from the community: surface conditions, crowd levels, shade, lighting and the best hours to come."
+        },
+        {
+          "title": "Hours & access",
+          "desc": "See what's open 24/7 and what has set hours, so you never show up to a locked gate again."
+        },
+        {
+          "title": "A real community",
+          "desc": "Add the spots you train at, share photos, and help the next athlete find their place to move."
+        }
       ]
     },
     "how": {
@@ -401,9 +431,18 @@
       "title": "From the couch to the bar",
       "sub": "Finding somewhere to train shouldn't be harder than the workout itself.",
       "steps": [
-        { "title": "Open the map", "desc": "See every outdoor training spot around you, instantly. No sign-up needed to start exploring." },
-        { "title": "Filter & choose", "desc": "Narrow by discipline and equipment, check ratings and hours, and pick the spot that fits your session." },
-        { "title": "Train & contribute", "desc": "Go move. Then leave a review or add a new spot to put it on the map for everyone else." }
+        {
+          "title": "Open the map",
+          "desc": "See every outdoor training spot around you, instantly. No sign-up needed to start exploring."
+        },
+        {
+          "title": "Filter & choose",
+          "desc": "Narrow by discipline and equipment, check ratings and hours, and pick the spot that fits your session."
+        },
+        {
+          "title": "Train & contribute",
+          "desc": "Go move. Then leave a review or add a new spot to put it on the map for everyone else."
+        }
       ]
     },
     "spots": {
@@ -414,12 +453,60 @@
       "reviews_one": "{{count}} review",
       "reviews_other": "{{count}} reviews",
       "showcase": [
-        { "name": "Quai de Bercy Street Bars", "loc": "Quai de Bercy, Paris 12e", "badge": "Calisthenics", "open": true, "rating": 4.8, "reviews": 214, "tags": ["Pull-up bar", "Parallel bars", "Rings"] },
-        { "name": "Parc de Belleville Calisthenics", "loc": "Rue des Couronnes, Paris 20e", "badge": "Calisthenics", "open": true, "rating": 4.6, "reviews": 128, "tags": ["Pull-up bar", "Dip station", "Monkey bars"] },
-        { "name": "Stade Charléty Track", "loc": "Av. Pierre de Coubertin, Paris 13e", "badge": "Running", "open": false, "rating": 4.7, "reviews": 402, "tags": ["400m track", "Bench", "Yoga"] },
-        { "name": "Trocadéro Ledges", "loc": "Place du Trocadéro, Paris 16e", "badge": "Parkour", "open": false, "rating": 4.4, "reviews": 193, "tags": ["Wall", "Ledges", "Street workout"] },
-        { "name": "Bois de Vincennes Rings", "loc": "Route de la Pyramide, Paris 12e", "badge": "Calisthenics", "open": true, "rating": 4.5, "reviews": 71, "tags": ["Rings", "Rope", "Climbing"] },
-        { "name": "Buttes-Chaumont Stairs", "loc": "Rue Botzaris, Paris 19e", "badge": "Stairs", "open": false, "rating": 4.3, "reviews": 56, "tags": ["Stairs", "Wall", "Parkour"] }
+        {
+          "name": "Quai de Bercy Street Bars",
+          "loc": "Quai de Bercy, Paris 12e",
+          "badge": "Calisthenics",
+          "open": true,
+          "rating": 4.8,
+          "reviews": 214,
+          "tags": ["Pull-up bar", "Parallel bars", "Rings"]
+        },
+        {
+          "name": "Parc de Belleville Calisthenics",
+          "loc": "Rue des Couronnes, Paris 20e",
+          "badge": "Calisthenics",
+          "open": true,
+          "rating": 4.6,
+          "reviews": 128,
+          "tags": ["Pull-up bar", "Dip station", "Monkey bars"]
+        },
+        {
+          "name": "Stade Charléty Track",
+          "loc": "Av. Pierre de Coubertin, Paris 13e",
+          "badge": "Running",
+          "open": false,
+          "rating": 4.7,
+          "reviews": 402,
+          "tags": ["400m track", "Bench", "Yoga"]
+        },
+        {
+          "name": "Trocadéro Ledges",
+          "loc": "Place du Trocadéro, Paris 16e",
+          "badge": "Parkour",
+          "open": false,
+          "rating": 4.4,
+          "reviews": 193,
+          "tags": ["Wall", "Ledges", "Street workout"]
+        },
+        {
+          "name": "Bois de Vincennes Rings",
+          "loc": "Route de la Pyramide, Paris 12e",
+          "badge": "Calisthenics",
+          "open": true,
+          "rating": 4.5,
+          "reviews": 71,
+          "tags": ["Rings", "Rope", "Climbing"]
+        },
+        {
+          "name": "Buttes-Chaumont Stairs",
+          "loc": "Rue Botzaris, Paris 19e",
+          "badge": "Stairs",
+          "open": false,
+          "rating": 4.3,
+          "reviews": 56,
+          "tags": ["Stairs", "Wall", "Parkour"]
+        }
       ]
     },
     "disciplines": {
@@ -444,10 +531,22 @@
       "eyebrow": "Questions",
       "title": "Frequently asked",
       "items": [
-        { "q": "Is Workout Spots free to use?", "a": "Yes. Browsing, searching and rating spots is completely free. We believe outdoor training should be accessible to everyone." },
-        { "q": "What kind of spots can I find?", "a": "Outdoor calisthenics rigs, street-workout bars, parkour spots, running tracks, stairs and more, each one tagged with its equipment and the disciplines it suits." },
-        { "q": "Can I add a spot that's missing?", "a": "Absolutely. Drop a pin, add photos, tag the equipment and disciplines, and it goes on the map for the whole community to find." },
-        { "q": "Do I need an account?", "a": "You can explore the map without an account. Sign in with a magic link to rate spots, leave reviews and contribute new locations." }
+        {
+          "q": "Is Workout Spots free to use?",
+          "a": "Yes. Browsing, searching and rating spots is completely free. We believe outdoor training should be accessible to everyone."
+        },
+        {
+          "q": "What kind of spots can I find?",
+          "a": "Outdoor calisthenics rigs, street-workout bars, parkour spots, running tracks, stairs and more, each one tagged with its equipment and the disciplines it suits."
+        },
+        {
+          "q": "Can I add a spot that's missing?",
+          "a": "Absolutely. Drop a pin, add photos, tag the equipment and disciplines, and it goes on the map for the whole community to find."
+        },
+        {
+          "q": "Do I need an account?",
+          "a": "You can explore the map without an account. Sign in with a magic link to rate spots, leave reviews and contribute new locations."
+        }
       ]
     },
     "footer": {
@@ -469,53 +568,160 @@
   },
   "pages": {
     "privacy": {
-      "meta": { "title": "Privacy Policy — Workout Spots", "description": "How Workout Spots collects, uses and protects your data." },
+      "meta": {
+        "title": "Privacy Policy — Workout Spots",
+        "description": "How Workout Spots collects, uses and protects your data."
+      },
       "eyebrow": "Legal",
       "title": "Privacy Policy",
       "lead": "This policy explains what we collect, why, and the choices you have. We keep it short and in plain language.",
       "updated": "Last updated: 26 June 2026",
       "sections": [
-        { "heading": "Who we are", "body": ["Workout Spots (\"we\") runs spots.evnja.gg, a free map of outdoor training spots. You can reach us at hello@evnja.gg."] },
-        { "heading": "What we collect", "bullets": ["Account: your email address, used only to send magic sign-in links.", "Profile: an optional nickname and avatar you choose, shown on spots and reviews you contribute.", "Content: spots, photos, ratings and reviews you submit.", "Usage: anonymous analytics (Google Analytics) about how the site is used — only after you accept analytics cookies.", "Technical: basic request data such as your browser type, needed to serve the site securely."] },
-        { "heading": "How we use it", "body": ["To run the service: authenticate you, attribute your contributions, and show spots on the map. To improve the product using aggregated, anonymous analytics. We do not sell your personal data."] },
-        { "heading": "Third parties", "body": ["We rely on a few processors to operate: Supabase (database, authentication and image storage), Mapbox (the interactive map), and Google Analytics (usage statistics, opt-in). Each processes data only to provide their service."] },
-        { "heading": "Cookies", "body": ["We use a small number of essential cookies to keep you signed in and remember your preferences (theme, language). Analytics cookies are optional and only set if you accept them in the banner."] },
-        { "heading": "Your rights", "body": ["You can view and edit your profile at any time, and request deletion of your account and contributions by emailing hello@evnja.gg. Depending on where you live, you may have additional rights under laws such as the GDPR."] },
-        { "heading": "Data retention", "body": ["We keep your data while your account is active. When you ask us to delete it, we remove your personal data and anonymise contributions that remain useful to the community."] }
+        {
+          "heading": "Who we are",
+          "body": [
+            "Workout Spots (\"we\") runs spots.evnja.gg, a free map of outdoor training spots. You can reach us at hello@evnja.gg."
+          ]
+        },
+        {
+          "heading": "What we collect",
+          "bullets": [
+            "Account: your email address, used only to send magic sign-in links.",
+            "Profile: an optional nickname and avatar you choose, shown on spots and reviews you contribute.",
+            "Content: spots, photos, ratings and reviews you submit.",
+            "Usage: anonymous analytics (Google Analytics) about how the site is used — only after you accept analytics cookies.",
+            "Technical: basic request data such as your browser type, needed to serve the site securely."
+          ]
+        },
+        {
+          "heading": "How we use it",
+          "body": [
+            "To run the service: authenticate you, attribute your contributions, and show spots on the map. To improve the product using aggregated, anonymous analytics. We do not sell your personal data."
+          ]
+        },
+        {
+          "heading": "Third parties",
+          "body": [
+            "We rely on a few processors to operate: Supabase (database, authentication and image storage), Mapbox (the interactive map), and Google Analytics (usage statistics, opt-in). Each processes data only to provide their service."
+          ]
+        },
+        {
+          "heading": "Cookies",
+          "body": [
+            "We use a small number of essential cookies to keep you signed in and remember your preferences (theme, language). Analytics cookies are optional and only set if you accept them in the banner."
+          ]
+        },
+        {
+          "heading": "Your rights",
+          "body": [
+            "You can view and edit your profile at any time, and request deletion of your account and contributions by emailing hello@evnja.gg. Depending on where you live, you may have additional rights under laws such as the GDPR."
+          ]
+        },
+        {
+          "heading": "Data retention",
+          "body": [
+            "We keep your data while your account is active. When you ask us to delete it, we remove your personal data and anonymise contributions that remain useful to the community."
+          ]
+        }
       ],
       "note": ""
     },
     "terms": {
-      "meta": { "title": "Terms of Service — Workout Spots", "description": "The terms for using Workout Spots." },
+      "meta": {
+        "title": "Terms of Service — Workout Spots",
+        "description": "The terms for using Workout Spots."
+      },
       "eyebrow": "Legal",
       "title": "Terms of Service",
       "lead": "By using Workout Spots you agree to these terms. They're written to keep the community useful and safe.",
       "updated": "Last updated: 26 June 2026",
       "sections": [
-        { "heading": "Using the service", "body": ["Workout Spots is provided free of charge for personal, non-commercial use. You must be old enough to consent to these terms in your country."] },
-        { "heading": "Your contributions", "body": ["You're responsible for the spots, photos, ratings and reviews you add. Only submit content you have the right to share, and keep it accurate and respectful. By contributing, you grant us a licence to display and distribute that content within the service."] },
-        { "heading": "Acceptable use", "bullets": ["Don't post false, misleading or unsafe spot information.", "Don't upload content you don't own or that infringes others' rights.", "Don't harass other users or post offensive content.", "Don't attempt to disrupt, scrape or abuse the service."] },
-        { "heading": "Moderation", "body": ["We may edit, hide or remove content and suspend accounts that break these terms, to protect the community. You can report problematic spots or reviews from within the app."] },
-        { "heading": "Safety disclaimer", "body": ["Outdoor training carries risk. Spot information is community-sourced and may be inaccurate or out of date. Always assess equipment and surroundings yourself before training — you train at your own risk."] },
-        { "heading": "No warranty", "body": ["The service is provided \"as is\", without warranties of any kind. We don't guarantee it will always be available, accurate or error-free."] },
-        { "heading": "Changes", "body": ["We may update these terms as the product evolves. We'll update the date above when we do; continued use means you accept the changes."] }
+        {
+          "heading": "Using the service",
+          "body": [
+            "Workout Spots is provided free of charge for personal, non-commercial use. You must be old enough to consent to these terms in your country."
+          ]
+        },
+        {
+          "heading": "Your contributions",
+          "body": [
+            "You're responsible for the spots, photos, ratings and reviews you add. Only submit content you have the right to share, and keep it accurate and respectful. By contributing, you grant us a licence to display and distribute that content within the service."
+          ]
+        },
+        {
+          "heading": "Acceptable use",
+          "bullets": [
+            "Don't post false, misleading or unsafe spot information.",
+            "Don't upload content you don't own or that infringes others' rights.",
+            "Don't harass other users or post offensive content.",
+            "Don't attempt to disrupt, scrape or abuse the service."
+          ]
+        },
+        {
+          "heading": "Moderation",
+          "body": [
+            "We may edit, hide or remove content and suspend accounts that break these terms, to protect the community. You can report problematic spots or reviews from within the app."
+          ]
+        },
+        {
+          "heading": "Safety disclaimer",
+          "body": [
+            "Outdoor training carries risk. Spot information is community-sourced and may be inaccurate or out of date. Always assess equipment and surroundings yourself before training — you train at your own risk."
+          ]
+        },
+        {
+          "heading": "No warranty",
+          "body": [
+            "The service is provided \"as is\", without warranties of any kind. We don't guarantee it will always be available, accurate or error-free."
+          ]
+        },
+        {
+          "heading": "Changes",
+          "body": [
+            "We may update these terms as the product evolves. We'll update the date above when we do; continued use means you accept the changes."
+          ]
+        }
       ],
       "note": ""
     },
     "about": {
-      "meta": { "title": "About — Workout Spots", "description": "Why we built Workout Spots — the map for outdoor training." },
+      "meta": {
+        "title": "About — Workout Spots",
+        "description": "Why we built Workout Spots — the map for outdoor training."
+      },
       "eyebrow": "Company",
       "title": "About Workout Spots",
       "lead": "We're building the map we always wanted as athletes: every outdoor training spot, in one place, free for everyone.",
       "sections": [
-        { "heading": "Our mission", "body": ["Outdoor training should be accessible to everyone. A pull-up bar in a park, a set of rings in the woods, a track open at dawn — these are free gyms, if only you know where they are. Workout Spots puts them all on one map."] },
-        { "heading": "Built by the community", "body": ["Every spot, photo and review comes from athletes like you. The more people contribute, the better the map gets for the next person looking for somewhere to train."] },
-        { "heading": "Free, as long as it's possible", "body": ["Browsing, searching and rating spots is completely free, with no ads getting in your way. We'd rather grow a community than sell your attention."] },
-        { "heading": "What's next", "body": ["We're starting with spots. Clubs and events will come later."] }
+        {
+          "heading": "Our mission",
+          "body": [
+            "Outdoor training should be accessible to everyone. A pull-up bar in a park, a set of rings in the woods, a track open at dawn — these are free gyms, if only you know where they are. Workout Spots puts them all on one map."
+          ]
+        },
+        {
+          "heading": "Built by the community",
+          "body": [
+            "Every spot, photo and review comes from athletes like you. The more people contribute, the better the map gets for the next person looking for somewhere to train."
+          ]
+        },
+        {
+          "heading": "Free, as long as it's possible",
+          "body": [
+            "Browsing, searching and rating spots is completely free, with no ads getting in your way. We'd rather grow a community than sell your attention."
+          ]
+        },
+        {
+          "heading": "What's next",
+          "body": ["We're starting with spots. Clubs and events will come later."]
+        }
       ]
     },
     "contact": {
-      "meta": { "title": "Contact — Workout Spots", "description": "Get in touch with the Workout Spots team." },
+      "meta": {
+        "title": "Contact — Workout Spots",
+        "description": "Get in touch with the Workout Spots team."
+      },
       "eyebrow": "Company",
       "title": "Get in touch",
       "lead": "Questions, feedback, a bug, or a partnership idea? We'd love to hear from you.",

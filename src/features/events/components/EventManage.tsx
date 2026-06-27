@@ -5,7 +5,9 @@ import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
 import type { EventDetail, EventParticipant } from '../domain'
 import { eventParticipantsQueryOptions } from '../queries'
-import { useCancelEvent, useSetParticipantStatus, useUpdateEvent } from '../organizerMutations'
+import { useCancelEvent, useSetParticipantStatus } from '../organizerMutations'
+import { useEditEvent } from '../mutations'
+import { EventForm, eventDetailToFormState } from './EventForm'
 import { initials } from './visuals'
 
 type ManageTab = 'participants' | 'settings'
@@ -184,82 +186,27 @@ function Act({ label, onClick, danger }: { label: string; onClick: () => void; d
   )
 }
 
-const inputCls =
-  'w-full rounded-lg border border-border bg-surface px-3 py-2 text-[14px] text-text outline-none placeholder:text-text-4 focus:border-accent'
-
 function Settings({ event, onCancelled }: { event: EventDetail; onCancelled: () => void }) {
   const { t } = useTranslation()
-  const update = useUpdateEvent(event.id)
+  const { edit, pending } = useEditEvent(event.id)
   const cancelEvent = useCancelEvent(event.id)
-
-  const [title, setTitle] = useState(event.title)
-  const [description, setDescription] = useState(event.description ?? '')
-  const [maxParticipants, setMaxParticipants] = useState(
-    event.maxParticipants != null ? String(event.maxParticipants) : '',
-  )
-  const [requiresApproval, setRequiresApproval] = useState(event.requiresApproval)
+  const initial = useMemo(() => eventDetailToFormState(event), [event])
   const [reason, setReason] = useState('')
   const [confirmCancel, setConfirmCancel] = useState(false)
 
-  const save = () =>
-    update.update({
-      title: title.trim(),
-      description,
-      maxParticipants: maxParticipants ? Number(maxParticipants) : null,
-      registrationDeadline: event.registrationDeadline,
-      requiresApproval,
-    })
-
   return (
-    <div className="flex flex-col gap-5">
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-2">{t('events.fieldTitle')}</span>
-        <input
-          className={inputCls}
-          value={title}
-          maxLength={100}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </label>
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-2">{t('events.fieldDescription')}</span>
-        <textarea
-          className={cx(inputCls, 'resize-none')}
-          rows={3}
-          maxLength={2000}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </label>
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-2">{t('events.fieldMax')}</span>
-        <input
-          type="number"
-          min={1}
-          className={inputCls}
-          value={maxParticipants}
-          onChange={(e) => setMaxParticipants(e.target.value)}
-          placeholder={t('events.unlimited')}
-        />
-      </label>
-      <label className="flex items-center gap-2 text-[14px] text-text-2">
-        <input
-          type="checkbox"
-          checked={requiresApproval}
-          onChange={(e) => setRequiresApproval(e.target.checked)}
-        />
-        {t('events.requiresApproval')}
-      </label>
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={save}
-          disabled={update.pending || title.trim().length < 3}
-          className="rounded-full bg-accent px-5 py-2 text-[13px] font-medium text-white hover:bg-accent-2 disabled:opacity-50"
-        >
-          {t('common.save')}
-        </button>
-      </div>
+    <div className="flex flex-col gap-6">
+      <EventForm
+        initial={initial}
+        submitLabel={t('common.save')}
+        pending={pending}
+        existingGalleryCount={event.images.length}
+        onCancel={onCancelled}
+        onSubmit={({ values, featured, gallery }) => {
+          edit(values, featured, gallery)
+          onCancelled()
+        }}
+      />
 
       {/* Danger zone */}
       <div className="mt-2 rounded-xl border border-red-500/30 p-3.5">
@@ -277,7 +224,7 @@ function Settings({ event, onCancelled }: { event: EventDetail; onCancelled: () 
         ) : (
           <div className="mt-2 flex flex-col gap-2">
             <textarea
-              className={cx(inputCls, 'resize-none')}
+              className="w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-[14px] text-text outline-none placeholder:text-text-4 focus:border-accent"
               rows={2}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
