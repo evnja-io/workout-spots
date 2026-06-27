@@ -62,6 +62,7 @@ function ClubDetailPage() {
       club={club}
       onBack={() => void navigate({ to: '/clubs' })}
       onOpenSpot={(spotId) => void navigate({ to: '/spots/$spotId', params: { spotId } })}
+      onManage={() => void navigate({ to: '/clubs/$clubId/manage', params: { clubId } })}
     />
   )
 }

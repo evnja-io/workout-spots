@@ -29,10 +29,21 @@ export function PrivacyBadge({
   )
 }
 
-export function CategoryChip({ category, onCover = false }: { category: string; onCover?: boolean }) {
+export function CategoryChip({
+  category,
+  onCover = false,
+}: {
+  category: string
+  onCover?: boolean
+}) {
   if (!category) return null
   return (
-    <span className={cx(pill, onCover ? 'bg-black/35 text-white backdrop-blur-sm' : 'bg-surface-2 text-text-2')}>
+    <span
+      className={cx(
+        pill,
+        onCover ? 'bg-black/35 text-white backdrop-blur-sm' : 'bg-surface-2 text-text-2',
+      )}
+    >
       <Icon name="dumbbell" size={12} />
       {category}
     </span>

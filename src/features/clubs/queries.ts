@@ -8,6 +8,7 @@ import type {
   ClubListItem,
   ClubMember,
   ClubMemberStatus,
+  ClubPendingRequest,
   ClubPost,
   ClubPrivacy,
   ClubRole,
@@ -196,6 +197,32 @@ export function clubDetailQueryOptions(clubId: string) {
         viewerRole: (row.current_user_role as ClubRole | null) ?? null,
         viewerStatus: (row.current_user_status as ClubMemberStatus | null) ?? null,
       }
+    },
+  })
+}
+
+// ── Pending membership requests (staff) ──────────────────────────────────────
+export function clubPendingRequestsQueryOptions(clubId: string) {
+  return queryOptions({
+    queryKey: ['clubs', 'pending', clubId] as const,
+    queryFn: async (): Promise<ClubPendingRequest[]> => {
+      if (!isSupabaseConfigured()) return []
+      const { data, error } = await getBrowserSupabase()
+        .from('club_members')
+        .select(
+          'id,joined_at,user:users!club_members_user_id_fkey(id,pseudo,name,profile_picture_url)',
+        )
+        .eq('club_id', clubId)
+        .eq('status', 'pending')
+        .order('joined_at', { ascending: true })
+      if (error) throw error
+      return (
+        (data ?? []) as unknown as { id: string; joined_at: string; user: FeedUser | null }[]
+      ).map((r) => ({
+        membershipId: r.id,
+        requestedAt: r.joined_at,
+        user: mapAuthor(r.user),
+      }))
     },
   })
 }

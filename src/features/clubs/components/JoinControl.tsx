@@ -24,7 +24,12 @@ function Btn({
   onClick?: () => void
 }) {
   return (
-    <button type="button" className={cx(base, variants[variant])} disabled={pending} onClick={onClick}>
+    <button
+      type="button"
+      className={cx(base, variants[variant])}
+      disabled={pending}
+      onClick={onClick}
+    >
       {icon && <Icon name={icon} size={15} />}
       {label}
     </button>
@@ -57,7 +62,13 @@ export function JoinControl({
       )}
 
       {primaryAction === 'join' && (
-        <Btn variant="primary" icon="plus" label="Join club" pending={joinPending} onClick={onJoin} />
+        <Btn
+          variant="primary"
+          icon="plus"
+          label="Join club"
+          pending={joinPending}
+          onClick={onJoin}
+        />
       )}
       {primaryAction === 'request' && (
         <Btn

@@ -26,7 +26,11 @@ export function ClubCard({ club, onOpen }: { club: ClubListItem; onOpen: (id: st
         style={!club.coverImageUrl ? { backgroundImage: coverGradient(club.id) } : undefined}
       >
         {club.coverImageUrl && (
-          <ImageWithShimmer src={club.coverImageUrl} alt="" className="h-full w-full object-cover" />
+          <ImageWithShimmer
+            src={club.coverImageUrl}
+            alt=""
+            className="h-full w-full object-cover"
+          />
         )}
         <div className="absolute inset-x-2 top-2 flex items-center justify-between gap-1">
           <CategoryChip category={club.category} onCover />
@@ -41,7 +45,10 @@ export function ClubCard({ club, onOpen }: { club: ClubListItem; onOpen: (id: st
         {club.tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {club.tags.slice(0, 3).map((t) => (
-              <span key={t} className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] text-text-3">
+              <span
+                key={t}
+                className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] text-text-3"
+              >
                 {t}
               </span>
             ))}

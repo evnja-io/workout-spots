@@ -16,10 +16,12 @@ export function ClubDetail({
   club,
   onBack,
   onOpenSpot,
+  onManage,
 }: {
   club: ClubDetailType
   onBack: () => void
   onOpenSpot: (spotId: string) => void
+  onManage: () => void
 }) {
   const { t } = useTranslation()
   const [tab, setTab] = useState<'overview' | 'feed'>('overview')
@@ -37,6 +39,7 @@ export function ClubDetail({
       leavePending={leavePending}
       onJoin={join}
       onLeave={leave}
+      onManage={onManage}
     />
   )
 

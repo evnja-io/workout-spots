@@ -30,10 +30,7 @@ export function ClubsBrowse({
     () => Array.from(new Set(clubs.map((c) => c.category).filter(Boolean))).sort(),
     [clubs],
   )
-  const allTags = useMemo(
-    () => Array.from(new Set(clubs.flatMap((c) => c.tags))).sort(),
-    [clubs],
-  )
+  const allTags = useMemo(() => Array.from(new Set(clubs.flatMap((c) => c.tags))).sort(), [clubs])
 
   const toggleTag = (tag: string) =>
     setTags((prev) => (prev.includes(tag) ? prev.filter((x) => x !== tag) : [...prev, tag]))
@@ -151,11 +148,7 @@ export function ClubsBrowse({
           ))}
         </div>
       ) : showEmpty ? (
-        <EmptyState
-          hasFilters={hasFilters}
-          onClear={clearAll}
-          onCreate={onCreate}
-        />
+        <EmptyState hasFilters={hasFilters} onClear={clearAll} onCreate={onCreate} />
       ) : (
         <>
           <p className="mt-5 text-[13px] text-text-3">

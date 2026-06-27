@@ -52,6 +52,12 @@ export type ClubPost = {
   comments: ClubComment[]
 }
 
+export type ClubPendingRequest = {
+  membershipId: string
+  user: ClubFeedAuthor
+  requestedAt: string
+}
+
 export type ClubDetail = {
   id: string
   name: string
