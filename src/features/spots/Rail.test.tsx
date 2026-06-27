@@ -70,10 +70,20 @@ beforeEach(() => {
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 describe('Rail', () => {
-  it('renders Map, List, and Saved buttons', () => {
+  it('renders Spots, Clubs, and Events section links', () => {
     renderRail()
-    expect(screen.getByRole('button', { name: /map/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /list/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Spots' })).toHaveAttribute('href', '/spots')
+    expect(screen.getByRole('link', { name: 'Clubs' })).toHaveAttribute('href', '/clubs')
+    expect(screen.getByRole('link', { name: 'Events' })).toHaveAttribute('href', '/events')
+  })
+
+  it('hides the Saved button when no overlay is wired', () => {
+    renderRail()
+    expect(screen.queryByRole('button', { name: /saved/i })).toBeNull()
+  })
+
+  it('shows the Saved button when its overlay is wired', () => {
+    renderRail({ onOpenSaved: () => {} })
     expect(screen.getByRole('button', { name: /saved/i })).toBeInTheDocument()
   })
 
@@ -86,7 +96,7 @@ describe('Rail', () => {
   })
 
   it('marks Saved as active (pressed) when its overlay is open', () => {
-    renderRail({ savedActive: true })
+    renderRail({ onOpenSaved: () => {}, savedActive: true })
     const savedBtn = screen.getByRole('button', { name: /saved/i })
     expect(savedBtn).toHaveAttribute('aria-pressed', 'true')
     expect(savedBtn.className).toContain('active')
@@ -98,10 +108,10 @@ describe('Rail', () => {
     expect(screen.queryByRole('link', { name: /community/i })).toBeNull()
   })
 
-  it('marks Map as active when on /spots', () => {
+  it('marks Spots as active when on /spots', () => {
     renderRail()
-    const mapBtn = screen.getByRole('button', { name: /map/i })
-    expect(mapBtn.className).toContain('active')
+    const spotsLink = screen.getByRole('link', { name: 'Spots' })
+    expect(spotsLink.className).toContain('active')
   })
 
   it('shows the pseudo initial (not the userId) when authed', async () => {

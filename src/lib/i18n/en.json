@@ -1,4 +1,7 @@
 {
+  "nav": { "spots": "Spots", "clubs": "Clubs", "events": "Events" },
+  "clubs": { "title": "Clubs", "comingSoon": "Clubs are coming soon." },
+  "events": { "title": "Events", "comingSoon": "Events are coming soon." },
   "common": { "save": "Save", "cancel": "Cancel", "back": "Back", "continue": "Continue", "retry": "Retry", "errorTitle": "Something went wrong", "errorMessage": "An unexpected error occurred. Please try again." },
   "auth": {
     "signInTitle": "Sign in",

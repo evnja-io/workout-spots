@@ -1,4 +1,7 @@
 {
+  "nav": { "spots": "Spots", "clubs": "Clubs", "events": "Événements" },
+  "clubs": { "title": "Clubs", "comingSoon": "Les clubs arrivent bientôt." },
+  "events": { "title": "Événements", "comingSoon": "Les événements arrivent bientôt." },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",

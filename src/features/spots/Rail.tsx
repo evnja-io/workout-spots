@@ -10,28 +10,23 @@ import { currentUserProfileQueryOptions } from '~/features/auth/profile'
 
 export interface RailProps {
   onOpenSettings?: () => void
+  /** When provided, the spots-only Saved button is shown. */
   onOpenSaved?: () => void
   /** Highlight the Saved button while its overlay is open. */
   savedActive?: boolean
-  view?: 'map' | 'list'
-  onViewChange?: (v: 'map' | 'list') => void
 }
 
-export function Rail({
-  onOpenSettings,
-  onOpenSaved,
-  savedActive = false,
-  view = 'map',
-  onViewChange,
-}: RailProps) {
+export function Rail({ onOpenSettings, onOpenSaved, savedActive = false }: RailProps) {
   const { pathname } = useLocation()
   const { t } = useTranslation()
   const { userId, status, openSignIn, signOut } = useSessionContext()
   const [menuOpen, setMenuOpen] = useState(false)
   const accountRef = useRef<HTMLDivElement>(null)
 
-  const isMapActive = pathname === '/spots' && view === 'map'
-  const isListActive = pathname === '/spots' && view === 'list'
+  // Section nav — the rail is the cross-section switcher (Spots / Clubs / Events).
+  const isSpotsActive = pathname.startsWith('/spots')
+  const isClubsActive = pathname.startsWith('/clubs')
+  const isEventsActive = pathname.startsWith('/events')
 
   const { data: profile } = useQuery({
     ...currentUserProfileQueryOptions(userId),
@@ -89,39 +84,52 @@ export function Rail({
         <Logo size={32} />
       </Link>
 
-      {/* Map view button */}
-      <button
-        type="button"
-        className={cx(railBtn, isMapActive && railBtnActive)}
-        aria-label="Map"
-        title="Map"
-        onClick={() => onViewChange?.('map')}
+      {/* Spots section */}
+      <Link
+        to="/spots"
+        className={cx(railBtn, isSpotsActive && railBtnActive)}
+        aria-label={t('nav.spots')}
+        title={t('nav.spots')}
+        aria-current={isSpotsActive ? 'page' : undefined}
       >
         <Icon name="map" size={20} />
-      </button>
+      </Link>
 
-      {/* List view button */}
-      <button
-        type="button"
-        className={cx(railBtn, isListActive && railBtnActive)}
-        aria-label="List"
-        title="List"
-        onClick={() => onViewChange?.('list')}
+      {/* Clubs section */}
+      <Link
+        to="/clubs"
+        className={cx(railBtn, isClubsActive && railBtnActive)}
+        aria-label={t('nav.clubs')}
+        title={t('nav.clubs')}
+        aria-current={isClubsActive ? 'page' : undefined}
       >
-        <Icon name="list" size={20} />
-      </button>
+        <Icon name="users" size={20} />
+      </Link>
 
-      {/* Saved */}
-      <button
-        type="button"
-        className={cx(railBtn, savedActive && railBtnActive)}
-        aria-label="Saved"
-        aria-pressed={savedActive}
-        title="Saved"
-        onClick={() => onOpenSaved?.()}
+      {/* Events section */}
+      <Link
+        to="/events"
+        className={cx(railBtn, isEventsActive && railBtnActive)}
+        aria-label={t('nav.events')}
+        title={t('nav.events')}
+        aria-current={isEventsActive ? 'page' : undefined}
       >
-        <Icon name="heart" size={20} fill={savedActive ? 'currentColor' : 'none'} />
-      </button>
+        <Icon name="clock" size={20} />
+      </Link>
+
+      {/* Saved — spots-only, shown when the host wires its overlay */}
+      {onOpenSaved && (
+        <button
+          type="button"
+          className={cx(railBtn, savedActive && railBtnActive)}
+          aria-label={t('saved.title')}
+          aria-pressed={savedActive}
+          title={t('saved.title')}
+          onClick={() => onOpenSaved()}
+        >
+          <Icon name="heart" size={20} fill={savedActive ? 'currentColor' : 'none'} />
+        </button>
+      )}
 
       <div className="flex-1" />
 
