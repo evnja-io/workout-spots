@@ -45,6 +45,15 @@ export type EventImage = {
   caption: string | null
 }
 
+export type EventParticipant = {
+  id: string
+  user: { id: string; name: string; avatarUrl: string | null }
+  type: ParticipationType
+  status: ParticipationStatus
+  note: string | null
+  createdAt: string
+}
+
 export type EventDetail = {
   id: string
   title: string

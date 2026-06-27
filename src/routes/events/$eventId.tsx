@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { trackEvent } from '~/features/analytics/gtag'
+import { useSession } from '~/features/auth/session'
 import { eventDetailQueryOptions } from '~/features/events/queries'
 import type { EventDetail as EventDetailType } from '~/features/events/domain'
 import { EventDetail } from '~/features/events/components/EventDetail'
@@ -50,6 +51,7 @@ export const Route = createFileRoute('/events/$eventId')({
 function EventDetailPage() {
   const { eventId } = Route.useParams()
   const navigate = useNavigate()
+  const { userId } = useSession()
   const { event: initialEvent } = Route.useLoaderData()
   const { data: event } = useSuspenseQuery({
     ...eventDetailQueryOptions(eventId),
@@ -62,11 +64,18 @@ function EventDetailPage() {
 
   if (!event) return null
 
+  const isOrganizer = userId != null && event.createdBy === userId
+
   return (
     <EventDetail
       event={event}
       onBack={() => void navigate({ to: '/events' })}
       onOpenSpot={(spotId) => void navigate({ to: '/spots/$spotId', params: { spotId } })}
+      onManage={
+        isOrganizer
+          ? () => void navigate({ to: '/events/$eventId/manage', params: { eventId } })
+          : undefined
+      }
     />
   )
 }

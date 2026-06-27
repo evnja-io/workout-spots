@@ -5,6 +5,7 @@ import type {
   EventImage,
   EventListItem,
   EventLocation,
+  EventParticipant,
   EventStatus,
   EventTag,
   EventVisibility,
@@ -80,6 +81,50 @@ export function eventsListQueryOptions() {
       const { data, error } = await getBrowserSupabase().rpc('rpc_list_events')
       if (error) throw error
       return ((data ?? []) as unknown as EventListRpcRow[]).map(mapEventListRow)
+    },
+  })
+}
+
+// ── Participants (organizer) ─────────────────────────────────────────────────
+type ParticipantRow = {
+  id: string
+  participation_type: string
+  status: string
+  notes: string | null
+  created_at: string
+  user: {
+    id: string
+    pseudo: string | null
+    name: string | null
+    profile_picture_url: string | null
+  } | null
+}
+
+export function eventParticipantsQueryOptions(eventId: string) {
+  return queryOptions({
+    queryKey: ['events', 'participants', eventId] as const,
+    queryFn: async (): Promise<EventParticipant[]> => {
+      if (!isSupabaseConfigured()) return []
+      const { data, error } = await getBrowserSupabase()
+        .from('event_participants')
+        .select(
+          'id,participation_type,status,notes,created_at,user:users!event_participants_user_id_fkey(id,pseudo,name,profile_picture_url)',
+        )
+        .eq('event_id', eventId)
+        .order('created_at', { ascending: true })
+      if (error) throw error
+      return ((data ?? []) as unknown as ParticipantRow[]).map((r) => ({
+        id: r.id,
+        user: {
+          id: r.user?.id ?? '',
+          name: r.user?.pseudo ?? r.user?.name ?? 'Member',
+          avatarUrl: r.user?.profile_picture_url ?? null,
+        },
+        type: r.participation_type as ParticipationType,
+        status: r.status as ParticipationStatus,
+        note: r.notes,
+        createdAt: r.created_at,
+      }))
     },
   })
 }

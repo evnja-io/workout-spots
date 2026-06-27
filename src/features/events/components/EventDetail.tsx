@@ -15,10 +15,13 @@ export function EventDetail({
   event,
   onBack,
   onOpenSpot,
+  onManage,
 }: {
   event: EventDetailType
   onBack: () => void
   onOpenSpot: (spotId: string) => void
+  /** Provided only to the organiser; renders the Manage entry. */
+  onManage?: () => void
 }) {
   const { t } = useTranslation()
   const [lightbox, setLightbox] = useState<number | null>(null)
@@ -58,6 +61,16 @@ export function EventDetail({
         </div>
       )}
       <div className="h-px bg-border" />
+      {onManage && (
+        <button
+          type="button"
+          onClick={onManage}
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-border px-4 py-2 text-[13px] font-medium text-text transition-colors hover:bg-surface-2"
+        >
+          <Icon name="settings" size={15} />
+          {t('events.manage')}
+        </button>
+      )}
       <RSVPControl
         view={view}
         interested={interested}
