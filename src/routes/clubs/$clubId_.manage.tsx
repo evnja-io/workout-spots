@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { clubDetailQueryOptions } from '~/features/clubs/queries'
 import { ClubManage } from '~/features/clubs/components/ClubManage'
 
-export const Route = createFileRoute('/clubs/$clubId/manage')({
+export const Route = createFileRoute('/clubs/$clubId_/manage')({
   loader: async ({ context, params }) => {
     const club = await context.queryClient.ensureQueryData(clubDetailQueryOptions(params.clubId))
     if (!club) throw notFound()

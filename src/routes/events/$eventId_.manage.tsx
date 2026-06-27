@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { eventDetailQueryOptions } from '~/features/events/queries'
 import { EventManage } from '~/features/events/components/EventManage'
 
-export const Route = createFileRoute('/events/$eventId/manage')({
+export const Route = createFileRoute('/events/$eventId_/manage')({
   loader: async ({ context, params }) => {
     const event = await context.queryClient.ensureQueryData(eventDetailQueryOptions(params.eventId))
     if (!event) throw notFound()
