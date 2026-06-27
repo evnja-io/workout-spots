@@ -1,4 +1,190 @@
 {
+  "nav": { "spots": "Spots", "clubs": "Clubs", "events": "Événements" },
+  "clubs": {
+    "title": "Clubs",
+    "subtitle": "Des communautés qui s'entraînent près de chez vous",
+    "comingSoon": "Bientôt disponible.",
+    "create": "Créer un club",
+    "searchPlaceholder": "Rechercher un club par nom, catégorie ou tag…",
+    "category": "Catégorie",
+    "tags": "Tags",
+    "all": "Tous",
+    "count": "{{count}} clubs",
+    "members": "{{count}} membres",
+    "membersTitle": "Membres",
+    "spots": "{{count}} spots",
+    "spotsLabel": "Spots",
+    "rules": "Règles",
+    "showAllRules": "Voir les {{count}} règles",
+    "showLess": "Voir moins",
+    "linkedSpots": "Spots associés",
+    "noLinkedSpots": "Aucun spot associé pour l'instant.",
+    "noMembers": "Aucun membre pour l'instant.",
+    "memberListLocked": "La liste des membres est visible par les membres du club.",
+    "backToClubs": "Retour aux clubs",
+    "emptyTitle": "Aucun club pour l'instant",
+    "emptyBody": "Soyez le premier à créer une communauté autour de vos spots préférés.",
+    "noMatchTitle": "Aucun club ne correspond à vos filtres",
+    "noMatchBody": "Essayez de retirer un filtre ou de rechercher un autre nom.",
+    "clearFilters": "Effacer les filtres",
+    "notFound": "Club introuvable",
+    "tabOverview": "Aperçu",
+    "tabFeed": "Fil",
+    "feedLocked": "Rejoignez ce club privé pour voir ses publications.",
+    "feedEmpty": "Aucune publication pour l'instant. Soyez le premier à partager.",
+    "composePlaceholder": "Partagez quelque chose avec le club…",
+    "commentPlaceholder": "Écrire un commentaire…",
+    "addPhoto": "Ajouter une photo",
+    "post": "Publier",
+    "send": "Envoyer",
+    "deletePost": "Supprimer la publication",
+    "deleteComment": "Supprimer le commentaire",
+    "formInvalid": "Veuillez remplir les champs requis.",
+    "fieldName": "Nom du club",
+    "fieldNamePlaceholder": "ex. Paris Street Workout",
+    "fieldDescription": "À propos",
+    "fieldDescriptionPlaceholder": "Quel est le but de votre club ?",
+    "fieldCategory": "Catégorie",
+    "fieldCategoryPlaceholder": "ex. Calisthenics, Course…",
+    "fieldPrivacy": "Confidentialité",
+    "privacy_public": "Public",
+    "privacy_private": "Privé",
+    "fieldRules": "Règles",
+    "fieldRulesPlaceholder": "Une règle par ligne",
+    "fieldCover": "Image de couverture",
+    "fieldCoverHint": "Ajouter une image de couverture",
+    "linkSpotPlaceholder": "Rechercher un spot à associer…",
+    "tagPlaceholder": "Ajoutez un tag et appuyez sur Entrée",
+    "manage": "Gérer le club",
+    "manageRequests": "Demandes",
+    "manageMembers": "Membres",
+    "manageEdit": "Modifier",
+    "noRequests": "Aucune demande en attente.",
+    "approve": "Approuver",
+    "reject": "Refuser",
+    "promote": "Nommer modérateur",
+    "demote": "Retirer modérateur",
+    "kick": "Retirer",
+    "makeOwner": "Transférer la propriété",
+    "notStaff": "Vous n'avez pas la permission de gérer ce club."
+  },
+  "events": {
+    "title": "Événements",
+    "subtitle": "Des rencontres planifiées sur les spots",
+    "comingSoon": "Bientôt disponible.",
+    "create": "Créer un événement",
+    "searchPlaceholder": "Rechercher un événement…",
+    "price": "Prix",
+    "price_all": "Tous",
+    "price_free": "Gratuit",
+    "price_paid": "Payant",
+    "tags": "Tags",
+    "count": "{{count}} événements",
+    "free": "Gratuit",
+    "going": "participants",
+    "goingCount": "{{count}} participants",
+    "waitlist": "Liste d'attente",
+    "full": "Complet",
+    "spotsLeft": "{{count}} places restantes",
+    "minReached": "Minimum atteint",
+    "minNeeded": "Encore {{count}} pour maintenir",
+    "locationTba": "Lieu à confirmer",
+    "emptyTitle": "Aucun événement pour l'instant",
+    "emptyBody": "Soyez le premier à organiser une rencontre sur votre spot préféré.",
+    "noMatchTitle": "Aucun événement ne correspond à vos filtres",
+    "noMatchBody": "Essayez de retirer un filtre ou de rechercher un autre nom.",
+    "clearFilters": "Effacer les filtres",
+    "notFound": "Événement introuvable",
+    "status_draft": "Brouillon",
+    "status_upcoming": "À venir",
+    "status_ongoing": "En cours",
+    "status_completed": "Terminé",
+    "status_cancelled": "Annulé",
+    "registrationClosed": "Les inscriptions sont closes",
+    "youreGoing": "Vous participez",
+    "seeYouThere": "À bientôt !",
+    "cancelRsvp": "Annuler ma participation",
+    "awaitingApproval": "En attente d'approbation",
+    "withdrawRequest": "Retirer ma demande",
+    "onWaitlist": "Vous êtes sur la liste d'attente",
+    "leaveWaitlist": "Quitter la liste d'attente",
+    "requestToJoin": "Demander à participer",
+    "joinWaitlist": "Rejoindre la liste d'attente",
+    "participate": "Participer",
+    "eventFull": "Événement complet — rejoignez la liste d'attente",
+    "interested": "Intéressé",
+    "imInterested": "Ça m'intéresse",
+    "locations": "Où",
+    "primary": "Principal",
+    "organizer": "Organisateur",
+    "hostedBy": "Organisé par",
+    "organizerUnknown": "L'organisateur",
+    "gallery": "Galerie",
+    "deadline": "Inscriptions closes le {{date}}, {{time}}",
+    "perPerson": "par personne",
+    "payNote": "Paiement sur place ou auprès de l'organisateur. Pas de paiement en ligne — votre participation réserve une place.",
+    "cancelled": "Annulé",
+    "backToEvents": "Retour aux événements",
+    "formInvalid": "Veuillez vérifier les champs indiqués.",
+    "fieldTitle": "Titre",
+    "fieldTitlePlaceholder": "ex. Rencontre Calisthenics du dimanche",
+    "fieldDescription": "Description",
+    "fieldStart": "Début",
+    "fieldEnd": "Fin",
+    "timezoneNote": "Les horaires sont dans votre fuseau ({{tz}}).",
+    "fieldLocations": "Où",
+    "searchSpot": "Rechercher un spot…",
+    "makePrimary": "Définir principal",
+    "locationNote": "Note pour ce spot (facultatif)",
+    "fieldMin": "Participants min",
+    "fieldMax": "Participants max",
+    "unlimited": "Illimité",
+    "fieldDeadline": "Date limite d'inscription (facultatif)",
+    "fieldPrice": "Prix",
+    "paid": "Payant",
+    "fieldVisibility": "Visibilité",
+    "visibility_public": "Public",
+    "visibility_private": "Privé",
+    "visibility_club_only": "Club uniquement",
+    "pickClub": "Choisir un club…",
+    "requiresApproval": "Approbation requise pour participer",
+    "fieldOrganizer": "Nom de l'organisateur",
+    "fieldOrganizerPlaceholder": "Qui organise ? (facultatif)",
+    "fieldFeatured": "Image à la une",
+    "fieldFeaturedHint": "Ajouter une image à la une",
+    "fieldGallery": "Galerie",
+    "fieldGalleryHint": "Ajouter des photos à la galerie",
+    "galleryChosen": "{{count}} photo(s) sélectionnée(s)",
+    "galleryExisting": "{{count}} déjà dans la galerie — les nouvelles photos sont ajoutées.",
+    "manage": "Gérer l'événement",
+    "manageParticipants": "Participants",
+    "manageSettings": "Réglages",
+    "noParticipants": "Personne n'a encore répondu.",
+    "groupGoing": "Participants",
+    "groupPending": "En attente d'approbation",
+    "groupWaitlisted": "Liste d'attente",
+    "groupInterested": "Intéressés",
+    "groupRejected": "Refusés",
+    "approve": "Approuver",
+    "reject": "Refuser",
+    "remove": "Retirer",
+    "toWaitlist": "Liste d'attente",
+    "cancelEvent": "Annuler l'événement",
+    "alreadyCancelled": "Cet événement est déjà annulé.",
+    "cancelReasonPlaceholder": "Pourquoi annulez-vous ? (visible par les participants)",
+    "confirmCancel": "Annuler l'événement",
+    "tabOverview": "Aperçu",
+    "tabFeed": "Fil",
+    "feedEmpty": "Aucune publication pour l'instant. Soyez le premier à partager.",
+    "feedJoinToPost": "Les participants peuvent publier dans le fil de l'événement.",
+    "composePlaceholder": "Partagez quelque chose avec les participants…",
+    "commentPlaceholder": "Écrire un commentaire…",
+    "addPhoto": "Ajouter une photo",
+    "post": "Publier",
+    "send": "Envoyer",
+    "deletePost": "Supprimer la publication",
+    "deleteComment": "Supprimer le commentaire"
+  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -214,12 +400,30 @@
       "title": "Conçu pour votre façon de vous entraîner",
       "sub": "De votre première traction à votre série la plus dure, trouvez le bon endroit pour le faire — et les gens qui s'y entraînent aussi.",
       "items": [
-        { "title": "Des spots près de vous", "desc": "Une carte en direct des spots d'entraînement en plein air, du parc de calisthénie complet à une simple barre au coin de la rue." },
-        { "title": "Filtrez par sport", "desc": "Calisthénie, street workout, parkour, course et plus encore. Ne voyez que les spots adaptés à votre pratique." },
-        { "title": "Connaissez l'équipement", "desc": "Barres de traction, barres parallèles, anneaux, échelles, pistes. Chaque spot indique exactement ce qui s'y trouve avant d'y aller." },
-        { "title": "De vraies notes et avis", "desc": "Des avis honnêtes de la communauté : état du sol, affluence, ombre, éclairage et meilleurs horaires pour venir." },
-        { "title": "Horaires et accès", "desc": "Voyez ce qui est ouvert 24/7 et ce qui a des horaires fixes, pour ne plus jamais tomber sur une grille fermée." },
-        { "title": "Une vraie communauté", "desc": "Ajoutez les spots où vous vous entraînez, partagez des photos et aidez le prochain athlète à trouver son terrain." }
+        {
+          "title": "Des spots près de vous",
+          "desc": "Une carte en direct des spots d'entraînement en plein air, du parc de calisthénie complet à une simple barre au coin de la rue."
+        },
+        {
+          "title": "Filtrez par sport",
+          "desc": "Calisthénie, street workout, parkour, course et plus encore. Ne voyez que les spots adaptés à votre pratique."
+        },
+        {
+          "title": "Connaissez l'équipement",
+          "desc": "Barres de traction, barres parallèles, anneaux, échelles, pistes. Chaque spot indique exactement ce qui s'y trouve avant d'y aller."
+        },
+        {
+          "title": "De vraies notes et avis",
+          "desc": "Des avis honnêtes de la communauté : état du sol, affluence, ombre, éclairage et meilleurs horaires pour venir."
+        },
+        {
+          "title": "Horaires et accès",
+          "desc": "Voyez ce qui est ouvert 24/7 et ce qui a des horaires fixes, pour ne plus jamais tomber sur une grille fermée."
+        },
+        {
+          "title": "Une vraie communauté",
+          "desc": "Ajoutez les spots où vous vous entraînez, partagez des photos et aidez le prochain athlète à trouver son terrain."
+        }
       ]
     },
     "how": {
@@ -227,9 +431,18 @@
       "title": "Du canapé à la barre",
       "sub": "Trouver où s'entraîner ne devrait pas être plus dur que la séance elle-même.",
       "steps": [
-        { "title": "Ouvrez la carte", "desc": "Voyez instantanément tous les spots d'entraînement autour de vous. Aucune inscription nécessaire pour commencer à explorer." },
-        { "title": "Filtrez et choisissez", "desc": "Affinez par discipline et équipement, vérifiez les notes et horaires, et choisissez le spot adapté à votre séance." },
-        { "title": "Entraînez-vous et contribuez", "desc": "Allez bouger. Puis laissez un avis ou ajoutez un nouveau spot pour le mettre sur la carte pour tous les autres." }
+        {
+          "title": "Ouvrez la carte",
+          "desc": "Voyez instantanément tous les spots d'entraînement autour de vous. Aucune inscription nécessaire pour commencer à explorer."
+        },
+        {
+          "title": "Filtrez et choisissez",
+          "desc": "Affinez par discipline et équipement, vérifiez les notes et horaires, et choisissez le spot adapté à votre séance."
+        },
+        {
+          "title": "Entraînez-vous et contribuez",
+          "desc": "Allez bouger. Puis laissez un avis ou ajoutez un nouveau spot pour le mettre sur la carte pour tous les autres."
+        }
       ]
     },
     "spots": {
@@ -240,12 +453,60 @@
       "reviews_one": "{{count}} avis",
       "reviews_other": "{{count}} avis",
       "showcase": [
-        { "name": "Quai de Bercy Street Bars", "loc": "Quai de Bercy, Paris 12e", "badge": "Calisthénie", "open": true, "rating": 4.8, "reviews": 214, "tags": ["Barre de traction", "Barres parallèles", "Anneaux"] },
-        { "name": "Parc de Belleville Calisthenics", "loc": "Rue des Couronnes, Paris 20e", "badge": "Calisthénie", "open": true, "rating": 4.6, "reviews": 128, "tags": ["Barre de traction", "Station de dips", "Échelle horizontale"] },
-        { "name": "Stade Charléty Track", "loc": "Av. Pierre de Coubertin, Paris 13e", "badge": "Course", "open": false, "rating": 4.7, "reviews": 402, "tags": ["Piste 400m", "Banc", "Yoga"] },
-        { "name": "Trocadéro Ledges", "loc": "Place du Trocadéro, Paris 16e", "badge": "Parkour", "open": false, "rating": 4.4, "reviews": 193, "tags": ["Mur", "Rebords", "Street workout"] },
-        { "name": "Bois de Vincennes Rings", "loc": "Route de la Pyramide, Paris 12e", "badge": "Calisthénie", "open": true, "rating": 4.5, "reviews": 71, "tags": ["Anneaux", "Corde", "Escalade"] },
-        { "name": "Buttes-Chaumont Stairs", "loc": "Rue Botzaris, Paris 19e", "badge": "Escaliers", "open": false, "rating": 4.3, "reviews": 56, "tags": ["Escaliers", "Mur", "Parkour"] }
+        {
+          "name": "Quai de Bercy Street Bars",
+          "loc": "Quai de Bercy, Paris 12e",
+          "badge": "Calisthénie",
+          "open": true,
+          "rating": 4.8,
+          "reviews": 214,
+          "tags": ["Barre de traction", "Barres parallèles", "Anneaux"]
+        },
+        {
+          "name": "Parc de Belleville Calisthenics",
+          "loc": "Rue des Couronnes, Paris 20e",
+          "badge": "Calisthénie",
+          "open": true,
+          "rating": 4.6,
+          "reviews": 128,
+          "tags": ["Barre de traction", "Station de dips", "Échelle horizontale"]
+        },
+        {
+          "name": "Stade Charléty Track",
+          "loc": "Av. Pierre de Coubertin, Paris 13e",
+          "badge": "Course",
+          "open": false,
+          "rating": 4.7,
+          "reviews": 402,
+          "tags": ["Piste 400m", "Banc", "Yoga"]
+        },
+        {
+          "name": "Trocadéro Ledges",
+          "loc": "Place du Trocadéro, Paris 16e",
+          "badge": "Parkour",
+          "open": false,
+          "rating": 4.4,
+          "reviews": 193,
+          "tags": ["Mur", "Rebords", "Street workout"]
+        },
+        {
+          "name": "Bois de Vincennes Rings",
+          "loc": "Route de la Pyramide, Paris 12e",
+          "badge": "Calisthénie",
+          "open": true,
+          "rating": 4.5,
+          "reviews": 71,
+          "tags": ["Anneaux", "Corde", "Escalade"]
+        },
+        {
+          "name": "Buttes-Chaumont Stairs",
+          "loc": "Rue Botzaris, Paris 19e",
+          "badge": "Escaliers",
+          "open": false,
+          "rating": 4.3,
+          "reviews": 56,
+          "tags": ["Escaliers", "Mur", "Parkour"]
+        }
       ]
     },
     "disciplines": {
@@ -270,10 +531,22 @@
       "eyebrow": "Questions",
       "title": "Questions fréquentes",
       "items": [
-        { "q": "Workout Spots est-il gratuit ?", "a": "Oui. Parcourir, rechercher et noter les spots est entièrement gratuit. Nous pensons que l'entraînement en plein air doit être accessible à tous." },
-        { "q": "Quels types de spots puis-je trouver ?", "a": "Des structures de calisthénie en plein air, des barres de street workout, des spots de parkour, des pistes, des escaliers et plus — chacun étiqueté avec son équipement et les disciplines qui lui conviennent." },
-        { "q": "Puis-je ajouter un spot manquant ?", "a": "Absolument. Placez un repère, ajoutez des photos, étiquetez l'équipement et les disciplines, et il apparaît sur la carte pour toute la communauté." },
-        { "q": "Ai-je besoin d'un compte ?", "a": "Vous pouvez explorer la carte sans compte. Connectez-vous avec un lien magique pour noter les spots, laisser des avis et ajouter de nouveaux lieux." }
+        {
+          "q": "Workout Spots est-il gratuit ?",
+          "a": "Oui. Parcourir, rechercher et noter les spots est entièrement gratuit. Nous pensons que l'entraînement en plein air doit être accessible à tous."
+        },
+        {
+          "q": "Quels types de spots puis-je trouver ?",
+          "a": "Des structures de calisthénie en plein air, des barres de street workout, des spots de parkour, des pistes, des escaliers et plus — chacun étiqueté avec son équipement et les disciplines qui lui conviennent."
+        },
+        {
+          "q": "Puis-je ajouter un spot manquant ?",
+          "a": "Absolument. Placez un repère, ajoutez des photos, étiquetez l'équipement et les disciplines, et il apparaît sur la carte pour toute la communauté."
+        },
+        {
+          "q": "Ai-je besoin d'un compte ?",
+          "a": "Vous pouvez explorer la carte sans compte. Connectez-vous avec un lien magique pour noter les spots, laisser des avis et ajouter de nouveaux lieux."
+        }
       ]
     },
     "footer": {
@@ -295,53 +568,160 @@
   },
   "pages": {
     "privacy": {
-      "meta": { "title": "Politique de confidentialité — Workout Spots", "description": "Comment Workout Spots collecte, utilise et protège vos données." },
+      "meta": {
+        "title": "Politique de confidentialité — Workout Spots",
+        "description": "Comment Workout Spots collecte, utilise et protège vos données."
+      },
       "eyebrow": "Mentions légales",
       "title": "Politique de confidentialité",
       "lead": "Cette politique explique ce que nous collectons, pourquoi, et les choix dont vous disposez. Nous la gardons courte et en langage clair.",
       "updated": "Dernière mise à jour : 26 juin 2026",
       "sections": [
-        { "heading": "Qui sommes-nous", "body": ["Workout Spots (« nous ») exploite spots.evnja.gg, une carte gratuite des spots d'entraînement en plein air. Vous pouvez nous joindre à hello@evnja.gg."] },
-        { "heading": "Ce que nous collectons", "bullets": ["Compte : votre adresse e-mail, utilisée uniquement pour envoyer les liens de connexion magiques.", "Profil : un pseudo et un avatar facultatifs que vous choisissez, affichés sur les spots et avis que vous publiez.", "Contenu : les spots, photos, notes et avis que vous soumettez.", "Utilisation : des statistiques anonymes (Google Analytics) sur l'usage du site — seulement après acceptation des cookies d'analyse.", "Technique : des données de requête de base comme le type de navigateur, nécessaires pour servir le site en toute sécurité."] },
-        { "heading": "Comment nous l'utilisons", "body": ["Pour faire fonctionner le service : vous authentifier, attribuer vos contributions et afficher les spots sur la carte. Pour améliorer le produit grâce à des statistiques agrégées et anonymes. Nous ne vendons pas vos données personnelles."] },
-        { "heading": "Tiers", "body": ["Nous nous appuyons sur quelques sous-traitants : Supabase (base de données, authentification et stockage des images), Mapbox (la carte interactive) et Google Analytics (statistiques d'usage, sur consentement). Chacun ne traite les données que pour fournir son service."] },
-        { "heading": "Cookies", "body": ["Nous utilisons un petit nombre de cookies essentiels pour vous garder connecté et mémoriser vos préférences (thème, langue). Les cookies d'analyse sont facultatifs et ne sont déposés que si vous les acceptez dans la bannière."] },
-        { "heading": "Vos droits", "body": ["Vous pouvez consulter et modifier votre profil à tout moment, et demander la suppression de votre compte et de vos contributions en écrivant à hello@evnja.gg. Selon votre lieu de résidence, vous pouvez disposer de droits supplémentaires au titre de lois telles que le RGPD."] },
-        { "heading": "Conservation des données", "body": ["Nous conservons vos données tant que votre compte est actif. Lorsque vous demandez leur suppression, nous effaçons vos données personnelles et anonymisons les contributions qui restent utiles à la communauté."] }
+        {
+          "heading": "Qui sommes-nous",
+          "body": [
+            "Workout Spots (« nous ») exploite spots.evnja.gg, une carte gratuite des spots d'entraînement en plein air. Vous pouvez nous joindre à hello@evnja.gg."
+          ]
+        },
+        {
+          "heading": "Ce que nous collectons",
+          "bullets": [
+            "Compte : votre adresse e-mail, utilisée uniquement pour envoyer les liens de connexion magiques.",
+            "Profil : un pseudo et un avatar facultatifs que vous choisissez, affichés sur les spots et avis que vous publiez.",
+            "Contenu : les spots, photos, notes et avis que vous soumettez.",
+            "Utilisation : des statistiques anonymes (Google Analytics) sur l'usage du site — seulement après acceptation des cookies d'analyse.",
+            "Technique : des données de requête de base comme le type de navigateur, nécessaires pour servir le site en toute sécurité."
+          ]
+        },
+        {
+          "heading": "Comment nous l'utilisons",
+          "body": [
+            "Pour faire fonctionner le service : vous authentifier, attribuer vos contributions et afficher les spots sur la carte. Pour améliorer le produit grâce à des statistiques agrégées et anonymes. Nous ne vendons pas vos données personnelles."
+          ]
+        },
+        {
+          "heading": "Tiers",
+          "body": [
+            "Nous nous appuyons sur quelques sous-traitants : Supabase (base de données, authentification et stockage des images), Mapbox (la carte interactive) et Google Analytics (statistiques d'usage, sur consentement). Chacun ne traite les données que pour fournir son service."
+          ]
+        },
+        {
+          "heading": "Cookies",
+          "body": [
+            "Nous utilisons un petit nombre de cookies essentiels pour vous garder connecté et mémoriser vos préférences (thème, langue). Les cookies d'analyse sont facultatifs et ne sont déposés que si vous les acceptez dans la bannière."
+          ]
+        },
+        {
+          "heading": "Vos droits",
+          "body": [
+            "Vous pouvez consulter et modifier votre profil à tout moment, et demander la suppression de votre compte et de vos contributions en écrivant à hello@evnja.gg. Selon votre lieu de résidence, vous pouvez disposer de droits supplémentaires au titre de lois telles que le RGPD."
+          ]
+        },
+        {
+          "heading": "Conservation des données",
+          "body": [
+            "Nous conservons vos données tant que votre compte est actif. Lorsque vous demandez leur suppression, nous effaçons vos données personnelles et anonymisons les contributions qui restent utiles à la communauté."
+          ]
+        }
       ],
       "note": ""
     },
     "terms": {
-      "meta": { "title": "Conditions d'utilisation — Workout Spots", "description": "Les conditions d'utilisation de Workout Spots." },
+      "meta": {
+        "title": "Conditions d'utilisation — Workout Spots",
+        "description": "Les conditions d'utilisation de Workout Spots."
+      },
       "eyebrow": "Mentions légales",
       "title": "Conditions d'utilisation",
       "lead": "En utilisant Workout Spots, vous acceptez ces conditions. Elles visent à garder la communauté utile et sûre.",
       "updated": "Dernière mise à jour : 26 juin 2026",
       "sections": [
-        { "heading": "Utilisation du service", "body": ["Workout Spots est fourni gratuitement pour un usage personnel et non commercial. Vous devez avoir l'âge requis pour accepter ces conditions dans votre pays."] },
-        { "heading": "Vos contributions", "body": ["Vous êtes responsable des spots, photos, notes et avis que vous ajoutez. Ne soumettez que du contenu que vous avez le droit de partager, et gardez-le exact et respectueux. En contribuant, vous nous accordez une licence pour afficher et distribuer ce contenu au sein du service."] },
-        { "heading": "Usage acceptable", "bullets": ["Ne publiez pas d'informations fausses, trompeuses ou dangereuses sur les spots.", "Ne téléversez pas de contenu dont vous n'êtes pas propriétaire ou qui enfreint les droits d'autrui.", "Ne harcelez pas les autres utilisateurs et ne publiez pas de contenu offensant.", "Ne tentez pas de perturber, d'extraire ou d'abuser du service."] },
-        { "heading": "Modération", "body": ["Nous pouvons modifier, masquer ou supprimer du contenu et suspendre des comptes qui enfreignent ces conditions, afin de protéger la communauté. Vous pouvez signaler des spots ou avis problématiques depuis l'application."] },
-        { "heading": "Avertissement de sécurité", "body": ["L'entraînement en plein air comporte des risques. Les informations sur les spots proviennent de la communauté et peuvent être inexactes ou obsolètes. Évaluez toujours vous-même l'équipement et l'environnement avant de vous entraîner — vous vous entraînez à vos propres risques."] },
-        { "heading": "Absence de garantie", "body": ["Le service est fourni « tel quel », sans garantie d'aucune sorte. Nous ne garantissons pas qu'il sera toujours disponible, exact ou exempt d'erreurs."] },
-        { "heading": "Modifications", "body": ["Nous pouvons mettre à jour ces conditions à mesure que le produit évolue. Nous mettrons à jour la date ci-dessus le cas échéant ; une utilisation continue vaut acceptation des modifications."] }
+        {
+          "heading": "Utilisation du service",
+          "body": [
+            "Workout Spots est fourni gratuitement pour un usage personnel et non commercial. Vous devez avoir l'âge requis pour accepter ces conditions dans votre pays."
+          ]
+        },
+        {
+          "heading": "Vos contributions",
+          "body": [
+            "Vous êtes responsable des spots, photos, notes et avis que vous ajoutez. Ne soumettez que du contenu que vous avez le droit de partager, et gardez-le exact et respectueux. En contribuant, vous nous accordez une licence pour afficher et distribuer ce contenu au sein du service."
+          ]
+        },
+        {
+          "heading": "Usage acceptable",
+          "bullets": [
+            "Ne publiez pas d'informations fausses, trompeuses ou dangereuses sur les spots.",
+            "Ne téléversez pas de contenu dont vous n'êtes pas propriétaire ou qui enfreint les droits d'autrui.",
+            "Ne harcelez pas les autres utilisateurs et ne publiez pas de contenu offensant.",
+            "Ne tentez pas de perturber, d'extraire ou d'abuser du service."
+          ]
+        },
+        {
+          "heading": "Modération",
+          "body": [
+            "Nous pouvons modifier, masquer ou supprimer du contenu et suspendre des comptes qui enfreignent ces conditions, afin de protéger la communauté. Vous pouvez signaler des spots ou avis problématiques depuis l'application."
+          ]
+        },
+        {
+          "heading": "Avertissement de sécurité",
+          "body": [
+            "L'entraînement en plein air comporte des risques. Les informations sur les spots proviennent de la communauté et peuvent être inexactes ou obsolètes. Évaluez toujours vous-même l'équipement et l'environnement avant de vous entraîner — vous vous entraînez à vos propres risques."
+          ]
+        },
+        {
+          "heading": "Absence de garantie",
+          "body": [
+            "Le service est fourni « tel quel », sans garantie d'aucune sorte. Nous ne garantissons pas qu'il sera toujours disponible, exact ou exempt d'erreurs."
+          ]
+        },
+        {
+          "heading": "Modifications",
+          "body": [
+            "Nous pouvons mettre à jour ces conditions à mesure que le produit évolue. Nous mettrons à jour la date ci-dessus le cas échéant ; une utilisation continue vaut acceptation des modifications."
+          ]
+        }
       ],
       "note": ""
     },
     "about": {
-      "meta": { "title": "À propos — Workout Spots", "description": "Pourquoi nous avons créé Workout Spots — la carte de l'entraînement en plein air." },
+      "meta": {
+        "title": "À propos — Workout Spots",
+        "description": "Pourquoi nous avons créé Workout Spots — la carte de l'entraînement en plein air."
+      },
       "eyebrow": "Entreprise",
       "title": "À propos de Workout Spots",
       "lead": "Nous construisons la carte dont nous avons toujours rêvé en tant qu'athlètes : tous les spots d'entraînement en plein air, au même endroit, gratuits pour tous.",
       "sections": [
-        { "heading": "Notre mission", "body": ["L'entraînement en plein air devrait être accessible à tous. Une barre de traction dans un parc, des anneaux en forêt, une piste ouverte à l'aube — ce sont des salles de sport gratuites, à condition de savoir où elles sont. Workout Spots les réunit toutes sur une seule carte."] },
-        { "heading": "Construit par la communauté", "body": ["Chaque spot, photo et avis vient d'athlètes comme vous. Plus les gens contribuent, meilleure devient la carte pour la personne suivante en quête d'un lieu où s'entraîner."] },
-        { "heading": "Gratuit, tant qu'il reste possible", "body": ["Parcourir, rechercher et noter les spots est entièrement gratuit, sans publicité qui vous gêne. Nous préférons faire grandir une communauté plutôt que vendre votre attention."] },
-        { "heading": "La suite", "body": ["Nous commençons par les spots. Les clubs et les événements viendront ensuite."] }
+        {
+          "heading": "Notre mission",
+          "body": [
+            "L'entraînement en plein air devrait être accessible à tous. Une barre de traction dans un parc, des anneaux en forêt, une piste ouverte à l'aube — ce sont des salles de sport gratuites, à condition de savoir où elles sont. Workout Spots les réunit toutes sur une seule carte."
+          ]
+        },
+        {
+          "heading": "Construit par la communauté",
+          "body": [
+            "Chaque spot, photo et avis vient d'athlètes comme vous. Plus les gens contribuent, meilleure devient la carte pour la personne suivante en quête d'un lieu où s'entraîner."
+          ]
+        },
+        {
+          "heading": "Gratuit, tant qu'il reste possible",
+          "body": [
+            "Parcourir, rechercher et noter les spots est entièrement gratuit, sans publicité qui vous gêne. Nous préférons faire grandir une communauté plutôt que vendre votre attention."
+          ]
+        },
+        {
+          "heading": "La suite",
+          "body": ["Nous commençons par les spots. Les clubs et les événements viendront ensuite."]
+        }
       ]
     },
     "contact": {
-      "meta": { "title": "Contact — Workout Spots", "description": "Contactez l'équipe Workout Spots." },
+      "meta": {
+        "title": "Contact — Workout Spots",
+        "description": "Contactez l'équipe Workout Spots."
+      },
       "eyebrow": "Entreprise",
       "title": "Nous contacter",
       "lead": "Une question, un retour, un bug ou une idée de partenariat ? Nous serions ravis de vous lire.",

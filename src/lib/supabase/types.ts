@@ -1868,11 +1868,82 @@ export type Database = {
           updated_at: string
         }[]
       }
+      rpc_get_event_with_details: {
+        Args: { p_event_id: string }
+        Returns: {
+          cancellation_reason: string
+          club_id: string
+          club_name: string
+          created_by: string
+          current_user_status: string
+          current_user_type: string
+          description: string
+          ends_at: string
+          featured_image_url: string
+          going_count: number
+          id: string
+          images: Json
+          is_free: boolean
+          locations: Json
+          max_participants: number
+          min_participants: number
+          organizer_contact: string
+          organizer_name: string
+          pending_count: number
+          price_amount: number
+          price_currency: string
+          registration_deadline: string
+          requires_approval: boolean
+          starts_at: string
+          status: string
+          tags: Json
+          timezone: string
+          title: string
+          visibility: string
+          waitlist_count: number
+        }[]
+      }
       rpc_kick_member: {
         Args: { p_club_id: string; p_member_user_id: string }
         Returns: undefined
       }
       rpc_leave_club: { Args: { p_club_id: string }; Returns: undefined }
+      rpc_list_clubs: {
+        Args: never
+        Returns: {
+          category: string
+          cover_image_url: string
+          created_at: string
+          id: string
+          member_count: number
+          name: string
+          privacy: string
+          spot_count: number
+          tags: string[]
+        }[]
+      }
+      rpc_list_events: {
+        Args: never
+        Returns: {
+          club_id: string
+          ends_at: string
+          featured_image_url: string
+          going_count: number
+          id: string
+          is_free: boolean
+          max_participants: number
+          price_amount: number
+          price_currency: string
+          primary_location_city: string
+          primary_location_name: string
+          starts_at: string
+          status: string
+          tags: Json
+          timezone: string
+          title: string
+          visibility: string
+        }[]
+      }
       rpc_reject_member: {
         Args: { p_membership_id: string }
         Returns: undefined
