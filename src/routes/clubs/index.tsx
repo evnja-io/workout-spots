@@ -1,16 +1,25 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { clubsListQueryOptions } from '~/features/clubs/queries'
+import { ClubsBrowse } from '~/features/clubs/components/ClubsBrowse'
 
 export const Route = createFileRoute('/clubs/')({
-  component: ClubsBrowse,
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(clubsListQueryOptions())
+  },
+  component: ClubsBrowsePage,
 })
 
-function ClubsBrowse() {
-  const { t } = useTranslation()
+function ClubsBrowsePage() {
+  const navigate = useNavigate()
+  const { data: clubs = [], isPending } = useQuery(clubsListQueryOptions())
+
   return (
-    <div className="mx-auto max-w-5xl px-5 py-8">
-      <h1 className="text-[22px] font-semibold text-text">{t('clubs.title')}</h1>
-      <p className="mt-2 text-[14px] text-text-3">{t('clubs.comingSoon')}</p>
-    </div>
+    <ClubsBrowse
+      clubs={clubs}
+      loading={isPending}
+      onOpen={(id) => void navigate({ to: '/clubs/$clubId', params: { clubId: id } })}
+      onCreate={() => void navigate({ to: '/clubs/new' })}
+    />
   )
 }

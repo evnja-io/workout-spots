@@ -1873,6 +1873,20 @@ export type Database = {
         Returns: undefined
       }
       rpc_leave_club: { Args: { p_club_id: string }; Returns: undefined }
+      rpc_list_clubs: {
+        Args: never
+        Returns: {
+          category: string
+          cover_image_url: string
+          created_at: string
+          id: string
+          member_count: number
+          name: string
+          privacy: string
+          spot_count: number
+          tags: string[]
+        }[]
+      }
       rpc_reject_member: {
         Args: { p_membership_id: string }
         Returns: undefined
