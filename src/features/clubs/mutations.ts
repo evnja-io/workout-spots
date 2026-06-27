@@ -1,9 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { getBrowserSupabase } from '~/lib/supabase/browser'
 import { useSession } from '~/features/auth/session'
 import { useAuthGate } from '~/features/auth/useAuthGate'
 import { trackEvent } from '~/features/analytics/gtag'
 import type { ClubDetail, ClubPrivacy } from './domain'
+import type { CreateClubParsed } from './schema'
+import { uploadClubCover } from './photos'
 
 const detailKey = (clubId: string) => ['clubs', 'detail', clubId] as const
 const listKey = ['clubs', 'list'] as const
@@ -92,4 +95,53 @@ export function useLeaveClub(clubId: string) {
   })
 
   return { leave: () => gate(() => mutation.mutate()), pending: mutation.isPending }
+}
+
+/**
+ * Create a club via rpc_create_club (atomic: club + owner membership + tags +
+ * linked spots), then upload the cover and patch it in. Navigates to the new club.
+ */
+export function useCreateClub() {
+  const { userId } = useSession()
+  const gate = useAuthGate()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async ({ values, cover }: { values: CreateClubParsed; cover: File | null }) => {
+      if (!userId) throw new Error('Not authenticated')
+      const sb = getBrowserSupabase()
+      const { data, error } = await sb.rpc('rpc_create_club', {
+        p_name: values.name,
+        p_description: values.description,
+        p_category: values.category,
+        p_privacy: values.privacy,
+        p_rules: values.rules || undefined,
+        p_linked_spot_ids: values.linkedSpotIds,
+        p_tags: values.tags,
+      })
+      if (error) throw error
+      const clubId = data
+      if (cover) {
+        const url = await uploadClubCover(clubId, cover)
+        const { error: updErr } = await sb.rpc('rpc_update_club', {
+          p_club_id: clubId,
+          p_cover_image_url: url,
+        })
+        if (updErr) throw updErr
+      }
+      return clubId
+    },
+    onSuccess: (clubId) => {
+      trackEvent('club_created', { club_id: clubId })
+      void queryClient.invalidateQueries({ queryKey: listKey })
+      void navigate({ to: '/clubs/$clubId', params: { clubId } })
+    },
+  })
+
+  return {
+    create: (values: CreateClubParsed, cover: File | null) =>
+      gate(() => mutation.mutate({ values, cover })),
+    pending: mutation.isPending,
+  }
 }

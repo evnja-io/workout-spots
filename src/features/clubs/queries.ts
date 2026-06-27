@@ -200,6 +200,30 @@ export function clubDetailQueryOptions(clubId: string) {
   })
 }
 
+// ── Spot search (for linking spots to a club) ────────────────────────────────
+export type LinkableSpot = { id: string; name: string; city: string }
+
+export function spotSearchQueryOptions(query: string) {
+  return queryOptions({
+    queryKey: ['clubs', 'spot-search', query] as const,
+    queryFn: async (): Promise<LinkableSpot[]> => {
+      const q = query.trim()
+      if (!isSupabaseConfigured() || q.length < 2) return []
+      const { data, error } = await getBrowserSupabase()
+        .from('locations')
+        .select('id,name,city')
+        .ilike('name', `%${q}%`)
+        .limit(20)
+      if (error) throw error
+      return ((data ?? []) as { id: string; name: string; city: string | null }[]).map((r) => ({
+        id: r.id,
+        name: r.name,
+        city: r.city ?? '',
+      }))
+    },
+  })
+}
+
 // ── Feed ─────────────────────────────────────────────────────────────────────
 // userId is part of the key so viewerLiked is recomputed when auth changes.
 // Mutations invalidate by the ['clubs','feed',clubId] prefix to cover all viewers.
