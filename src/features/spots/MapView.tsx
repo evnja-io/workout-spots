@@ -274,6 +274,7 @@ export function MapView({
     const map = mapRef.current
     if (!mapReady || !map || !userLocation) return
     if (flewToUserRef.current) return
+    // One-shot: burn the flag even if we skip flying (a spot is open), so closing a deep-linked detail later never yanks the map to the user.
     flewToUserRef.current = true
     if (activeSpotId) return
     map.flyTo({ center: userLocation, zoom: USER_ZOOM })
