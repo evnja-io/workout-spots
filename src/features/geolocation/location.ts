@@ -59,7 +59,7 @@ export function setLocationCookie(lng: number, lat: number): void {
   document.cookie = `${LOC_COOKIE}=${value}; path=/; max-age=2592000; samesite=lax`
 }
 
-function readClientInitialCenter(): MapCenter {
+export function readClientInitialCenter(): MapCenter {
   const raw = document.cookie
     .split('; ')
     .find((c) => c.startsWith(`${LOC_COOKIE}=`))

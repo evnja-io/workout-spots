@@ -5,10 +5,10 @@ import {
   parseLocCookie,
   resolveCenter,
   setLocationCookie,
+  readClientInitialCenter,
   PARIS_CENTER,
   REGION_ZOOM,
   PRECISE_ZOOM,
-  getInitialMapCenter,
 } from './location'
 
 describe('roundCoord', () => {
@@ -81,19 +81,19 @@ describe('setLocationCookie', () => {
   })
 })
 
-describe('getInitialMapCenter (client branch)', () => {
+describe('readClientInitialCenter', () => {
   beforeEach(() => {
     document.cookie = 'loc=; path=/; max-age=0'
   })
   it('uses the loc cookie when present', () => {
     document.cookie = 'loc=2.35,48.85; path=/'
-    expect(getInitialMapCenter()).toEqual({
+    expect(readClientInitialCenter()).toEqual({
       center: [2.35, 48.85],
       zoom: PRECISE_ZOOM,
       source: 'cookie',
     })
   })
   it('falls back to Paris default when no cookie (client has no IP headers)', () => {
-    expect(getInitialMapCenter().source).toBe('default')
+    expect(readClientInitialCenter().source).toBe('default')
   })
 })
