@@ -16,6 +16,8 @@ import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
 import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
 import { ErrorState } from '~/components/ErrorState'
+import { getInitialMapCenter } from '~/features/geolocation/location'
+import { useUserLocation } from '~/features/geolocation/useUserLocation'
 
 const BOUNDS_DEBOUNCE_MS = 200
 
@@ -38,6 +40,10 @@ export const Route = createFileRoute('/spots')({
     await context.queryClient.ensureQueryData(spotsInBoundsQueryOptions(WORLD_BOUNDS))
     await context.queryClient.ensureQueryData(equipmentsQueryOptions())
     await context.queryClient.ensureQueryData(disciplinesQueryOptions())
+    // Resolve the initial map center here (not in the component): the server
+    // branch reads Vercel IP-geo headers, which the client can't see — returning
+    // it from the loader serializes that value to the client.
+    return { mapCenter: getInitialMapCenter() }
   },
   pendingComponent: SpotsPending,
   errorComponent: SpotsError,
@@ -51,6 +57,8 @@ function SpotsLayout() {
   const [listSheetOpen, setListSheetOpen] = useState(false)
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
   const navigate = useNavigate()
+  const { mapCenter } = Route.useLoaderData()
+  const { userLocation, requestLocation } = useUserLocation()
 
   // ── Bounds state (starts at world, tightens as the map reports its viewport) ─
   const [bounds, setBounds] = useState<Bounds>(WORLD_BOUNDS)
@@ -98,6 +106,10 @@ function SpotsLayout() {
           activeSpotId={activeSpotId}
           onSelectSpot={handleSelectSpot}
           onBoundsChange={debouncedSetBounds}
+          initialCenter={mapCenter.center}
+          initialZoom={mapCenter.zoom}
+          userLocation={userLocation}
+          onRequestLocation={requestLocation}
           mapStyle={mapStyle}
           onChange={setMapStyle}
           theme="light"
