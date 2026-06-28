@@ -9,6 +9,7 @@ import { MapStyleSwitch } from './MapStyleSwitch'
 
 const DEFAULT_CENTER: [number, number] = [2.35, 48.85]
 const DEFAULT_ZOOM = 11.5
+const USER_ZOOM = 13
 
 // ── Minimal typed interfaces for mapbox-gl instances ─────────────────────────
 interface MapboxMarker {
@@ -57,6 +58,10 @@ export interface MapViewProps {
   mapStyle: MapStyle
   onChange?: (s: MapStyle) => void
   theme: Theme
+  initialCenter?: [number, number]
+  initialZoom?: number
+  userLocation?: [number, number] | null
+  onRequestLocation?: () => void
 }
 
 export function MapView({
@@ -70,6 +75,10 @@ export function MapView({
   mapStyle,
   onChange,
   theme,
+  initialCenter,
+  initialZoom,
+  userLocation = null,
+  onRequestLocation,
 }: MapViewProps) {
   const { t } = useTranslation()
   const mapHostRef = useRef<HTMLDivElement>(null)
@@ -80,6 +89,8 @@ export function MapView({
   // recreating the whole pin layer — which would flicker on every pan.
   const markersRef = useRef<Map<string, MapboxMarker>>(new Map())
   const newSpotMarkerRef = useRef<MapboxMarker | null>(null)
+  const userMarkerRef = useRef<MapboxMarker | null>(null)
+  const flewToUserRef = useRef(false)
   // Tracks the spot we last flew to, so refetching spots (e.g. after panning)
   // never re-centers the map — we only fly when the *selection* changes.
   const flownToRef = useRef<string | null>(null)
@@ -96,6 +107,8 @@ export function MapView({
   onMapClickRef.current = onMapClick
   const onBoundsChangeRef = useRef(onBoundsChange)
   onBoundsChangeRef.current = onBoundsChange
+  const onRequestLocationRef = useRef(onRequestLocation)
+  onRequestLocationRef.current = onRequestLocation
 
   // ── Init effect (mount, client-only, token required) ─────────────────────
   useEffect(() => {
@@ -117,8 +130,8 @@ export function MapView({
       const map = new mapboxgl.Map({
         container: mapHostRef.current,
         style: mapStyleUrl(mapStyle, theme),
-        center: DEFAULT_CENTER,
-        zoom: DEFAULT_ZOOM,
+        center: initialCenter ?? DEFAULT_CENTER,
+        zoom: initialZoom ?? DEFAULT_ZOOM,
       })
 
       map.on('click', (e) => {
@@ -154,6 +167,7 @@ export function MapView({
       // reconciles from a clean slate rather than against stale markers.
       markers.clear()
       newSpotMarkerRef.current = null
+      userMarkerRef.current = null
       mapboxglRef.current = null
       setMapReady(false)
     }
@@ -234,6 +248,37 @@ export function MapView({
       .addTo(map)
   }, [newSpotPosition, mapReady])
 
+  // ── "You are here" marker — isolated from the spot-pin layer ───────────────
+  useEffect(() => {
+    const map = mapRef.current
+    const mapboxgl = mapboxglRef.current
+    if (!mapReady || !map || !mapboxgl) return
+
+    userMarkerRef.current?.remove()
+    userMarkerRef.current = null
+    if (!userLocation) return
+
+    const el = document.createElement('div')
+    el.className = 'wp-user'
+    const dot = document.createElement('div')
+    dot.className = 'dot'
+    el.appendChild(dot)
+    userMarkerRef.current = new mapboxgl.Marker({ element: el })
+      .setLngLat(userLocation)
+      .addTo(map)
+  }, [userLocation, mapReady])
+
+  // ── Auto-fly to the user once, when their location first resolves ──────────
+  // Skips if a spot is already selected (don't yank a deep-linked detail view).
+  useEffect(() => {
+    const map = mapRef.current
+    if (!mapReady || !map || !userLocation) return
+    if (flewToUserRef.current) return
+    flewToUserRef.current = true
+    if (activeSpotId) return
+    map.flyTo({ center: userLocation, zoom: USER_ZOOM })
+  }, [userLocation, mapReady, activeSpotId])
+
   // ── Fly to the active spot ONLY when the selection changes ────────────────
   // Decoupled from marker rebuilds so panning (which refetches spots) never
   // snaps the map back. The ref guard ensures we fly once per selection.
@@ -269,7 +314,11 @@ export function MapView({
   }
   function handleRecenter() {
     if (!mapRef.current) return
-    mapRef.current.flyTo({ center: DEFAULT_CENTER, zoom: DEFAULT_ZOOM })
+    if (userLocation) {
+      mapRef.current.flyTo({ center: userLocation, zoom: USER_ZOOM })
+      return
+    }
+    onRequestLocationRef.current?.()
   }
 
   return (
