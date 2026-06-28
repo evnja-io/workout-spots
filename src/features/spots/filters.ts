@@ -2,7 +2,6 @@ import { z } from 'zod'
 import type { SpotListItem } from './domain'
 
 export const spotSearchSchema = z.object({
-  q: z.string().catch('').default(''),
   disciplines: z.array(z.string()).catch([]).default([]),
   equipment: z.array(z.string()).catch([]).default([]),
   open24h: z.boolean().catch(false).default(false),
@@ -18,7 +17,6 @@ export type SpotSearch = z.infer<typeof spotSearchSchema>
  * Components call `spotSearchSchema.parse(Route.useSearch())` to apply defaults.
  */
 export const spotRouteSearchSchema = z.object({
-  q: z.string().optional(),
   disciplines: z.array(z.string()).optional(),
   equipment: z.array(z.string()).optional(),
   open24h: z.boolean().optional(),
@@ -26,10 +24,6 @@ export const spotRouteSearchSchema = z.object({
 })
 
 function matches(s: SpotListItem, search: SpotSearch): boolean {
-  if (search.q) {
-    const q = search.q.toLowerCase()
-    if (![s.name, s.address, s.city].some((f) => f.toLowerCase().includes(q))) return false
-  }
   if (search.disciplines.length && !search.disciplines.some((d) => s.disciplineIds.includes(d)))
     return false
   if (search.equipment.length && !search.equipment.some((e) => s.equipmentIds.includes(e)))

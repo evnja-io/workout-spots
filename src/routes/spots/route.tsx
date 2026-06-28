@@ -5,7 +5,7 @@ import { spotRouteSearchSchema } from '~/features/spots/filters'
 import { Rail } from '~/features/spots/Rail'
 import { Sidebar } from '~/features/spots/Sidebar'
 import { MobileNav } from '~/features/navigation/MobileNav'
-import { MapView } from '~/features/spots/MapView'
+import { MapView, type SearchLocation } from '~/features/spots/MapView'
 import { Sheet } from '~/components/ui/Sheet'
 import { Icon } from '~/components/ui/Icon'
 import { spotsInBoundsQueryOptions, WORLD_BOUNDS, type Bounds } from '~/features/spots/queries'
@@ -18,6 +18,8 @@ import type { MapStyle } from '~/lib/mapbox/map'
 import { ErrorState } from '~/components/ErrorState'
 import { getInitialMapCenter } from '~/features/geolocation/location'
 import { useUserLocation } from '~/features/geolocation/useUserLocation'
+import { trackEvent } from '~/features/analytics/gtag'
+import type { GeocodeResult } from '~/lib/mapbox/geocoding'
 
 const BOUNDS_DEBOUNCE_MS = 200
 
@@ -80,6 +82,10 @@ function SpotsLayout() {
     placeholderData: keepPreviousData,
   })
 
+  // ── Searched location — set by the sidebar geosuggest, drives a map fly + marker.
+  // The map's moveend then reloads spots for the new viewport via onBoundsChange.
+  const [searchLocation, setSearchLocation] = useState<SearchLocation | null>(null)
+
   // Get active spotId from child route params (non-strict)
   const params = useParams({ strict: false })
   const activeSpotId = params.spotId ?? null
@@ -87,6 +93,13 @@ function SpotsLayout() {
   function handleSelectSpot(id: string) {
     setListSheetOpen(false)
     void navigate({ to: '/spots/$spotId', params: { spotId: id }, search: (prev) => prev })
+  }
+
+  function handleLocationSelect(r: GeocodeResult) {
+    trackEvent('search', { search_term: r.placeName })
+    setListSheetOpen(false)
+    // Fresh object each select so re-picking the same place still refires the fly effect.
+    setSearchLocation({ center: [r.lng, r.lat], bbox: r.bbox })
   }
 
   return (
@@ -97,7 +110,12 @@ function SpotsLayout() {
         <Suspense fallback={null}>
           {/* NOTE: text search only matches spots in the current viewport (Task 24).
               Global name search would require server-side full-text query. */}
-          <Sidebar spots={spots} onSpotClick={handleSelectSpot} loading={isPending} />
+          <Sidebar
+            spots={spots}
+            onSpotClick={handleSelectSpot}
+            onLocationSelect={handleLocationSelect}
+            loading={isPending}
+          />
         </Suspense>
       </aside>
       <div className="relative h-full bg-surface-2">
@@ -108,6 +126,7 @@ function SpotsLayout() {
           onBoundsChange={debouncedSetBounds}
           initialCenter={mapCenter.center}
           initialZoom={mapCenter.zoom}
+          searchLocation={searchLocation}
           userLocation={userLocation}
           onRequestLocation={requestLocation}
           mapStyle={mapStyle}
@@ -150,7 +169,12 @@ function SpotsLayout() {
       <Sheet open={listSheetOpen} onClose={() => setListSheetOpen(false)}>
         <div className="flex h-[80dvh] flex-col">
           <Suspense fallback={null}>
-            <Sidebar spots={spots} onSpotClick={handleSelectSpot} loading={isPending} />
+            <Sidebar
+              spots={spots}
+              onSpotClick={handleSelectSpot}
+              onLocationSelect={handleLocationSelect}
+              loading={isPending}
+            />
           </Suspense>
         </div>
       </Sheet>

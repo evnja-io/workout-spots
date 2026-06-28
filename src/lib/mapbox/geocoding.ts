@@ -6,12 +6,15 @@ export type GeocodeResult = {
   country: string
   lng: number
   lat: number
+  /** [west, south, east, north] extent — present for areas (cities/regions), absent for point addresses. */
+  bbox?: [number, number, number, number]
 }
 type MapboxContext = { id: string; text: string }
 type MapboxFeature = {
   place_name: string
   text: string
   center: [number, number]
+  bbox?: [number, number, number, number]
   context?: MapboxContext[]
 }
 
@@ -32,6 +35,7 @@ function toResult(f: MapboxFeature): GeocodeResult {
     country: pick(f.context, 'country'),
     lng: f.center[0],
     lat: f.center[1],
+    bbox: f.bbox,
   }
 }
 export async function forwardGeocode(

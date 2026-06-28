@@ -242,6 +242,27 @@
 [data-theme='dark'] .wp-user .dot {
   border-color: var(--surface);
 }
+/* Searched-location marker — amber ring, distinct from spot pins and the user dot. */
+.wp-search {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.wp-search .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f59e0b;
+  border: 3px solid white;
+  box-shadow:
+    0 0 0 6px rgba(245, 158, 11, 0.2),
+    0 2px 8px rgba(245, 158, 11, 0.45);
+}
+[data-theme='dark'] .wp-search .dot {
+  border-color: var(--surface);
+}
 
 /* ===== Mapbox overrides ===== */
 .mapboxgl-ctrl-attrib {

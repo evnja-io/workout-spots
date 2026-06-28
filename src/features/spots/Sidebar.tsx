@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -8,9 +8,11 @@ import { disciplinesQueryOptions, equipmentsQueryOptions } from '~/features/taxo
 import { spotSearchSchema, applyFilters } from './filters'
 import type { SpotSearch } from './filters'
 import type { SpotListItem } from './domain'
+import type { GeocodeResult } from '~/lib/mapbox/geocoding'
 import { SpotCard } from './SpotCard'
 import { SpotCardSkeleton } from './SpotCardSkeleton'
 import { Filters } from './Filters'
+import { LocationSearch } from './LocationSearch'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
 import { trackEvent } from '~/features/analytics/gtag'
@@ -25,11 +27,14 @@ const SKELETON_COUNT = 6
 export function Sidebar({
   spots,
   onSpotClick,
+  onLocationSelect,
   loading = false,
 }: {
   /** In-viewport spots from the route's bbox query — single source of truth. */
   spots: SpotListItem[]
   onSpotClick?: (id: string) => void
+  /** A geosuggest result was picked — the route recenters the map on it. */
+  onLocationSelect?: (r: GeocodeResult) => void
   /** First load with no cached spots yet — show skeleton cards instead of the empty state. */
   loading?: boolean
 }) {
@@ -56,31 +61,6 @@ export function Sidebar({
   })
   const source = mode === 'saved' ? savedSpots : spots
   const filtered = applyFilters(source, search)
-
-  // Debounced search input
-  const [inputValue, setInputValue] = useState(search.q)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  // Keep local input in sync when search.q changes from URL
-  useEffect(() => {
-    setInputValue(search.q)
-  }, [search.q])
-
-  function handleSearchChange(value: string) {
-    setInputValue(value)
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => {
-      const term = value.trim()
-      if (term) trackEvent('search', { search_term: term })
-      void navigate({ search: (prev) => ({ ...prev, q: value }) })
-    }, 250)
-  }
-
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-    }
-  }, [])
 
   function toggleDiscipline(id: string) {
     trackEvent('filter_applied', { filter_type: 'discipline', filter_id: id })
@@ -153,16 +133,8 @@ export function Sidebar({
           </span>
         </div>
 
-        <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-surface-2 border border-transparent rounded-[10px] transition-[border-color,background-color] duration-150 focus-within:bg-surface focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-softer)]">
-          <Icon name="search" size={16} color="var(--text-3)" />
-          <input
-            type="search"
-            placeholder={t('discover.searchPlaceholder')}
-            value={inputValue}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            aria-label={t('discover.searchPlaceholder')}
-            className="w-full border-0 bg-transparent text-[13.5px] placeholder:text-text-4"
-          />
+        <div className="mt-3">
+          <LocationSearch onSelect={(r) => onLocationSelect?.(r)} />
         </div>
 
         {/* All / Saved toggle */}

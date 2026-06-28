@@ -35,7 +35,6 @@ vi.mock('@tanstack/react-router', () => ({
 vi.mock('~/routes/spots/route', () => ({
   Route: {
     useSearch: () => ({
-      q: 'bercy',
       disciplines: [],
       equipment: [],
       open24h: false,
@@ -88,7 +87,7 @@ function makeClient() {
 }
 
 describe('Sidebar', () => {
-  it('shows count of 1 and the Bercy card when q=bercy filters', () => {
+  it('renders all in-viewport spots (no text filtering — search is an address picker)', () => {
     const client = makeClient()
     render(
       <QueryClientProvider client={client}>
@@ -99,14 +98,10 @@ describe('Sidebar', () => {
       </QueryClientProvider>,
     )
 
-    // The results count pill should show 1 (only Bercy matches "bercy")
-    expect(screen.getByText('1')).toBeInTheDocument()
-
-    // Bercy card name is present
+    // Count pill shows both spots — the search box no longer filters the list
+    expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('Bercy Bars')).toBeInTheDocument()
-
-    // The other spot is NOT present
-    expect(screen.queryByText('Fontaine du Trocadéro')).toBeNull()
+    expect(screen.getByText('Fontaine du Trocadéro')).toBeInTheDocument()
   })
 
   it('switching to the Saved toggle swaps the list source', async () => {
