@@ -10,6 +10,14 @@ import { MapStyleSwitch } from './MapStyleSwitch'
 const DEFAULT_CENTER: [number, number] = [2.35, 48.85]
 const DEFAULT_ZOOM = 11.5
 const USER_ZOOM = 13
+// Point addresses have no bbox; fly to a neighborhood-level zoom instead.
+const SEARCH_ZOOM = 14
+
+/** A place picked from the sidebar geosuggest. `bbox` is [west, south, east, north] when known. */
+export type SearchLocation = {
+  center: [number, number]
+  bbox?: [number, number, number, number]
+}
 
 // ── Minimal typed interfaces for mapbox-gl instances ─────────────────────────
 interface MapboxMarker {
@@ -34,6 +42,10 @@ interface MapboxMap {
   on: (event: string, cb: (e: MapboxMapEvent) => void) => void
   setStyle: (style: string) => void
   flyTo: (opts: { center: [number, number]; zoom?: number }) => void
+  fitBounds: (
+    bounds: [[number, number], [number, number]],
+    opts?: { padding?: number; maxZoom?: number },
+  ) => void
   zoomTo: (zoom: number) => void
   getZoom: () => number
   getBounds: () => MapboxLngLatBounds
@@ -60,6 +72,7 @@ export interface MapViewProps {
   theme: Theme
   initialCenter?: [number, number]
   initialZoom?: number
+  searchLocation?: SearchLocation | null
   userLocation?: [number, number] | null
   onRequestLocation?: () => void
 }
@@ -77,6 +90,7 @@ export function MapView({
   theme,
   initialCenter,
   initialZoom,
+  searchLocation = null,
   userLocation = null,
   onRequestLocation,
 }: MapViewProps) {
@@ -90,6 +104,7 @@ export function MapView({
   const markersRef = useRef<Map<string, MapboxMarker>>(new Map())
   const newSpotMarkerRef = useRef<MapboxMarker | null>(null)
   const userMarkerRef = useRef<MapboxMarker | null>(null)
+  const searchMarkerRef = useRef<MapboxMarker | null>(null)
   const flewToUserRef = useRef(false)
   // Tracks the spot we last flew to, so refetching spots (e.g. after panning)
   // never re-centers the map — we only fly when the *selection* changes.
@@ -267,6 +282,47 @@ export function MapView({
       .setLngLat(userLocation)
       .addTo(map)
   }, [userLocation, mapReady])
+
+  // ── Searched location: fly/fit the map + drop a marker ─────────────────────
+  // Fitting to the result's bbox (cities/regions) loads exactly the spots in
+  // that area; point addresses (no bbox) fall back to a neighborhood zoom. The
+  // resulting moveend reloads viewport spots via onBoundsChange — no extra fetch.
+  useEffect(() => {
+    const map = mapRef.current
+    if (!mapReady || !map || !searchLocation) return
+    const { center, bbox } = searchLocation
+    if (bbox) {
+      map.fitBounds(
+        [
+          [bbox[0], bbox[1]],
+          [bbox[2], bbox[3]],
+        ],
+        { padding: 40, maxZoom: 16 },
+      )
+    } else {
+      map.flyTo({ center, zoom: SEARCH_ZOOM })
+    }
+  }, [searchLocation, mapReady])
+
+  // ── Searched-location marker — distinct from spot pins and the user marker ──
+  useEffect(() => {
+    const map = mapRef.current
+    const mapboxgl = mapboxglRef.current
+    if (!mapReady || !map || !mapboxgl) return
+
+    searchMarkerRef.current?.remove()
+    searchMarkerRef.current = null
+    if (!searchLocation) return
+
+    const el = document.createElement('div')
+    el.className = 'wp-search'
+    const dot = document.createElement('div')
+    dot.className = 'dot'
+    el.appendChild(dot)
+    searchMarkerRef.current = new mapboxgl.Marker({ element: el })
+      .setLngLat(searchLocation.center)
+      .addTo(map)
+  }, [searchLocation, mapReady])
 
   // ── Auto-fly to the user once, when their location first resolves ──────────
   // Skips if a spot is already selected (don't yank a deep-linked detail view).

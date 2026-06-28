@@ -28,6 +28,7 @@ export class FakeMap {
   }
   setStyle() {}
   flyTo() {}
+  fitBounds() {}
   zoomTo() {}
   getZoom() {
     return 11.5

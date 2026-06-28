@@ -37,7 +37,6 @@ const spots: SpotListItem[] = [
 describe('filters', () => {
   it('search schema defaults', () => {
     expect(spotSearchSchema.parse({})).toEqual({
-      q: '',
       disciplines: [],
       equipment: [],
       open24h: false,
@@ -48,13 +47,10 @@ describe('filters', () => {
     const out = applyFilters(spots, spotSearchSchema.parse({ disciplines: ['di-4'] }))
     expect(out.map((s) => s.id)).toEqual(['b'])
   })
-  it('filters by open24h and query', () => {
+  it('filters by open24h', () => {
     expect(applyFilters(spots, spotSearchSchema.parse({ open24h: true })).map((s) => s.id)).toEqual(
       ['a'],
     )
-    expect(applyFilters(spots, spotSearchSchema.parse({ q: 'charl' })).map((s) => s.id)).toEqual([
-      'b',
-    ])
   })
   it('sorts by popular then name', () => {
     expect(

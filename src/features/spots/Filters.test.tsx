@@ -10,7 +10,6 @@ import type { SpotSearch } from './filters'
 const i18n = createI18n('en')
 
 const defaultSearch: SpotSearch = {
-  q: '',
   disciplines: [],
   equipment: [],
   open24h: false,

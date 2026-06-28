@@ -19,14 +19,17 @@
  *   onSpotClick callback rather than a full route transition
  */
 
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { http, HttpResponse } from 'msw'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
 import { createI18n } from '~/lib/i18n/config'
+import { server } from '~/test/msw/server'
 import { Sidebar } from '~/features/spots/Sidebar'
 import type { SpotListItem, Discipline } from '~/features/spots/domain'
+import type { GeocodeResult } from '~/lib/mapbox/geocoding'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -45,7 +48,6 @@ vi.mock('~/features/auth/useAuthGate', () => ({
 
 const mockNavigate = vi.fn()
 let mockSearchState = {
-  q: '',
   disciplines: [] as string[],
   equipment: [] as string[],
   open24h: false,
@@ -122,12 +124,19 @@ function makeClient() {
   return client
 }
 
-function renderSidebar(onSpotClick?: (id: string) => void) {
+function renderSidebar(opts?: {
+  onSpotClick?: (id: string) => void
+  onLocationSelect?: (r: GeocodeResult) => void
+}) {
   return render(
     <QueryClientProvider client={makeClient()}>
       <I18nextProvider i18n={i18n}>
         {/* spots prop: route.tsx owns the bbox query and passes results down */}
-        <Sidebar spots={allSpots} onSpotClick={onSpotClick} />
+        <Sidebar
+          spots={allSpots}
+          onSpotClick={opts?.onSpotClick}
+          onLocationSelect={opts?.onLocationSelect}
+        />
       </I18nextProvider>
     </QueryClientProvider>,
   )
@@ -137,7 +146,7 @@ function renderSidebar(onSpotClick?: (id: string) => void) {
 
 describe('Discover integration', () => {
   beforeEach(() => {
-    mockSearchState = { q: '', disciplines: [], equipment: [], open24h: false, sort: 'rating' }
+    mockSearchState = { disciplines: [], equipment: [], open24h: false, sort: 'rating' }
     mockNavigate.mockReset()
   })
 
@@ -149,33 +158,41 @@ describe('Discover integration', () => {
     expect(screen.getByText('2')).toBeInTheDocument()
   })
 
-  it('search input triggers navigate with updated q param', async () => {
-    renderSidebar()
-    const input = screen.getByPlaceholderText(/search/i)
-    await userEvent.type(input, 'Calis')
-
-    // Wait for debounce (250ms) to fire navigate
-    await waitFor(
-      () => {
-        expect(mockNavigate).toHaveBeenCalled()
-      },
-      { timeout: 500 },
+  it('geosuggest: typing shows address suggestions and selecting calls onLocationSelect', async () => {
+    // Intercept the Mapbox forward-geocoding call with a fixture result.
+    server.use(
+      http.get('https://api.mapbox.com/geocoding/v5/mapbox.places/*', () =>
+        HttpResponse.json({
+          features: [
+            {
+              place_name: 'Lyon, France',
+              text: 'Lyon',
+              center: [4.83, 45.75],
+              bbox: [4.77, 45.7, 4.9, 45.81],
+              context: [{ id: 'country.1', text: 'France' }],
+            },
+          ],
+        }),
+      ),
     )
 
-    // Verify the navigate search updater function produces the correct output
-    const lastArgs = mockNavigate.mock.calls[mockNavigate.mock.calls.length - 1]
-    expect(lastArgs).toBeDefined()
-    const lastCall = lastArgs![0] as {
-      search: (prev: typeof mockSearchState) => typeof mockSearchState
-    }
-    const resultSearch = lastCall.search({
-      q: '',
-      disciplines: [],
-      equipment: [],
-      open24h: false,
-      sort: 'rating',
+    const onLocationSelect = vi.fn()
+    renderSidebar({ onLocationSelect })
+
+    const input = screen.getByPlaceholderText(/search/i)
+    await userEvent.type(input, 'Lyon')
+
+    // Suggestion appears after the 300ms debounce + geocode resolves
+    const option = await screen.findByRole('option', { name: 'Lyon, France' })
+    await userEvent.click(option)
+
+    expect(onLocationSelect).toHaveBeenCalledTimes(1)
+    expect(onLocationSelect.mock.calls[0]![0]).toMatchObject({
+      placeName: 'Lyon, France',
+      lng: 4.83,
+      lat: 45.75,
+      bbox: [4.77, 45.7, 4.9, 45.81],
     })
-    expect(resultSearch).toMatchObject({ q: 'Calis' })
   })
 
   it('toggling a discipline chip calls navigate with the discipline id added', async () => {
@@ -197,7 +214,6 @@ describe('Discover integration', () => {
       search: (prev: typeof mockSearchState) => typeof mockSearchState
     }
     const resultSearch = call.search({
-      q: '',
       disciplines: [],
       equipment: [],
       open24h: false,
@@ -208,7 +224,7 @@ describe('Discover integration', () => {
 
   it('clicking a spot card calls onSpotClick with the spot id', async () => {
     const onSpotClick = vi.fn()
-    renderSidebar(onSpotClick)
+    renderSidebar({ onSpotClick })
 
     // SpotCard renders as role="button" with the spot name as heading inside
     const cards = await screen.findAllByRole('button')
