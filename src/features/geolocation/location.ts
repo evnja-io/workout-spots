@@ -1,3 +1,6 @@
+import { createIsomorphicFn } from '@tanstack/react-start'
+import { getServerInitialCenter } from './location.server'
+
 export type LngLat = [number, number]
 
 export type MapCenter = {
@@ -55,3 +58,21 @@ export function setLocationCookie(lng: number, lat: number): void {
   const value = `${roundCoord(lng)},${roundCoord(lat)}`
   document.cookie = `${LOC_COOKIE}=${value}; path=/; max-age=2592000; samesite=lax`
 }
+
+function readClientInitialCenter(): MapCenter {
+  const raw = document.cookie
+    .split('; ')
+    .find((c) => c.startsWith(`${LOC_COOKIE}=`))
+    ?.split('=')[1]
+  return resolveCenter(parseLocCookie(raw), null, null)
+}
+
+/**
+ * Resolve the initial map center. Call this in the route loader so the
+ * server-only Vercel IP headers reach the client via serialized loader data.
+ * - server: cookie → IP headers → Paris
+ * - client (nav): cookie → Paris (no IP headers available client-side)
+ */
+export const getInitialMapCenter = createIsomorphicFn()
+  .client(readClientInitialCenter)
+  .server((): MapCenter => getServerInitialCenter())

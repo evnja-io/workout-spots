@@ -8,6 +8,7 @@ import {
   PARIS_CENTER,
   REGION_ZOOM,
   PRECISE_ZOOM,
+  getInitialMapCenter,
 } from './location'
 
 describe('roundCoord', () => {
@@ -77,5 +78,22 @@ describe('setLocationCookie', () => {
   it('writes rounded coords as "lng,lat"', () => {
     setLocationCookie(2.352211, 48.856612)
     expect(document.cookie).toContain('loc=2.35,48.86')
+  })
+})
+
+describe('getInitialMapCenter (client branch)', () => {
+  beforeEach(() => {
+    document.cookie = 'loc=; path=/; max-age=0'
+  })
+  it('uses the loc cookie when present', () => {
+    document.cookie = 'loc=2.35,48.85; path=/'
+    expect(getInitialMapCenter()).toEqual({
+      center: [2.35, 48.85],
+      zoom: PRECISE_ZOOM,
+      source: 'cookie',
+    })
+  })
+  it('falls back to Paris default when no cookie (client has no IP headers)', () => {
+    expect(getInitialMapCenter().source).toBe('default')
   })
 })
