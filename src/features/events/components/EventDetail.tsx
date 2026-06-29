@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Icon } from '~/components/ui/Icon'
 import { ImageWithShimmer } from '~/components/ui/ImageWithShimmer'
 import { cx } from '~/components/ui/cx'
+import { cdnImageUrl } from '~/lib/cdn/images'
 import type {
   EventDetail as EventDetailType,
   EventImage,
@@ -466,7 +467,11 @@ function Gallery({ images, onOpen }: { images: EventImage[]; onOpen: (i: number)
           onClick={() => onOpen(i)}
           className="aspect-square overflow-hidden rounded-[14px] bg-surface-2 transition-transform hover:scale-[1.03]"
         >
-          <img src={img.imageUrl} alt={img.caption ?? ''} className="h-full w-full object-cover" />
+          <img
+            src={cdnImageUrl(img.imageUrl)}
+            alt={img.caption ?? ''}
+            className="h-full w-full object-cover"
+          />
         </button>
       ))}
     </div>
@@ -513,7 +518,7 @@ function Lightbox({
         </button>
       )}
       <img
-        src={img.imageUrl}
+        src={cdnImageUrl(img.imageUrl)}
         alt={img.caption ?? ''}
         className="max-h-[80vh] max-w-full rounded-[18px] object-contain shadow-[var(--shadow-lg)]"
         onClick={(e) => e.stopPropagation()}

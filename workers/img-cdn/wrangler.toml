@@ -1,0 +1,21 @@
+# Source-of-truth config for the evnja-img-cdn Worker.
+#
+# The Worker is currently deployed via the Cloudflare dashboard editor, but this
+# file documents its config and allows `wrangler deploy` once an API token /
+# `wrangler login` is available locally.
+#
+#   cd workers/img-cdn && npx wrangler deploy
+#
+# The custom domain img.evnja.gg is attached in the dashboard
+# (Worker → Settings → Domains & Routes → Custom Domain), which creates the
+# proxied DNS record and edge certificate automatically.
+
+name = "evnja-img-cdn"
+main = "index.js"
+compatibility_date = "2025-01-01"
+
+# Attaching the custom domain here means a single `wrangler deploy` both ships
+# the code and creates the proxied img.evnja.gg DNS record + edge certificate.
+routes = [
+  { pattern = "img.evnja.gg", custom_domain = true },
+]

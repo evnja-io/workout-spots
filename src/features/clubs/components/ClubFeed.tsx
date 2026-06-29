@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Avatar } from '~/components/ui/Avatar'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
+import { cdnImageUrl } from '~/lib/cdn/images'
 import { useSession } from '~/features/auth/session'
 import type { ClubPost } from '../domain'
 import { clubFeedQueryOptions } from '../queries'
@@ -185,7 +186,7 @@ function PostCard({
       )}
       {post.imageUrl && (
         <img
-          src={post.imageUrl}
+          src={cdnImageUrl(post.imageUrl)}
           alt=""
           className="mt-2.5 max-h-80 w-full rounded-lg object-cover"
         />
