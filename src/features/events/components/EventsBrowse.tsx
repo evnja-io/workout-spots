@@ -84,7 +84,7 @@ export function EventsBrowse({
             <span className="size-[7px] rounded-full bg-[#FF3B6B] [animation:livePulse_1.4s_ease-in-out_infinite]" />
             {t('events.kicker')}
           </span>
-          <h1 className="mt-2.5 font-display text-[clamp(40px,7vw,76px)] uppercase leading-[0.86] tracking-[0.005em] text-text">
+          <h1 className="mt-4 font-display text-[clamp(40px,7vw,76px)] uppercase leading-[0.95] tracking-[0.005em] text-text">
             {t('events.title')}
           </h1>
           <p className="mt-3 max-w-md text-[14.5px] leading-relaxed text-text-3">
@@ -210,7 +210,9 @@ export function EventsBrowse({
                   {t('events.count', { count: rail.items.length })}
                 </span>
               </div>
-              <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-3.5 md:-mx-8 md:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {/* pt/pb give the cards' hover lift + shadow room — overflow-x:auto
+                  forces overflow-y:auto, which would otherwise clip them. */}
+              <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-6 pt-3 md:-mx-8 md:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {rail.items.map((e) => (
                   <EventCard key={e.id} event={e} onOpen={onOpen} variant="rail" />
                 ))}

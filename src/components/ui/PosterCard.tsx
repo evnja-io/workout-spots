@@ -50,7 +50,10 @@ export function PosterCard({
     <div
       className={cx(
         'group relative isolate overflow-hidden rounded-[22px] bg-surface shadow-[var(--shadow-md)]',
-        'transition-[transform,box-shadow,opacity] duration-200 ease-[cubic-bezier(.32,.72,0,1)]',
+        // Tailwind v4 maps -translate-y-* to the CSS `translate` property (not
+        // `transform`), so `translate` must be in the transition list or the lift
+        // jumps with no animation.
+        'transition-[translate,box-shadow,opacity] duration-200 ease-[cubic-bezier(.32,.72,0,1)]',
         interactive && 'cursor-pointer hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]',
         dimmed && 'opacity-60 hover:opacity-100',
         VARIANT_ASPECT[variant],

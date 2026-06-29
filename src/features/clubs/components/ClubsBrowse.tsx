@@ -68,7 +68,7 @@ export function ClubsBrowse({
             <Icon name="users" size={13} />
             {t('clubs.kicker')}
           </span>
-          <h1 className="mt-2.5 font-display text-[clamp(40px,7vw,76px)] uppercase leading-[0.86] tracking-[0.005em] text-text">
+          <h1 className="mt-4 font-display text-[clamp(40px,7vw,76px)] uppercase leading-[0.95] tracking-[0.005em] text-text">
             {t('clubs.title')}
           </h1>
           <p className="mt-3 max-w-md text-[14.5px] leading-relaxed text-text-3">
