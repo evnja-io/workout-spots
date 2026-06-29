@@ -7,7 +7,7 @@ export const Route = createFileRoute('/events')({
 
 function EventsLayout() {
   return (
-    <SectionShell>
+    <SectionShell className="section-poster">
       <Outlet />
     </SectionShell>
   )

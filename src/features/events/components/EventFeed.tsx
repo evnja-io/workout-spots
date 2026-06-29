@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { Avatar } from '~/components/ui/Avatar'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
 import { useSession } from '~/features/auth/session'
@@ -13,30 +14,7 @@ import {
   useDeletePost,
   useToggleLike,
 } from '../feedMutations'
-import { initials, timeAgo } from './visuals'
-
-function Avatar({
-  name,
-  avatarUrl,
-  size = 36,
-}: {
-  name: string
-  avatarUrl: string | null
-  size?: number
-}) {
-  return (
-    <div
-      className="grid shrink-0 place-items-center overflow-hidden rounded-full text-[12px] font-semibold text-white"
-      style={{ width: size, height: size, background: 'var(--accent)' }}
-    >
-      {avatarUrl ? (
-        <img src={avatarUrl} alt="" className="size-full object-cover" />
-      ) : (
-        initials(name)
-      )}
-    </div>
-  )
-}
+import { timeAgo } from './visuals'
 
 export function EventFeed({ eventId, canCompose }: { eventId: string; canCompose: boolean }) {
   const { t } = useTranslation()
@@ -103,14 +81,14 @@ function Composer({
   }
 
   return (
-    <div className="rounded-xl border border-border bg-surface p-3">
+    <div className="rounded-[18px] border border-border bg-surface p-3.5">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={t('events.composePlaceholder')}
         rows={3}
         maxLength={2000}
-        className="w-full resize-none bg-transparent text-[14px] text-text outline-none placeholder:text-text-4"
+        className="w-full resize-none bg-transparent text-[14.5px] text-text outline-none placeholder:text-text-4"
       />
       <div className="mt-2 flex items-center justify-between">
         <label className="inline-flex cursor-pointer items-center gap-1.5 text-[13px] text-text-3 hover:text-text">
@@ -131,7 +109,7 @@ function Composer({
           type="button"
           disabled={pending || content.trim() === ''}
           onClick={submit}
-          className="rounded-full bg-accent px-4 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-2 disabled:opacity-50"
+          className="rounded-full bg-hot px-4 py-2 text-[13px] font-bold text-white transition-[filter] hover:brightness-105 disabled:opacity-50"
         >
           {t('events.post')}
         </button>
@@ -171,9 +149,9 @@ function PostCard({
   }
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-3.5">
+    <article className="rounded-[18px] border border-border bg-surface p-4">
       <header className="flex items-center gap-2.5">
-        <Avatar name={post.author.name} avatarUrl={post.author.avatarUrl} />
+        <Avatar name={post.author.name} avatarUrl={post.author.avatarUrl} size={36} />
         <div className="min-w-0 flex-1">
           <div className="truncate text-[14px] font-semibold text-text">{post.author.name}</div>
           <div className="text-[12px] text-text-4">{timeAgo(post.createdAt)}</div>

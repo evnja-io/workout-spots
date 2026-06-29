@@ -1,5 +1,10 @@
 {
-  "nav": { "spots": "Spots", "clubs": "Clubs", "events": "Événements", "create": "Créer" },
+  "nav": {
+    "spots": "Spots",
+    "clubs": "Clubs",
+    "events": "Événements",
+    "create": "Créer"
+  },
   "clubs": {
     "title": "Clubs",
     "subtitle": "Des communautés qui s'entraînent près de chez vous",
@@ -66,7 +71,14 @@
     "demote": "Retirer modérateur",
     "kick": "Retirer",
     "makeOwner": "Transférer la propriété",
-    "notStaff": "Vous n'avez pas la permission de gérer ce club."
+    "notStaff": "Vous n'avez pas la permission de gérer ce club.",
+    "kicker": "Communauté",
+    "tagline": "Entraînez-vous avec ceux qui vous poussent — trouvez votre équipe.",
+    "join": "Rejoindre",
+    "request": "Demander",
+    "role_owner": "Propriétaire",
+    "role_moderator": "Modérateur",
+    "role_member": "Membre"
   },
   "events": {
     "title": "Événements",
@@ -183,7 +195,22 @@
     "post": "Publier",
     "send": "Envoyer",
     "deletePost": "Supprimer la publication",
-    "deleteComment": "Supprimer le commentaire"
+    "deleteComment": "Supprimer le commentaire",
+    "kicker": "À découvrir",
+    "tagline": "Trouvez votre prochaine séance — entraînez-vous ensemble.",
+    "layout_rails": "À la une",
+    "layout_feed": "Flux",
+    "railLive": "En ce moment",
+    "railUpcoming": "À venir",
+    "railWrapped": "Terminés",
+    "beFirst": "Soyez le premier",
+    "cta_recap": "Résumé",
+    "cta_joinNow": "Rejoindre",
+    "cta_waitlist": "Liste d’attente",
+    "cta_rsvp": "Participer",
+    "minLabel": "min {{count}}",
+    "awaitingApprovalSub": "L’organisateur examinera votre demande",
+    "onWaitlistSub": "Nous vous préviendrons si une place se libère"
   },
   "common": {
     "save": "Enregistrer",

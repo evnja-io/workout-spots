@@ -10,7 +10,7 @@ import { eventTagsQueryOptions, userClubsQueryOptions } from '../queries'
 import { EventLocationPicker } from './EventLocationPicker'
 
 const inputCls =
-  'w-full rounded-lg border border-border bg-surface px-3 py-2 text-[14px] text-text outline-none placeholder:text-text-4 focus:border-accent'
+  'w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[14px] text-text outline-none placeholder:text-text-4 focus:border-accent'
 
 export type EventFormState = {
   title: string
@@ -405,7 +405,7 @@ export function EventForm({
           type="button"
           onClick={submit}
           disabled={pending || s.title.trim().length < 3}
-          className="rounded-full bg-accent px-5 py-2 text-[13px] font-medium text-white transition-colors hover:bg-accent-2 disabled:opacity-50"
+          className="rounded-full bg-hot px-5 py-2.5 text-[13px] font-bold text-white shadow-[0_6px_20px_-6px_rgba(244,55,79,0.6)] transition-[filter] hover:brightness-105 disabled:opacity-50"
         >
           {submitLabel}
         </button>
@@ -416,8 +416,10 @@ export function EventForm({
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex flex-col gap-1.5">
-      <span className="text-[13px] font-medium text-text-2">{label}</span>
+    <label className="flex flex-col gap-2">
+      <span className="font-display text-[15px] uppercase tracking-[0.02em] text-text">
+        {label}
+      </span>
       {children}
     </label>
   )

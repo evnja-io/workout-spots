@@ -1,8 +1,12 @@
+import { useTranslation } from 'react-i18next'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
 import type { ClubPrivacy, ClubRole } from '../domain'
 
-const pill = 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium'
+const coverPill =
+  'inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/45 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm'
+const surfacePill =
+  'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold'
 
 export function PrivacyBadge({
   privacy,
@@ -11,20 +15,28 @@ export function PrivacyBadge({
   privacy: ClubPrivacy
   onCover?: boolean
 }) {
+  const { t } = useTranslation()
   const isPrivate = privacy === 'private'
+  const icon = isPrivate ? 'lock' : 'globe'
+  const label = isPrivate ? t('clubs.privacy_private') : t('clubs.privacy_public')
+
+  if (onCover) {
+    return (
+      <span className={coverPill}>
+        <Icon name={icon} size={11} />
+        {label}
+      </span>
+    )
+  }
   return (
     <span
       className={cx(
-        pill,
-        onCover
-          ? 'bg-black/35 text-white backdrop-blur-sm'
-          : isPrivate
-            ? 'bg-surface-2 text-text-2'
-            : 'bg-accent-soft text-accent',
+        surfacePill,
+        isPrivate ? 'bg-accent-soft text-accent' : 'bg-surface-2 text-text-2',
       )}
     >
-      <span className={cx('size-1.5 rounded-full', isPrivate ? 'bg-current' : 'bg-current')} />
-      {isPrivate ? 'Private' : 'Public'}
+      <Icon name={icon} size={11} />
+      {label}
     </span>
   )
 }
@@ -38,12 +50,7 @@ export function CategoryChip({
 }) {
   if (!category) return null
   return (
-    <span
-      className={cx(
-        pill,
-        onCover ? 'bg-black/35 text-white backdrop-blur-sm' : 'bg-surface-2 text-text-2',
-      )}
-    >
+    <span className={onCover ? coverPill : cx(surfacePill, 'bg-accent-soft text-accent')}>
       <Icon name="dumbbell" size={12} />
       {category}
     </span>
@@ -51,11 +58,29 @@ export function CategoryChip({
 }
 
 export function RoleBadge({ role }: { role: ClubRole }) {
-  if (role === 'member') return <span className={cx(pill, 'bg-surface-2 text-text-3')}>Member</span>
+  const { t } = useTranslation()
+  if (role === 'owner') {
+    return (
+      <span
+        className={cx(
+          surfacePill,
+          'bg-amber-500/15 capitalize text-amber-600 [[data-theme=dark]_&]:text-amber-400',
+        )}
+      >
+        <Icon name="crown" size={11} />
+        {t('clubs.role_owner')}
+      </span>
+    )
+  }
+  if (role === 'moderator') {
+    return (
+      <span className={cx(surfacePill, 'bg-accent-soft capitalize text-accent')}>
+        <Icon name="shield" size={11} />
+        {t('clubs.role_moderator')}
+      </span>
+    )
+  }
   return (
-    <span className={cx(pill, 'bg-accent-soft text-accent capitalize')}>
-      {role === 'owner' && <Icon name="star" size={11} />}
-      {role}
-    </span>
+    <span className={cx(surfacePill, 'bg-surface-2 text-text-3')}>{t('clubs.role_member')}</span>
   )
 }

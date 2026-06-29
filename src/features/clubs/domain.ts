@@ -2,6 +2,13 @@ export type ClubPrivacy = 'public' | 'private'
 export type ClubRole = 'owner' | 'moderator' | 'member'
 export type ClubMemberStatus = 'pending' | 'approved' | 'rejected'
 
+/** Lightweight person reference for "social stack" avatar rows. */
+export type SampleAvatar = {
+  id: string
+  name: string
+  avatarUrl: string | null
+}
+
 export type ClubListItem = {
   id: string
   name: string
@@ -11,6 +18,8 @@ export type ClubListItem = {
   memberCount: number
   spotCount: number
   tags: string[]
+  /** Up to ~5 sample members (owner/mods first) for the card's social stack. */
+  sampleMembers: SampleAvatar[]
 }
 
 export type ClubMember = {
