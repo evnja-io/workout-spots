@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { cdnImageUrl } from '~/lib/cdn/images'
 import { coverGradient, initials } from '~/lib/visuals'
 import { cx } from './cx'
 
@@ -35,7 +36,7 @@ export function Avatar({ name, avatarUrl, size = 32, bg, className, style }: Ava
       title={name}
     >
       {avatarUrl ? (
-        <img src={avatarUrl} alt="" className="size-full object-cover" />
+        <img src={cdnImageUrl(avatarUrl)} alt="" className="size-full object-cover" />
       ) : (
         initials(name)
       )}

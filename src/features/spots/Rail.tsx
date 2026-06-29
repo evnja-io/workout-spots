@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
+import { cdnImageUrl } from '~/lib/cdn/images'
 import { Logo } from '~/features/spots/Logo'
 import { useSessionContext } from '~/features/auth/session'
 import { currentUserProfileQueryOptions } from '~/features/auth/profile'
@@ -137,7 +138,7 @@ export function Rail({ onOpenSettings }: RailProps) {
           onClick={handleAccountClick}
         >
           {avatarUrl ? (
-            <img src={avatarUrl} alt="" className="size-full object-cover" />
+            <img src={cdnImageUrl(avatarUrl)} alt="" className="size-full object-cover" />
           ) : (
             (initial ?? <Icon name="user" size={16} />)
           )}

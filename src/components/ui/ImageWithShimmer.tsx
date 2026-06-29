@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { cdnImageUrl } from '~/lib/cdn/images'
 import { cx } from './cx'
 import { Skeleton } from './Skeleton'
 
@@ -32,7 +33,7 @@ export function ImageWithShimmer({
       {!loaded && <Skeleton className="absolute inset-0" />}
       <img
         ref={ref}
-        src={src}
+        src={cdnImageUrl(src)}
         alt={alt}
         loading="lazy"
         decoding="async"
