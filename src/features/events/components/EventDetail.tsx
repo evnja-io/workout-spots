@@ -98,7 +98,9 @@ export function EventDetail({
       {/* Immersive hero */}
       <div className="relative flex min-h-[380px] flex-col md:min-h-[460px]">
         {event.featuredImageUrl ? (
-          <ImageWithShimmer src={event.featuredImageUrl} alt="" className="absolute inset-0 z-0" />
+          <div className="absolute inset-0 z-0">
+            <ImageWithShimmer src={event.featuredImageUrl} alt="" className="h-full w-full" />
+          </div>
         ) : (
           <div
             className="absolute inset-0 z-0"

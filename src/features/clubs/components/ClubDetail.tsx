@@ -55,7 +55,9 @@ export function ClubDetail({
       {/* Immersive hero */}
       <div className="relative flex min-h-[300px] flex-col text-white md:min-h-[360px]">
         {club.coverImageUrl ? (
-          <ImageWithShimmer src={club.coverImageUrl} alt="" className="absolute inset-0 z-0" />
+          <div className="absolute inset-0 z-0">
+            <ImageWithShimmer src={club.coverImageUrl} alt="" className="h-full w-full" />
+          </div>
         ) : (
           <div
             className="absolute inset-0 z-0"

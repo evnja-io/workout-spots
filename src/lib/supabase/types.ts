@@ -1918,6 +1918,7 @@ export type Database = {
           member_count: number
           name: string
           privacy: string
+          sample_avatars: Json
           spot_count: number
           tags: string[]
         }[]
@@ -1936,6 +1937,7 @@ export type Database = {
           price_currency: string
           primary_location_city: string
           primary_location_name: string
+          sample_avatars: Json
           starts_at: string
           status: string
           tags: Json

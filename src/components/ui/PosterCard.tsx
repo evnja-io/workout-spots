@@ -71,7 +71,9 @@ export function PosterCard({
       }
     >
       {imageUrl ? (
-        <ImageWithShimmer src={imageUrl} alt="" className="absolute inset-0 z-0" />
+        <div className="absolute inset-0 z-0">
+          <ImageWithShimmer src={imageUrl} alt="" className="h-full w-full" />
+        </div>
       ) : (
         <div className="absolute inset-0 z-0" style={{ backgroundImage: coverGradient(seedId) }} />
       )}
