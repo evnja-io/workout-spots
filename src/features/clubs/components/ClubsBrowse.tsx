@@ -149,7 +149,7 @@ export function ClubsBrowse({
         <EmptyState hasFilters={hasFilters} onClear={clearAll} onCreate={onCreate} />
       ) : (
         <>
-          <p className="mt-5 text-[13px] font-semibold text-text-3">
+          <p className="mt-5 text-right text-[13px] font-semibold text-text-3">
             {t('clubs.count', { count: filtered.length })}
           </p>
           <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2">

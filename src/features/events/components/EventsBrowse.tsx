@@ -35,7 +35,7 @@ export function EventsBrowse({
   const [query, setQuery] = useState('')
   const [tagIds, setTagIds] = useState<string[]>([])
   const [price, setPrice] = useState<PriceFilter>('all')
-  const [layout, setLayout] = useState<Layout>('rails')
+  const [layout, setLayout] = useState<Layout>('feed')
 
   const allTags = useMemo(() => {
     const map = new Map<string, EventTag>()
@@ -222,7 +222,7 @@ export function EventsBrowse({
         </div>
       ) : (
         <>
-          <p className="mt-5 text-[13px] font-semibold text-text-3">
+          <p className="mt-5 text-right text-[13px] font-semibold text-text-3">
             {t('events.count', { count: filtered.length })}
           </p>
           <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2">
