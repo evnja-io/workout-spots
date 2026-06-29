@@ -6,6 +6,8 @@ import { LandingFooter } from './LandingFooter'
 import { Hero } from './Hero'
 import { Stats } from './Stats'
 import { Features } from './Features'
+import { Clubs } from './Clubs'
+import { Events } from './Events'
 import { HowItWorks } from './HowItWorks'
 import { PopularSpots } from './PopularSpots'
 import { Disciplines } from './Disciplines'
@@ -43,6 +45,8 @@ export function LandingPage({ spots, equipments, disciplines, spotsCount }: Prop
           disciplineCount={disciplines.length}
         />
         <Features />
+        <Clubs />
+        <Events />
         <HowItWorks />
         <PopularSpots spots={spots} equipments={equipments} disciplines={disciplines} />
         <Disciplines />

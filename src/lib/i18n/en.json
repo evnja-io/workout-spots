@@ -398,6 +398,8 @@
       "features": "Features",
       "how": "How it works",
       "spots": "Spots",
+      "clubs": "Clubs",
+      "events": "Events",
       "faq": "FAQ",
       "openMap": "Open the map",
       "openMenu": "Open menu",
@@ -409,7 +411,7 @@
       "eyebrow": "The map for outdoor training",
       "titleLead": "Find your next",
       "titleHighlight": "workout spot.",
-      "sub": "Discover outdoor calisthenics rigs, street-workout bars, parkour spots and running tracks near you. Filter by equipment and discipline, see real ratings, and train anywhere, for free.",
+      "sub": "Discover outdoor calisthenics rigs, street-workout bars, parkour spots and running tracks near you. Join a club and show up to events to train with people who push you. Filter by equipment and discipline, see real ratings, and train anywhere, for free.",
       "explore": "Explore the map",
       "how": "How it works",
       "trustRating": "4.8 average from 1,100+ athletes",
@@ -475,10 +477,99 @@
         }
       ]
     },
+    "clubs": {
+      "eyebrow": "Clubs",
+      "title": "Find your crew, not just a spot",
+      "sub": "Clubs are communities built around outdoor training. Join one near you, see who's already in, and never train alone again.",
+      "cta": "Browse all clubs",
+      "showcase": [
+        {
+          "name": "Bercy Bar Brothers",
+          "category": "Calisthenics",
+          "meta": "6 spots · 128 members",
+          "tags": ["Pull-ups", "Beginners welcome"]
+        },
+        {
+          "name": "Paris Parkour Collective",
+          "category": "Parkour",
+          "meta": "9 spots · 64 members",
+          "tags": ["Freerunning", "Weekly jams"]
+        },
+        {
+          "name": "Sunrise Street Workout",
+          "category": "Street workout",
+          "meta": "4 spots · 212 members",
+          "tags": ["Morning sessions", "All levels"]
+        }
+      ],
+      "steps": [
+        {
+          "title": "Find a club",
+          "desc": "Browse communities near you and filter by discipline, vibe and location."
+        },
+        {
+          "title": "Join or request",
+          "desc": "Jump straight into public clubs, or request to join private ones in a tap."
+        },
+        {
+          "title": "Train together",
+          "desc": "Follow the club feed, share sessions and meet up at your favourite spots."
+        }
+      ]
+    },
+    "events": {
+      "eyebrow": "Events",
+      "title": "Never miss a session",
+      "sub": "Events are scheduled meetups at real workout spots. RSVP in one tap, see who's going, and turn up to train with the crew.",
+      "cta": "See all events",
+      "showcase": [
+        {
+          "title": "Sunday Calisthenics Jam",
+          "month": "JUN",
+          "day": "28",
+          "meta": "Sun 10:00 · Quai de Bercy",
+          "price": "Free",
+          "status": "Live now",
+          "tags": ["Calisthenics", "All levels"]
+        },
+        {
+          "title": "Beginner Bar Basics",
+          "month": "JUL",
+          "day": "05",
+          "meta": "Sat 09:00 · Parc de Belleville",
+          "price": "Free",
+          "status": "Upcoming",
+          "tags": ["Beginners", "Coached"]
+        },
+        {
+          "title": "Parkour Night Session",
+          "month": "JUL",
+          "day": "12",
+          "meta": "Fri 19:30 · Stade Charléty",
+          "price": "€8",
+          "status": "Almost full",
+          "tags": ["Parkour", "Advanced"]
+        }
+      ],
+      "steps": [
+        {
+          "title": "Pick a session",
+          "desc": "Browse what's live now, coming up and already wrapped near you."
+        },
+        {
+          "title": "RSVP in a tap",
+          "desc": "Reserve your place instantly. Capacity, waitlists and approvals are handled for you."
+        },
+        {
+          "title": "Show up & move",
+          "desc": "Meet the crew at the spot. Pay on site if it's a paid event, no checkout needed."
+        }
+      ]
+    },
     "spots": {
-      "eyebrow": "Popular spots",
-      "title": "Spots the community loves",
-      "sub": "A glimpse of what's on the map right now — tap any spot to see photos, equipment and reviews.",
+      "eyebrow": "Near you",
+      "title": "The best spots around you",
+      "sub": "Some of the highest-rated outdoor training spots close to you. Tap any spot to see photos, equipment and reviews.",
       "open24": "Open 24/7",
       "reviews_one": "{{count}} review",
       "reviews_other": "{{count}} reviews",
@@ -553,7 +644,7 @@
     },
     "cta": {
       "title": "Know a spot we're missing?",
-      "sub": "Drop a pin, add the equipment and a few photos, and put it on the map for athletes everywhere.",
+      "sub": "Drop a pin, add the equipment and a few photos, and put it on the map for athletes everywhere. Then start a club or an event around it.",
       "addSpot": "Add a spot",
       "explore": "Explore the map"
     },
@@ -576,6 +667,22 @@
         {
           "q": "Do I need an account?",
           "a": "You can explore the map without an account. Sign in with a magic link to rate spots, leave reviews and contribute new locations."
+        },
+        {
+          "q": "What are clubs?",
+          "a": "Clubs are communities built around outdoor training spots. Join one to find regular training partners, follow a shared feed, and discover the spots your crew loves. Public clubs you can join instantly; private ones take a quick request."
+        },
+        {
+          "q": "How do events work?",
+          "a": "Events are scheduled meetups at real workout spots. Browse what's on, RSVP in one tap, and see who else is going. The app handles capacity, waitlists and approvals automatically."
+        },
+        {
+          "q": "Do events cost money?",
+          "a": "Most events are free. When an organiser sets a price, your RSVP reserves a place and you simply pay on site. There's no online checkout."
+        },
+        {
+          "q": "How do I start my own club or event?",
+          "a": "Open Clubs or Events and tap Create. You can build a club around your favourite spots or organise a meetup with a date, location and capacity in a couple of minutes."
         }
       ]
     },
@@ -592,8 +699,8 @@
       "copyright": "© {{year}} Workout Spots · spots.evnja.gg"
     },
     "meta": {
-      "title": "Workout Spots — Find Outdoor Calisthenics & Street Workout Spots",
-      "description": "Discover, rate and share outdoor calisthenics, street workout and parkour spots near you. Filter by equipment and discipline, find pull-up bars, parallel bars and tracks, and train anywhere — for free."
+      "title": "Workout Spots: Find Outdoor Training Spots, Clubs & Events",
+      "description": "Discover, rate and share outdoor calisthenics, street workout and parkour spots near you. Join training clubs, RSVP to events, filter by equipment and discipline, and train anywhere, for free."
     }
   },
   "pages": {

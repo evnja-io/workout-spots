@@ -5,7 +5,7 @@ import { Logo } from '~/features/spots/Logo'
 import { useScrolled, useScrollSpy, scrollToAnchor } from './hooks'
 import { MobileMenu, type NavItem } from './MobileMenu'
 
-const SECTION_IDS = ['features', 'how', 'spots', 'faq']
+const SECTION_IDS = ['features', 'clubs', 'events', 'how', 'spots', 'faq']
 
 type Props = {
   /** 'landing' enables smooth-scroll + scroll-spy; 'page' links back to the home sections. */
@@ -22,6 +22,8 @@ export function LandingHeader({ variant = 'landing' }: Props) {
 
   const items: NavItem[] = [
     { label: t('landing.nav.features'), href: '#features' },
+    { label: t('landing.nav.clubs'), href: '#clubs' },
+    { label: t('landing.nav.events'), href: '#events' },
     { label: t('landing.nav.how'), href: '#how' },
     { label: t('landing.nav.spots'), href: '#spots' },
     { label: t('landing.nav.faq'), href: '#faq' },
@@ -84,7 +86,14 @@ export function LandingHeader({ variant = 'landing' }: Props) {
           aria-haspopup="dialog"
           onClick={() => setMenuOpen(true)}
         >
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <line x1="3" y1="7" x2="21" y2="7" />
             <line x1="3" y1="12" x2="21" y2="12" />
             <line x1="3" y1="17" x2="21" y2="17" />

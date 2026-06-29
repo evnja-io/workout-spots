@@ -398,6 +398,8 @@
       "features": "Fonctionnalités",
       "how": "Comment ça marche",
       "spots": "Spots",
+      "clubs": "Clubs",
+      "events": "Événements",
       "faq": "FAQ",
       "openMap": "Ouvrir la carte",
       "openMenu": "Ouvrir le menu",
@@ -409,7 +411,7 @@
       "eyebrow": "La carte de l'entraînement en plein air",
       "titleLead": "Trouvez votre prochain",
       "titleHighlight": "spot d'entraînement.",
-      "sub": "Découvrez les structures de street workout, barres de traction, spots de parkour et pistes près de chez vous. Filtrez par équipement et discipline, consultez de vraies notes, et entraînez-vous partout, gratuitement.",
+      "sub": "Découvrez les structures de street workout, barres de traction, spots de parkour et pistes près de chez vous. Rejoignez un club et participez à des événements pour vous entraîner avec ceux qui vous poussent. Filtrez par équipement et discipline, consultez de vraies notes, et entraînez-vous partout, gratuitement.",
       "explore": "Explorer la carte",
       "how": "Comment ça marche",
       "trustRating": "4,8 de moyenne sur plus de 1 100 athlètes",
@@ -428,7 +430,7 @@
     "features": {
       "eyebrow": "Tout ce qu'il vous faut",
       "title": "Conçu pour votre façon de vous entraîner",
-      "sub": "De votre première traction à votre série la plus dure, trouvez le bon endroit pour le faire — et les gens qui s'y entraînent aussi.",
+      "sub": "De votre première traction à votre série la plus dure, trouvez le bon endroit pour le faire, et les gens qui s'y entraînent aussi.",
       "items": [
         {
           "title": "Des spots près de vous",
@@ -475,10 +477,99 @@
         }
       ]
     },
+    "clubs": {
+      "eyebrow": "Clubs",
+      "title": "Trouvez votre équipe, pas juste un spot",
+      "sub": "Les clubs sont des communautés bâties autour de l'entraînement en plein air. Rejoignez-en un près de chez vous, voyez qui en fait déjà partie, et ne vous entraînez plus jamais seul.",
+      "cta": "Voir tous les clubs",
+      "showcase": [
+        {
+          "name": "Bercy Bar Brothers",
+          "category": "Calisthénie",
+          "meta": "6 spots · 128 membres",
+          "tags": ["Tractions", "Débutants bienvenus"]
+        },
+        {
+          "name": "Paris Parkour Collective",
+          "category": "Parkour",
+          "meta": "9 spots · 64 membres",
+          "tags": ["Freerunning", "Jams hebdo"]
+        },
+        {
+          "name": "Sunrise Street Workout",
+          "category": "Street workout",
+          "meta": "4 spots · 212 membres",
+          "tags": ["Sessions du matin", "Tous niveaux"]
+        }
+      ],
+      "steps": [
+        {
+          "title": "Trouvez un club",
+          "desc": "Parcourez les communautés près de chez vous et filtrez par discipline, ambiance et lieu."
+        },
+        {
+          "title": "Rejoignez ou demandez",
+          "desc": "Entrez directement dans les clubs publics, ou demandez à rejoindre les clubs privés en un geste."
+        },
+        {
+          "title": "Entraînez-vous ensemble",
+          "desc": "Suivez le fil du club, partagez vos sessions et retrouvez-vous sur vos spots préférés."
+        }
+      ]
+    },
+    "events": {
+      "eyebrow": "Événements",
+      "title": "Ne manquez plus aucune session",
+      "sub": "Les événements sont des rencontres programmées sur de vrais spots d'entraînement. Inscrivez-vous en un geste, voyez qui vient, et venez vous entraîner avec l'équipe.",
+      "cta": "Voir tous les événements",
+      "showcase": [
+        {
+          "title": "Jam calisthénie du dimanche",
+          "month": "JUIN",
+          "day": "28",
+          "meta": "Dim 10:00 · Quai de Bercy",
+          "price": "Gratuit",
+          "status": "En direct",
+          "tags": ["Calisthénie", "Tous niveaux"]
+        },
+        {
+          "title": "Bases de la barre pour débutants",
+          "month": "JUIL",
+          "day": "05",
+          "meta": "Sam 09:00 · Parc de Belleville",
+          "price": "Gratuit",
+          "status": "À venir",
+          "tags": ["Débutants", "Encadré"]
+        },
+        {
+          "title": "Session parkour nocturne",
+          "month": "JUIL",
+          "day": "12",
+          "meta": "Ven 19:30 · Stade Charléty",
+          "price": "8 €",
+          "status": "Presque complet",
+          "tags": ["Parkour", "Avancé"]
+        }
+      ],
+      "steps": [
+        {
+          "title": "Choisissez une session",
+          "desc": "Parcourez ce qui est en direct, à venir et déjà passé près de chez vous."
+        },
+        {
+          "title": "Inscrivez-vous en un geste",
+          "desc": "Réservez votre place instantanément. Capacité, listes d'attente et validations sont gérées pour vous."
+        },
+        {
+          "title": "Venez et bougez",
+          "desc": "Retrouvez l'équipe sur le spot. Payez sur place si l'événement est payant, aucun paiement en ligne."
+        }
+      ]
+    },
     "spots": {
-      "eyebrow": "Spots populaires",
-      "title": "Les spots que la communauté adore",
-      "sub": "Un aperçu de ce qui est sur la carte en ce moment — touchez un spot pour voir photos, équipement et avis.",
+      "eyebrow": "Près de chez vous",
+      "title": "Les meilleurs spots près de chez vous",
+      "sub": "Quelques-uns des spots d'entraînement en plein air les mieux notés autour de vous. Touchez un spot pour voir photos, équipement et avis.",
       "open24": "Ouvert 24/7",
       "reviews_one": "{{count}} avis",
       "reviews_other": "{{count}} avis",
@@ -553,7 +644,7 @@
     },
     "cta": {
       "title": "Vous connaissez un spot qui manque ?",
-      "sub": "Placez un repère, ajoutez l'équipement et quelques photos, et mettez-le sur la carte pour les athlètes du monde entier.",
+      "sub": "Placez un repère, ajoutez l'équipement et quelques photos, et mettez-le sur la carte pour les athlètes du monde entier. Lancez-y ensuite un club ou un événement.",
       "addSpot": "Ajouter un spot",
       "explore": "Explorer la carte"
     },
@@ -567,7 +658,7 @@
         },
         {
           "q": "Quels types de spots puis-je trouver ?",
-          "a": "Des structures de calisthénie en plein air, des barres de street workout, des spots de parkour, des pistes, des escaliers et plus — chacun étiqueté avec son équipement et les disciplines qui lui conviennent."
+          "a": "Des structures de calisthénie en plein air, des barres de street workout, des spots de parkour, des pistes, des escaliers et plus, chacun étiqueté avec son équipement et les disciplines qui lui conviennent."
         },
         {
           "q": "Puis-je ajouter un spot manquant ?",
@@ -576,6 +667,22 @@
         {
           "q": "Ai-je besoin d'un compte ?",
           "a": "Vous pouvez explorer la carte sans compte. Connectez-vous avec un lien magique pour noter les spots, laisser des avis et ajouter de nouveaux lieux."
+        },
+        {
+          "q": "Qu'est-ce qu'un club ?",
+          "a": "Les clubs sont des communautés bâties autour de spots d'entraînement en plein air. Rejoignez-en un pour trouver des partenaires réguliers, suivre un fil partagé et découvrir les spots préférés de votre équipe. Les clubs publics se rejoignent instantanément ; les clubs privés via une simple demande."
+        },
+        {
+          "q": "Comment fonctionnent les événements ?",
+          "a": "Les événements sont des rencontres programmées sur de vrais spots d'entraînement. Parcourez ce qui se passe, inscrivez-vous en un geste, et voyez qui vient aussi. L'application gère automatiquement la capacité, les listes d'attente et les validations."
+        },
+        {
+          "q": "Les événements sont-ils payants ?",
+          "a": "La plupart des événements sont gratuits. Quand un organisateur fixe un prix, votre inscription réserve une place et vous payez simplement sur place, sans paiement en ligne."
+        },
+        {
+          "q": "Comment créer mon propre club ou événement ?",
+          "a": "Ouvrez Clubs ou Événements et appuyez sur Créer. Vous pouvez bâtir un club autour de vos spots préférés ou organiser une rencontre avec une date, un lieu et une capacité en quelques minutes."
         }
       ]
     },
@@ -592,8 +699,8 @@
       "copyright": "© {{year}} Workout Spots · spots.evnja.gg"
     },
     "meta": {
-      "title": "Workout Spots — Spots de calisthénie et de street workout en plein air",
-      "description": "Découvrez, notez et partagez des spots de calisthénie, de street workout et de parkour près de chez vous. Filtrez par équipement et discipline, trouvez barres de traction, barres parallèles et pistes, et entraînez-vous partout — gratuitement."
+      "title": "Workout Spots : spots d'entraînement en plein air, clubs et événements",
+      "description": "Découvrez, notez et partagez des spots de calisthénie, de street workout et de parkour près de chez vous. Rejoignez des clubs, participez à des événements, filtrez par équipement et discipline, et entraînez-vous partout, gratuitement."
     }
   },
   "pages": {
