@@ -11,6 +11,13 @@ export type EventTag = {
   icon: string | null
 }
 
+/** Lightweight person reference for "social stack" avatar rows. */
+export type SampleAvatar = {
+  id: string
+  name: string
+  avatarUrl: string | null
+}
+
 export type EventListItem = {
   id: string
   title: string
@@ -27,6 +34,8 @@ export type EventListItem = {
   clubId: string | null
   featuredImageUrl: string | null
   tags: EventTag[]
+  /** Up to ~5 sample approved attendees for the card's social stack. */
+  sampleAttendees: SampleAvatar[]
 }
 
 export type EventLocation = {

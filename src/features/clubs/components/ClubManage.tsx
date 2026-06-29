@@ -14,7 +14,7 @@ import {
   useUpdateClub,
 } from '../staffMutations'
 import { createClubSchema } from '../schema'
-import { Avatar } from './Avatar'
+import { Avatar } from '~/components/ui/Avatar'
 import { RoleBadge } from './badges'
 import { SpotLinker } from './SpotLinker'
 import { TagInput } from './TagInput'
@@ -47,7 +47,9 @@ export function ClubManage({ club, onBack }: { club: ClubDetail; onBack: () => v
         <Icon name="chevronL" size={16} />
         {club.name}
       </button>
-      <h1 className="text-[22px] font-semibold text-text">{t('clubs.manage')}</h1>
+      <h1 className="font-display text-[30px] uppercase tracking-[0.02em] text-text">
+        {t('clubs.manage')}
+      </h1>
 
       <div className="mt-4 flex gap-1 border-b border-border">
         <Tab
@@ -84,8 +86,8 @@ function Tab({ active, label, onClick }: { active: boolean; label: string; onCli
       type="button"
       onClick={onClick}
       className={cx(
-        '-mb-px border-b-2 px-3 py-2 text-[13.5px] font-medium transition-colors',
-        active ? 'border-accent text-text' : 'border-transparent text-text-3 hover:text-text',
+        '-mb-px border-b-2 px-3 py-2.5 text-[14px] font-bold transition-colors',
+        active ? 'border-accent text-accent' : 'border-transparent text-text-3 hover:text-text',
       )}
     >
       {label}
@@ -118,7 +120,7 @@ function Requests({ clubId }: { clubId: string }) {
           <button
             type="button"
             onClick={() => approve(r.membershipId)}
-            className="rounded-full bg-accent px-3 py-1.5 text-[12.5px] font-medium text-white hover:bg-accent-2"
+            className="rounded-full bg-hot px-3.5 py-1.5 text-[12.5px] font-bold text-white transition-[filter] hover:brightness-105"
           >
             {t('clubs.approve')}
           </button>
@@ -222,7 +224,7 @@ function ActionBtn({
 }
 
 const inputCls =
-  'w-full rounded-lg border border-border bg-surface px-3 py-2 text-[14px] text-text outline-none placeholder:text-text-4 focus:border-accent'
+  'w-full rounded-[12px] border border-border bg-surface px-3 py-2.5 text-[14px] text-text outline-none placeholder:text-text-4 focus:border-accent'
 
 function EditClub({ club, onSaved }: { club: ClubDetail; onSaved: () => void }) {
   const { t } = useTranslation()
@@ -340,7 +342,7 @@ function EditClub({ club, onSaved }: { club: ClubDetail; onSaved: () => void }) 
           type="button"
           onClick={save}
           disabled={pending || name.trim() === '' || category.trim() === ''}
-          className="rounded-full bg-accent px-5 py-2 text-[13px] font-medium text-white hover:bg-accent-2 disabled:opacity-50"
+          className="rounded-full bg-hot px-5 py-2.5 text-[13px] font-bold text-white shadow-[0_6px_20px_-6px_rgba(244,55,79,0.6)] transition-[filter] hover:brightness-105 disabled:opacity-50"
         >
           {t('common.save')}
         </button>

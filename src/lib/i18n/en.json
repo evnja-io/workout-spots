@@ -1,5 +1,10 @@
 {
-  "nav": { "spots": "Spots", "clubs": "Clubs", "events": "Events", "create": "Create" },
+  "nav": {
+    "spots": "Spots",
+    "clubs": "Clubs",
+    "events": "Events",
+    "create": "Create"
+  },
   "clubs": {
     "title": "Clubs",
     "subtitle": "Communities training near you",
@@ -66,7 +71,14 @@
     "demote": "Remove moderator",
     "kick": "Remove",
     "makeOwner": "Make owner",
-    "notStaff": "You don't have permission to manage this club."
+    "notStaff": "You don't have permission to manage this club.",
+    "kicker": "Community",
+    "tagline": "Train with people who push you — find your crew.",
+    "join": "Join",
+    "request": "Request",
+    "role_owner": "Owner",
+    "role_moderator": "Moderator",
+    "role_member": "Member"
   },
   "events": {
     "title": "Events",
@@ -183,7 +195,22 @@
     "post": "Post",
     "send": "Send",
     "deletePost": "Delete post",
-    "deleteComment": "Delete comment"
+    "deleteComment": "Delete comment",
+    "kicker": "Discover",
+    "tagline": "Find your next session — train together and meet your crew.",
+    "layout_rails": "Spotlight",
+    "layout_feed": "Feed",
+    "railLive": "Live now",
+    "railUpcoming": "Upcoming",
+    "railWrapped": "Wrapped",
+    "beFirst": "Be the first to go",
+    "cta_recap": "Recap",
+    "cta_joinNow": "Join now",
+    "cta_waitlist": "Waitlist",
+    "cta_rsvp": "RSVP",
+    "minLabel": "min {{count}}",
+    "awaitingApprovalSub": "The organizer will review your request",
+    "onWaitlistSub": "We will ping you if a spot opens"
   },
   "common": {
     "save": "Save",

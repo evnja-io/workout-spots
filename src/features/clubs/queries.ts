@@ -12,11 +12,13 @@ import type {
   ClubPost,
   ClubPrivacy,
   ClubRole,
+  SampleAvatar,
 } from './domain'
 
 // ── Browse ───────────────────────────────────────────────────────────────────
 // rpc_list_clubs returns accurate member/spot counts even for private clubs
 // (SECURITY DEFINER) — a plain embedded count would be hidden by RLS.
+type SampleAvatarJson = { id: string; name: string | null; avatar_url: string | null }
 type ClubListRpcRow = {
   id: string
   name: string
@@ -26,6 +28,15 @@ type ClubListRpcRow = {
   member_count: number | null
   spot_count: number | null
   tags: string[] | null
+  sample_avatars: SampleAvatarJson[] | null
+}
+
+function mapSampleAvatars(rows: SampleAvatarJson[] | null): SampleAvatar[] {
+  return (rows ?? []).map((r) => ({
+    id: r.id,
+    name: r.name ?? '',
+    avatarUrl: r.avatar_url ?? null,
+  }))
 }
 
 export function mapClubListRow(row: ClubListRpcRow): ClubListItem {
@@ -38,6 +49,7 @@ export function mapClubListRow(row: ClubListRpcRow): ClubListItem {
     memberCount: Number(row.member_count ?? 0),
     spotCount: Number(row.spot_count ?? 0),
     tags: row.tags ?? [],
+    sampleMembers: mapSampleAvatars(row.sample_avatars),
   }
 }
 

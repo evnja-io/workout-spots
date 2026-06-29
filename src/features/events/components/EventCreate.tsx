@@ -17,7 +17,9 @@ export function EventCreate({ onCancel }: { onCancel: () => void }) {
         <Icon name="chevronL" size={16} />
         {t('events.backToEvents')}
       </button>
-      <h1 className="text-[22px] font-semibold text-text">{t('events.create')}</h1>
+      <h1 className="font-display text-[30px] uppercase tracking-[0.02em] text-text">
+        {t('events.create')}
+      </h1>
 
       <div className="mt-6">
         <EventForm

@@ -3,9 +3,9 @@ import { cx } from '~/components/ui/cx'
 import type { ClubViewerState } from '../membership'
 
 const base =
-  'inline-flex w-full items-center justify-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-colors disabled:opacity-60'
+  'inline-flex w-full items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[13px] font-bold transition-[filter,background-color] disabled:opacity-60'
 const variants = {
-  primary: 'bg-accent text-white hover:bg-accent-2',
+  primary: 'bg-hot text-white shadow-[0_6px_20px_-6px_rgba(244,55,79,0.6)] hover:brightness-105',
   outline: 'border border-border text-text hover:bg-surface-2',
   ghost: 'text-text-3 hover:text-text',
 } as const
@@ -92,8 +92,8 @@ export function JoinControl({
         <Btn variant="outline" label="Leave club" pending={leavePending} onClick={onLeave} />
       )}
       {primaryAction === 'owned' && (
-        <div className="flex items-center justify-center gap-1.5 rounded-full bg-accent-soft px-4 py-2 text-[13px] font-medium text-accent">
-          <Icon name="star" size={15} />
+        <div className="flex items-center justify-center gap-1.5 rounded-full bg-accent-soft px-4 py-2.5 text-[13px] font-bold text-accent">
+          <Icon name="crown" size={15} />
           You own this club
         </div>
       )}

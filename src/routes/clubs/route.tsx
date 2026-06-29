@@ -7,7 +7,7 @@ export const Route = createFileRoute('/clubs')({
 
 function ClubsLayout() {
   return (
-    <SectionShell>
+    <SectionShell className="section-poster">
       <Outlet />
     </SectionShell>
   )

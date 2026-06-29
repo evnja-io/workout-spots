@@ -11,6 +11,7 @@ import type {
   EventPost,
   EventStatus,
   EventTag,
+  SampleAvatar,
   EventVisibility,
   ParticipationStatus,
   ParticipationType,
@@ -54,6 +55,17 @@ type EventListRpcRow = {
   primary_location_name: string | null
   primary_location_city: string | null
   tags: TagJson[] | null
+  sample_avatars: SampleAvatarJson[] | null
+}
+
+type SampleAvatarJson = { id: string; name: string | null; avatar_url: string | null }
+
+export function mapSampleAvatars(rows: SampleAvatarJson[] | null): SampleAvatar[] {
+  return (rows ?? []).map((r) => ({
+    id: r.id,
+    name: r.name ?? '',
+    avatarUrl: r.avatar_url ?? null,
+  }))
 }
 
 export function mapEventListRow(row: EventListRpcRow): EventListItem {
@@ -73,6 +85,7 @@ export function mapEventListRow(row: EventListRpcRow): EventListItem {
     clubId: row.club_id,
     featuredImageUrl: row.featured_image_url,
     tags: (row.tags ?? []).map(mapTag),
+    sampleAttendees: mapSampleAvatars(row.sample_avatars),
   }
 }
 

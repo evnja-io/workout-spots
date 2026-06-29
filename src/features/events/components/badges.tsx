@@ -1,10 +1,18 @@
 import { useTranslation } from 'react-i18next'
+import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
 import type { EventStatus, EventTag } from '../domain'
 
-const pill = 'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium'
+// Poster-safe pill: dark glass over imagery, uppercase + bold like the design.
+// `coverPillBase` carries layout only (no bg/text color) so each variant fully
+// owns its colors — appending a color override onto a class string that already
+// sets `text-white` is unreliable (utility precedence is source-order, not class
+// order), which previously rendered the white "Free" pill with white text.
+const coverPillBase =
+  'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold uppercase tracking-[0.04em] backdrop-blur-sm'
+const coverPill = cx(coverPillBase, 'border border-white/15 bg-black/50 text-white')
 
-const STATUS_STYLE: Record<EventStatus, string> = {
+const surfaceStatus: Record<EventStatus, string> = {
   draft: 'bg-surface-2 text-text-3',
   upcoming: 'bg-accent-soft text-accent',
   ongoing: 'bg-emerald-500/15 text-emerald-500',
@@ -12,6 +20,10 @@ const STATUS_STYLE: Record<EventStatus, string> = {
   cancelled: 'bg-red-500/15 text-red-500',
 }
 
+/**
+ * Status badge. `upcoming` renders nothing on a cover (the date stub carries
+ * it), matching the design — only live/wrapped/cancelled show a pill.
+ */
 export function StatusBadge({
   status,
   onCover = false,
@@ -20,11 +32,40 @@ export function StatusBadge({
   onCover?: boolean
 }) {
   const { t } = useTranslation()
+
+  if (onCover) {
+    if (status === 'ongoing') {
+      return (
+        <span
+          className={cx(coverPillBase, 'bg-[#FF3B6B] text-white shadow-[0_4px_16px_-4px_#FF3B6B]')}
+        >
+          <span className="size-1.5 rounded-full bg-white [animation:livePulse_1.3s_ease-in-out_infinite]" />
+          {t('events.status_ongoing')}
+        </span>
+      )
+    }
+    if (status === 'completed') {
+      return (
+        <span className={cx(coverPillBase, 'border border-white/15 bg-black/50 text-white/80')}>
+          {t('events.status_completed')}
+        </span>
+      )
+    }
+    if (status === 'cancelled') {
+      return (
+        <span className={cx(coverPillBase, 'border border-white/15 bg-black/50 text-[#FCA5A5]')}>
+          {t('events.status_cancelled')}
+        </span>
+      )
+    }
+    return null
+  }
+
   return (
     <span
       className={cx(
-        pill,
-        onCover ? 'bg-black/40 text-white backdrop-blur-sm' : STATUS_STYLE[status],
+        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold',
+        surfaceStatus[status],
       )}
     >
       {status === 'ongoing' && <span className="size-1.5 animate-pulse rounded-full bg-current" />}
@@ -46,41 +87,71 @@ export function PriceBadge({
 }) {
   const { t } = useTranslation()
   const sym = currency === 'EUR' ? '€' : currency === 'USD' ? '$' : `${currency} `
+
+  if (onCover) {
+    return isFree ? (
+      <span className={cx(coverPillBase, 'bg-white text-[#11070f]')}>{t('events.free')}</span>
+    ) : (
+      <span className={coverPill}>
+        <Icon name="ticket" size={12} />
+        {sym}
+        {amount ?? 0}
+      </span>
+    )
+  }
+
   return (
-    <span
-      className={cx(
-        pill,
-        onCover ? 'bg-black/40 text-white backdrop-blur-sm' : 'bg-surface-2 text-text-2',
-      )}
-    >
+    <span className="inline-flex items-center gap-1 rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-text-2">
       {isFree ? t('events.free') : `${sym}${amount ?? 0}`}
     </span>
   )
 }
 
-export function EvTag({ tag }: { tag: EventTag }) {
+/**
+ * Colored tag chip. Poster-safe by default (dark glass + colored dot); pass
+ * `surface` for placement on a light surface (color-mixed tint).
+ */
+export function EvTag({ tag, surface = false }: { tag: EventTag; surface?: boolean }) {
   const { i18n } = useTranslation()
   const label = i18n.language === 'fr' && tag.nameFr ? tag.nameFr : tag.name
+
+  if (surface) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold"
+        style={{
+          backgroundColor: `color-mix(in srgb, ${tag.color} 16%, transparent)`,
+          color: tag.color,
+        }}
+      >
+        {tag.icon ? <Icon name="dumbbell" size={11} /> : null}
+        {label}
+      </span>
+    )
+  }
+
   return (
-    <span
-      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium"
-      style={{
-        backgroundColor: `color-mix(in srgb, ${tag.color} 16%, transparent)`,
-        color: tag.color,
-      }}
-    >
+    <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/40 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
       <span className="size-1.5 rounded-full" style={{ backgroundColor: tag.color }} />
       {label}
     </span>
   )
 }
 
-export function EvTags({ tags, max }: { tags: EventTag[]; max?: number }) {
+export function EvTags({
+  tags,
+  max,
+  surface = false,
+}: {
+  tags: EventTag[]
+  max?: number
+  surface?: boolean
+}) {
   const shown = max ? tags.slice(0, max) : tags
   return (
     <>
-      {shown.map((t) => (
-        <EvTag key={t.id} tag={t} />
+      {shown.map((tag) => (
+        <EvTag key={tag.id} tag={tag} surface={surface} />
       ))}
     </>
   )

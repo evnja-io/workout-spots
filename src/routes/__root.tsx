@@ -78,6 +78,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: 'icon', href: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
       { rel: 'apple-touch-icon', href: '/favicon-180.png', sizes: '180x180' },
       { rel: 'manifest', href: '/site.webmanifest' },
+      // Display fonts for the Clubs/Events poster system (Anton titles, Archivo body).
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&display=swap',
+      },
     ],
   }),
   errorComponent: RootError,

@@ -18,7 +18,8 @@
     "db:diff": "supabase db diff",
     "db:types": "supabase gen types typescript --local > src/lib/supabase/types.ts",
     "db:pull": "supabase db pull",
-    "db:push": "supabase db push"
+    "db:push": "supabase db push",
+    "db:seed-auth": "node scripts/seed-local-auth.mjs"
   },
   "keywords": [],
   "author": "",
