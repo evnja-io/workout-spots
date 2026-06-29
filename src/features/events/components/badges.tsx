@@ -4,8 +4,13 @@ import { cx } from '~/components/ui/cx'
 import type { EventStatus, EventTag } from '../domain'
 
 // Poster-safe pill: dark glass over imagery, uppercase + bold like the design.
-const coverPill =
-  'inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/50 px-2.5 py-1 text-[11.5px] font-extrabold uppercase tracking-[0.04em] text-white backdrop-blur-sm'
+// `coverPillBase` carries layout only (no bg/text color) so each variant fully
+// owns its colors — appending a color override onto a class string that already
+// sets `text-white` is unreliable (utility precedence is source-order, not class
+// order), which previously rendered the white "Free" pill with white text.
+const coverPillBase =
+  'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-extrabold uppercase tracking-[0.04em] backdrop-blur-sm'
+const coverPill = cx(coverPillBase, 'border border-white/15 bg-black/50 text-white')
 
 const surfaceStatus: Record<EventStatus, string> = {
   draft: 'bg-surface-2 text-text-3',
@@ -32,10 +37,7 @@ export function StatusBadge({
     if (status === 'ongoing') {
       return (
         <span
-          className={cx(
-            coverPill,
-            'border-transparent bg-[#FF3B6B] shadow-[0_4px_16px_-4px_#FF3B6B]',
-          )}
+          className={cx(coverPillBase, 'bg-[#FF3B6B] text-white shadow-[0_4px_16px_-4px_#FF3B6B]')}
         >
           <span className="size-1.5 rounded-full bg-white [animation:livePulse_1.3s_ease-in-out_infinite]" />
           {t('events.status_ongoing')}
@@ -43,10 +45,18 @@ export function StatusBadge({
       )
     }
     if (status === 'completed') {
-      return <span className={cx(coverPill, 'text-white/80')}>{t('events.status_completed')}</span>
+      return (
+        <span className={cx(coverPillBase, 'border border-white/15 bg-black/50 text-white/80')}>
+          {t('events.status_completed')}
+        </span>
+      )
     }
     if (status === 'cancelled') {
-      return <span className={cx(coverPill, 'text-[#FCA5A5]')}>{t('events.status_cancelled')}</span>
+      return (
+        <span className={cx(coverPillBase, 'border border-white/15 bg-black/50 text-[#FCA5A5]')}>
+          {t('events.status_cancelled')}
+        </span>
+      )
     }
     return null
   }
@@ -80,9 +90,7 @@ export function PriceBadge({
 
   if (onCover) {
     return isFree ? (
-      <span className={cx(coverPill, 'border-transparent bg-white text-[#11070f]')}>
-        {t('events.free')}
-      </span>
+      <span className={cx(coverPillBase, 'bg-white text-[#11070f]')}>{t('events.free')}</span>
     ) : (
       <span className={coverPill}>
         <Icon name="ticket" size={12} />
