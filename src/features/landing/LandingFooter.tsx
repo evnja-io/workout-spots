@@ -34,6 +34,8 @@ export function LandingFooter({ variant = 'landing' }: Props) {
             <SectionLink id="spots" variant={variant}>
               {t('landing.footer.popularSpots')}
             </SectionLink>
+            <Link to="/clubs">{t('landing.nav.clubs')}</Link>
+            <Link to="/events">{t('landing.nav.events')}</Link>
             <Link to="/spots">{t('landing.nav.openMap')}</Link>
           </div>
 
