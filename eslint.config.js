@@ -6,7 +6,7 @@ export default tseslint.config(
   // src/lib/supabase/types.ts is `supabase gen types` output (regenerated, not
   // hand-edited); like routeTree.gen.ts it's excluded from type-aware linting,
   // whose heavy generics otherwise exhaust the heap on the generated file.
-  { ignores: ['.output', 'dist', 'src/routeTree.gen.ts', 'src/lib/supabase/types.ts'] },
+  { ignores: ['.output', 'dist', 'scripts', 'src/routeTree.gen.ts', 'src/lib/supabase/types.ts'] },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
