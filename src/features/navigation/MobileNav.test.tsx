@@ -57,21 +57,44 @@ describe('MobileNav', () => {
     expect(screen.getByRole('link', { name: 'Events' })).toHaveAttribute('href', '/events')
   })
 
-  it('the + calls onCreateSpot on the spots route', async () => {
+  it('the + opens a sheet offering all three create choices', async () => {
+    const user = userEvent.setup()
+    renderNav()
+    await user.click(screen.getByTestId('mobile-create-fab'))
+    expect(screen.getByRole('button', { name: 'Add a spot' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Create club' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Create event' })).toBeInTheDocument()
+  })
+
+  it('"Add a spot" calls onCreateSpot when on the spots route', async () => {
     const user = userEvent.setup()
     const onCreateSpot = vi.fn()
     renderNav({ onCreateSpot })
     await user.click(screen.getByTestId('mobile-create-fab'))
+    await user.click(screen.getByRole('button', { name: 'Add a spot' }))
     expect(onCreateSpot).toHaveBeenCalledOnce()
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
-  it('the + navigates to /clubs/new on the clubs route', async () => {
+  it('"Add a spot" routes to /spots?create=spot when the wizard is unavailable', async () => {
     const user = userEvent.setup()
     mockPathname = '/clubs'
     renderNav()
     await user.click(screen.getByTestId('mobile-create-fab'))
+    await user.click(screen.getByRole('button', { name: 'Add a spot' }))
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/spots', search: { create: 'spot' } })
+  })
+
+  it('"Create club" and "Create event" navigate to their create routes', async () => {
+    const user = userEvent.setup()
+    renderNav()
+    await user.click(screen.getByTestId('mobile-create-fab'))
+    await user.click(screen.getByRole('button', { name: 'Create club' }))
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/clubs/new' })
+
+    await user.click(screen.getByTestId('mobile-create-fab'))
+    await user.click(screen.getByRole('button', { name: 'Create event' }))
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/events/new' })
   })
 
   it('Account sheet exposes Settings', async () => {

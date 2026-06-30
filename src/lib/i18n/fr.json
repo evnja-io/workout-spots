@@ -3,7 +3,8 @@
     "spots": "Spots",
     "clubs": "Clubs",
     "events": "Événements",
-    "create": "Créer"
+    "create": "Créer",
+    "createTitle": "Ajouter à la carte"
   },
   "clubs": {
     "title": "Clubs",

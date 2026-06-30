@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, useNavigate, useParams } from '@tanstack/react-router'
-import { Suspense, useState, useRef, useCallback } from 'react'
+import { Suspense, useState, useRef, useCallback, useEffect } from 'react'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { spotRouteSearchSchema } from '~/features/spots/filters'
 import { Rail } from '~/features/spots/Rail'
@@ -60,7 +60,17 @@ function SpotsLayout() {
   const [mapStyle, setMapStyle] = useState<MapStyle>(() => getPrefs().mapStyle)
   const navigate = useNavigate()
   const { mapCenter } = Route.useLoaderData()
+  const { create } = Route.useSearch()
   const { userLocation, requestLocation } = useUserLocation()
+
+  // Cross-section entry: when "Add a spot" is chosen from clubs/events (where the
+  // wizard isn't mounted), MobileNav routes here with `?create=spot`. Open the
+  // wizard on arrival, then strip the param so it doesn't re-fire or linger.
+  useEffect(() => {
+    if (create !== 'spot') return
+    setAddSpotOpen(true)
+    void navigate({ to: '/spots', search: (prev) => ({ ...prev, create: undefined }), replace: true })
+  }, [create, navigate])
 
   // ── Bounds state (starts at world, tightens as the map reports its viewport) ─
   const [bounds, setBounds] = useState<Bounds>(WORLD_BOUNDS)

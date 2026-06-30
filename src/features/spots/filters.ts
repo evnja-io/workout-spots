@@ -21,6 +21,10 @@ export const spotRouteSearchSchema = z.object({
   equipment: z.array(z.string()).optional(),
   open24h: z.boolean().optional(),
   sort: z.string().optional(),
+  // Cross-section intent flag: `?create=spot` (set when "Add a spot" is chosen
+  // from clubs/events, where the wizard isn't mounted) tells the spots route to
+  // open the Add-Spot wizard on arrival. Optional/unknown values pass through 200.
+  create: z.string().optional(),
 })
 
 function matches(s: SpotListItem, search: SpotSearch): boolean {
