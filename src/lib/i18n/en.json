@@ -3,7 +3,8 @@
     "spots": "Spots",
     "clubs": "Clubs",
     "events": "Events",
-    "create": "Create"
+    "create": "Create",
+    "createTitle": "Add to the map"
   },
   "clubs": {
     "title": "Clubs",

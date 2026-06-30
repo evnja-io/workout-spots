@@ -7,7 +7,11 @@ import { Sheet } from '~/components/ui/Sheet'
 import { useSessionContext } from '~/features/auth/session'
 
 export interface MobileNavProps {
-  /** Spots-only: open the add-spot wizard. On clubs/events the + navigates to the create route. */
+  /**
+   * Spots-only: open the add-spot wizard directly. When absent (clubs/events,
+   * where the wizard isn't mounted), the "Add a spot" choice routes to
+   * `/spots?create=spot` and the spots route opens the wizard on arrival.
+   */
   onCreateSpot?: () => void
   onOpenSettings: () => void
 }
@@ -19,8 +23,9 @@ const acctItem =
 /**
  * Unified mobile bottom navigation (hidden on `md+`, where the Rail is shown).
  * Used across every section so Clubs and Events are always reachable. The center
- * (+) is context-aware (add spot / create club / create event); Account opens a
- * sheet that also hosts Settings.
+ * (+) opens a sheet offering all three create choices (spot / club / event), so
+ * the action is explicit rather than depending on the current tab. Account opens
+ * a sheet that also hosts Settings.
  */
 export function MobileNav({ onCreateSpot, onOpenSettings }: MobileNavProps) {
   const { t } = useTranslation()
@@ -28,21 +33,25 @@ export function MobileNav({ onCreateSpot, onOpenSettings }: MobileNavProps) {
   const navigate = useNavigate()
   const { status, openSignIn, signOut } = useSessionContext()
   const [accountOpen, setAccountOpen] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
 
   const link = (active: boolean) => cx(tab, active ? 'text-accent' : 'text-text-3')
 
-  function handleCreate() {
-    if (pathname.startsWith('/clubs')) void navigate({ to: '/clubs/new' })
-    else if (pathname.startsWith('/events')) void navigate({ to: '/events/new' })
-    else onCreateSpot?.()
+  function handleAddSpot() {
+    setCreateOpen(false)
+    if (onCreateSpot) onCreateSpot()
+    else void navigate({ to: '/spots', search: { create: 'spot' } })
   }
 
-  // Context-aware create affordance: show what the (+) will add on the current tab.
-  const create = pathname.startsWith('/clubs')
-    ? { icon: 'users' as const, label: t('clubs.create') }
-    : pathname.startsWith('/events')
-      ? { icon: 'clock' as const, label: t('events.create') }
-      : { icon: 'mappin' as const, label: t('discover.addSpot') }
+  function handleCreateClub() {
+    setCreateOpen(false)
+    void navigate({ to: '/clubs/new' })
+  }
+
+  function handleCreateEvent() {
+    setCreateOpen(false)
+    void navigate({ to: '/events/new' })
+  }
 
   return (
     <>
@@ -67,21 +76,16 @@ export function MobileNav({ onCreateSpot, onOpenSettings }: MobileNavProps) {
           {t('nav.clubs')}
         </Link>
 
-        {/* Context-aware create FAB — lifted center */}
+        {/* Create FAB — lifted center; opens the three-choice sheet */}
         <div className="flex flex-1 justify-center">
           <button
             type="button"
-            onClick={handleCreate}
+            onClick={() => setCreateOpen(true)}
             data-testid="mobile-create-fab"
-            aria-label={create.label}
+            aria-label={t('nav.create')}
             className="-mt-5 grid size-12 place-items-center rounded-full bg-accent text-white shadow-[var(--shadow-md)] transition-transform duration-150 active:translate-y-px"
           >
-            <span className="relative grid place-items-center">
-              <Icon name={create.icon} size={22} />
-              <span className="absolute -bottom-2 -right-2 grid size-[15px] place-items-center rounded-full bg-white text-accent shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
-                <Icon name="plus" size={11} strokeWidth={3} />
-              </span>
-            </span>
+            <Icon name="plus" size={24} strokeWidth={2.5} />
           </button>
         </div>
 
@@ -103,6 +107,23 @@ export function MobileNav({ onCreateSpot, onOpenSettings }: MobileNavProps) {
           {t('auth.account')}
         </button>
       </nav>
+
+      <Sheet open={createOpen} onClose={() => setCreateOpen(false)} title={t('nav.createTitle')}>
+        <div className="flex flex-col px-3 pb-4">
+          <button type="button" className={acctItem} onClick={handleAddSpot}>
+            <Icon name="mappin" size={18} />
+            {t('discover.addSpot')}
+          </button>
+          <button type="button" className={acctItem} onClick={handleCreateClub}>
+            <Icon name="users" size={18} />
+            {t('clubs.create')}
+          </button>
+          <button type="button" className={acctItem} onClick={handleCreateEvent}>
+            <Icon name="clock" size={18} />
+            {t('events.create')}
+          </button>
+        </div>
+      </Sheet>
 
       <Sheet open={accountOpen} onClose={() => setAccountOpen(false)} title={t('auth.account')}>
         <div className="flex flex-col px-3 pb-4">
