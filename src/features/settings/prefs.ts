@@ -15,13 +15,13 @@ export type Prefs = {
 
 export const VALID_THEMES: Theme[] = ['light', 'dark']
 export const VALID_ACCENTS: AccentKey[] = ['violet', 'slate', 'emerald', 'rose']
-export const VALID_MAP_STYLES: MapStyle[] = ['light', 'minimal', 'satellite']
+export const VALID_MAP_STYLES: MapStyle[] = ['minimal', 'satellite']
 export const VALID_LANGS: Locale[] = ['en', 'fr']
 
 const DEFAULT_PREFS: Prefs = {
   theme: 'light',
   accent: 'rose',
-  mapStyle: 'light',
+  mapStyle: 'minimal',
   lang: 'en',
 }
 

@@ -8,7 +8,6 @@ interface MapStyleSwitchProps {
 }
 
 const STYLES: { key: MapStyle; labelKey: string }[] = [
-  { key: 'light', labelKey: 'discover.styleLight' },
   { key: 'minimal', labelKey: 'discover.styleMinimal' },
   { key: 'satellite', labelKey: 'discover.styleSatellite' },
 ]

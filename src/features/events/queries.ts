@@ -1,5 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import { getBrowserSupabase, isSupabaseConfigured } from '~/lib/supabase/browser'
+import { mapPoll, type PollOptionRow } from '~/features/feed/mapPoll'
+import type { PostMediaType } from '~/features/feed/types'
 import type {
   EventComment,
   EventDetail,
@@ -289,11 +291,15 @@ type FeedUser = {
 type FeedCommentRow = { id: string; content: string; created_at: string; author: FeedUser | null }
 type FeedPostRow = {
   id: string
-  content: string
+  content: string | null
   image_url: string | null
+  video_url: string | null
+  media_type: PostMediaType | null
+  poll_closes_at: string | null
   created_at: string
   author: FeedUser | null
   likes: { count: number }[]
+  poll_options: PollOptionRow[]
   comments: FeedCommentRow[]
 }
 
@@ -314,9 +320,10 @@ export function eventFeedQueryOptions(eventId: string, userId: string | null) {
       const { data, error } = await sb
         .from('event_posts')
         .select(
-          'id,content,image_url,created_at,' +
+          'id,content,image_url,video_url,media_type,poll_closes_at,created_at,' +
             'author:users!event_posts_author_id_fkey(id,pseudo,name,profile_picture_url),' +
             'likes:event_post_likes(count),' +
+            'poll_options:event_poll_options(id,label,position,votes:event_poll_votes(count)),' +
             'comments:event_post_comments(id,content,created_at,author:users!event_post_comments_author_id_fkey(id,pseudo,name,profile_picture_url))',
         )
         .eq('event_id', eventId)
@@ -325,24 +332,37 @@ export function eventFeedQueryOptions(eventId: string, userId: string | null) {
       const rows = (data ?? []) as unknown as FeedPostRow[]
 
       let likedIds = new Set<string>()
+      const myVotes = new Map<string, string>()
       if (userId && rows.length > 0) {
+        const ids = rows.map((r) => r.id)
         const { data: mine, error: likeErr } = await sb
           .from('event_post_likes')
           .select('post_id')
           .eq('user_id', userId)
-          .in(
-            'post_id',
-            rows.map((r) => r.id),
-          )
+          .in('post_id', ids)
         if (likeErr) throw likeErr
         likedIds = new Set((mine ?? []).map((l) => l.post_id))
+
+        const { data: votes, error: voteErr } = await sb
+          .from('event_poll_votes')
+          .select('post_id,option_id')
+          .eq('user_id', userId)
+          .in('post_id', ids)
+        if (voteErr) throw voteErr
+        for (const v of votes ?? []) myVotes.set(v.post_id, v.option_id)
       }
 
       return rows.map((p) => ({
         id: p.id,
         author: mapFeedAuthor(p.author),
-        content: p.content,
+        content: p.content ?? '',
         imageUrl: p.image_url,
+        videoUrl: p.video_url,
+        mediaType: p.media_type,
+        poll:
+          p.media_type === 'poll'
+            ? mapPoll(p.poll_options, p.poll_closes_at, myVotes.get(p.id) ?? null)
+            : null,
         createdAt: p.created_at,
         likeCount: p.likes?.[0]?.count ?? 0,
         viewerLiked: likedIds.has(p.id),

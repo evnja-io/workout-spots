@@ -1,200 +1,190 @@
-# Task 1: Project scaffold (TanStack Start + TS strict + Vite + Tailwind v4)
+### Task 1: Pure location utilities
 
 **Files:**
-
-- Create: `package.json`, `vite.config.ts`, `tsconfig.json`, `.env.example`, `src/router.tsx`, `src/routes/__root.tsx`, `src/routes/index.tsx`, `src/routes/spots/route.tsx`, `src/routes/spots/index.tsx`
-- Create: `index.html`, `src/styles/global.css`
+- Create: `src/features/geolocation/location.ts`
+- Test: `src/features/geolocation/location.test.ts`
 
 **Interfaces:**
+- Consumes: nothing.
+- Produces:
+  - `type LngLat = [number, number]` (Mapbox `[lng, lat]`)
+  - `type MapCenter = { center: LngLat; zoom: number; source: 'cookie' | 'ip' | 'default' }`
+  - `const PARIS_CENTER: LngLat` = `[2.35, 48.85]`
+  - `const REGION_ZOOM = 11.5`, `const PRECISE_ZOOM = 13`, `const LOC_COOKIE = 'loc'`
+  - `roundCoord(n: number): number`
+  - `parseCoord(raw: string | undefined | null): number | null`
+  - `parseLocCookie(raw: string | undefined | null): LngLat | null`
+  - `resolveCenter(cookieLoc: LngLat | null, ipLat: number | null, ipLng: number | null): MapCenter`
+  - `setLocationCookie(lng: number, lat: number): void`
 
-- Produces: a running TanStack Start dev server; `createRouter()` factory in `src/router.tsx`; route tree with `/` → redirect `/spots` and a placeholder `/spots`.
+- [ ] **Step 1: Write the failing test**
 
-- [ ] **Step 1: Initialize package + install**
-
-Run:
-
-```bash
-npm init -y
-npm i react@^19 react-dom@^19 @tanstack/react-start @tanstack/react-router @tanstack/react-query
-npm i tailwindcss @tailwindcss/vite
-npm i -D typescript @types/react @types/react-dom vite @vitejs/plugin-react vite-tsconfig-paths
-```
-
-If any TanStack Start or Tailwind v4 install detail differs from current docs, consult context7 (`/websites/tanstack_start_framework_react`, query "build from scratch vite config"; and resolve `Tailwind CSS` → query "v4 @tailwindcss/vite plugin setup and @theme") and follow it. Keep the produced config shape below.
-
-- [ ] **Step 2: Write `tsconfig.json` (strict)**
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": { "~/*": ["./src/*"] },
-    "noEmit": true,
-    "types": ["vite/client"]
-  },
-  "include": ["src", "*.ts", "*.tsx"]
-}
-```
-
-- [ ] **Step 3: Write `vite.config.ts`**
+Create `src/features/geolocation/location.test.ts`:
 
 ```ts
-import { defineConfig } from 'vite'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
-import tailwindcss from '@tailwindcss/vite'
+import { describe, expect, it, beforeEach } from 'vitest'
+import {
+  roundCoord,
+  parseCoord,
+  parseLocCookie,
+  resolveCenter,
+  setLocationCookie,
+  PARIS_CENTER,
+  REGION_ZOOM,
+  PRECISE_ZOOM,
+} from './location'
 
-export default defineConfig({
-  server: { port: 3000 },
-  plugins: [tsconfigPaths(), tailwindcss(), tanstackStart(), viteReact()],
+describe('roundCoord', () => {
+  it('rounds to 2 decimals', () => {
+    expect(roundCoord(48.8566123)).toBe(48.86)
+    expect(roundCoord(2.3522)).toBe(2.35)
+    expect(roundCoord(-0.126)).toBe(-0.13)
+  })
+})
+
+describe('parseCoord', () => {
+  it('parses finite decimals', () => {
+    expect(parseCoord('48.85')).toBe(48.85)
+    expect(parseCoord('-2.3')).toBe(-2.3)
+  })
+  it('returns null for missing/invalid', () => {
+    expect(parseCoord(undefined)).toBeNull()
+    expect(parseCoord(null)).toBeNull()
+    expect(parseCoord('')).toBeNull()
+    expect(parseCoord('abc')).toBeNull()
+  })
+})
+
+describe('parseLocCookie', () => {
+  it('parses "lng,lat" into a tuple', () => {
+    expect(parseLocCookie('2.35,48.85')).toEqual([2.35, 48.85])
+  })
+  it('returns null for malformed values', () => {
+    expect(parseLocCookie(undefined)).toBeNull()
+    expect(parseLocCookie('2.35')).toBeNull()
+    expect(parseLocCookie('a,b')).toBeNull()
+    expect(parseLocCookie('2.35,48.85,9')).toBeNull()
+  })
+})
+
+describe('resolveCenter', () => {
+  it('prefers the cookie location at precise zoom', () => {
+    expect(resolveCenter([2.35, 48.85], 51, 0)).toEqual({
+      center: [2.35, 48.85],
+      zoom: PRECISE_ZOOM,
+      source: 'cookie',
+    })
+  })
+  it('falls back to IP coords (lng,lat order) at region zoom', () => {
+    expect(resolveCenter(null, 51.5, -0.12)).toEqual({
+      center: [-0.12, 51.5],
+      zoom: REGION_ZOOM,
+      source: 'ip',
+    })
+  })
+  it('falls back to Paris default when nothing is known', () => {
+    expect(resolveCenter(null, null, null)).toEqual({
+      center: PARIS_CENTER,
+      zoom: REGION_ZOOM,
+      source: 'default',
+    })
+  })
+  it('treats a partial IP pair as unknown', () => {
+    expect(resolveCenter(null, 51.5, null).source).toBe('default')
+  })
+})
+
+describe('setLocationCookie', () => {
+  beforeEach(() => {
+    document.cookie = 'loc=; path=/; max-age=0'
+  })
+  it('writes rounded coords as "lng,lat"', () => {
+    setLocationCookie(2.352211, 48.856612)
+    expect(document.cookie).toContain('loc=2.35,48.86')
+  })
 })
 ```
 
-Create `src/styles/global.css` with the Tailwind entrypoint (theme tokens are added in Task 4):
+- [ ] **Step 2: Run test to verify it fails**
 
-```css
-@import 'tailwindcss';
-```
+Run: `npx vitest run src/features/geolocation/location.test.ts`
+Expected: FAIL — cannot resolve `./location`.
 
-Import it in `__root.tsx`: `import '~/styles/global.css'`.
+- [ ] **Step 3: Write minimal implementation**
 
-- [ ] **Step 4: Write router + root + routes**
+Create `src/features/geolocation/location.ts`:
 
-`src/router.tsx`:
+```ts
+export type LngLat = [number, number]
 
-```tsx
-import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { QueryClient } from '@tanstack/react-query'
-import { routeTree } from './routeTree.gen'
-
-export function createRouter() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { staleTime: 60_000 } },
-  })
-  return createTanStackRouter({
-    routeTree,
-    context: { queryClient },
-    defaultPreload: 'intent',
-    scrollRestoration: true,
-  })
+export type MapCenter = {
+  center: LngLat
+  zoom: number
+  source: 'cookie' | 'ip' | 'default'
 }
 
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: ReturnType<typeof createRouter>
+export const PARIS_CENTER: LngLat = [2.35, 48.85]
+export const REGION_ZOOM = 11.5
+export const PRECISE_ZOOM = 13
+export const LOC_COOKIE = 'loc'
+
+/** Round a coordinate to 2 decimals (~1.1 km) for privacy. */
+export function roundCoord(n: number): number {
+  return Math.round(n * 100) / 100
+}
+
+/** Parse a single finite decimal coordinate, else null. */
+export function parseCoord(raw: string | undefined | null): number | null {
+  if (raw == null || raw === '') return null
+  const n = Number.parseFloat(raw)
+  return Number.isFinite(n) ? n : null
+}
+
+/** Parse the `loc` cookie value ("lng,lat") into a tuple, tolerant of garbage. */
+export function parseLocCookie(raw: string | undefined | null): LngLat | null {
+  if (raw == null) return null
+  const parts = raw.split(',')
+  if (parts.length !== 2) return null
+  const lng = parseCoord(parts[0])
+  const lat = parseCoord(parts[1])
+  if (lng == null || lat == null) return null
+  return [lng, lat]
+}
+
+/**
+ * Resolve the initial map center from the location priority ladder:
+ * remembered cookie (precise) → IP geo (region) → Paris default.
+ */
+export function resolveCenter(
+  cookieLoc: LngLat | null,
+  ipLat: number | null,
+  ipLng: number | null,
+): MapCenter {
+  if (cookieLoc) return { center: cookieLoc, zoom: PRECISE_ZOOM, source: 'cookie' }
+  if (ipLat != null && ipLng != null) {
+    return { center: [ipLng, ipLat], zoom: REGION_ZOOM, source: 'ip' }
   }
+  return { center: PARIS_CENTER, zoom: REGION_ZOOM, source: 'default' }
+}
+
+/** Persist the last precise location (client-only). Coords rounded for privacy. */
+export function setLocationCookie(lng: number, lat: number): void {
+  const value = `${roundCoord(lng)},${roundCoord(lat)}`
+  document.cookie = `${LOC_COOKIE}=${value}; path=/; max-age=2592000; samesite=lax`
 }
 ```
 
-`src/routes/__root.tsx`:
+- [ ] **Step 4: Run test to verify it passes**
 
-```tsx
-import { Outlet, createRootRouteWithContext, HeadContent, Scripts } from '@tanstack/react-router'
-import type { QueryClient } from '@tanstack/react-query'
-import '~/styles/global.css'
+Run: `npx vitest run src/features/geolocation/location.test.ts`
+Expected: PASS (all cases).
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({ meta: [{ title: 'Workout Spots' }] }),
-  component: RootComponent,
-})
-
-function RootComponent() {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <Outlet />
-        <Scripts />
-      </body>
-    </html>
-  )
-}
-```
-
-`src/routes/index.tsx`:
-
-```tsx
-import { createFileRoute, redirect } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/')({
-  beforeLoad: () => {
-    throw redirect({ to: '/spots' })
-  },
-})
-```
-
-`src/routes/spots/route.tsx`:
-
-```tsx
-import { createFileRoute, Outlet } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/spots')({ component: () => <Outlet /> })
-```
-
-`src/routes/spots/index.tsx`:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/spots/')({
-  component: () => <main>Discover</main>,
-})
-```
-
-`.env.example`:
-
-```
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
-VITE_MAPBOX_TOKEN=
-```
-
-- [ ] **Step 5: Add scripts to `package.json`**
-
-```json
-"scripts": {
-  "dev": "vite dev",
-  "build": "vite build",
-  "start": "node .output/server/index.mjs",
-  "typecheck": "tsc --noEmit"
-}
-```
-
-- [ ] **Step 6: Verify dev server boots**
-
-Run: `npm run dev` then in another shell `curl -s localhost:3000/spots | grep -i discover`
-Expected: response contains "Discover"; stop the server.
-
-- [ ] **Step 7: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-printf 'node_modules\n.output\n.vinxi\ndist\n.env\nsrc/routeTree.gen.ts\n' > .gitignore
-git add -A && git commit -m "chore: scaffold TanStack Start app with strict TypeScript and Tailwind v4"
+git add src/features/geolocation/location.ts src/features/geolocation/location.test.ts
+git commit -m "feat(geolocation): pure location resolver + cookie helpers"
 ```
 
-## Global Constraints (apply to this task)
+---
 
-- TypeScript strict; zero `any`. Prefer `unknown` + narrowing.
-- React 19, TanStack Start latest stable, TanStack Query v5, TanStack Router (file-based), Vite 7+.
-- Styling: Tailwind CSS v4 via `@tailwindcss/vite` + `@import "tailwindcss"`. In this task, `global.css` only needs the `@import 'tailwindcss';` line plus the Tailwind Vite plugin wired in `vite.config.ts`; theme tokens come in Task 4.
-- No secrets in client bundles. `.env` is git-ignored; only `.env.example` is committed.
-- Commit on branch `feature/workout-spots-discover`.
-
-## Notes from controller
-
-- We are mocks-first: no live Supabase/Mapbox keys yet. `.env.example` is committed; do NOT create a real `.env`.
-- A platform classifier outage is making `Bash`/MCP calls intermittently return "temporarily unavailable". If a Bash call returns that error, simply retry it — it is transient, not a real failure.
-- `routeTree.gen.ts` is generated by the TanStack Start/Router Vite plugin on `npm run dev`/`build`. It is fine that it does not exist until the dev server runs; it is git-ignored. If typecheck fails solely because `routeTree.gen.ts` is missing, run `npm run dev` once (or the router generator) to produce it, then stop the server.

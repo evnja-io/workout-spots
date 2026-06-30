@@ -16,7 +16,7 @@ function renderPanel(
 ) {
   const onClose = () => undefined
   const onMapStyleChange = props.onMapStyleChange ?? (() => undefined)
-  const mapStyle: MapStyle = props.mapStyle ?? 'light'
+  const mapStyle: MapStyle = props.mapStyle ?? 'minimal'
 
   return render(
     <I18nextProvider i18n={i18n}>
@@ -47,7 +47,7 @@ describe('SettingsPanel', () => {
     const i18n = makeI18n()
     render(
       <I18nextProvider i18n={i18n}>
-        <SettingsPanel open={false} onClose={() => undefined} mapStyle="light" onMapStyleChange={() => undefined} />
+        <SettingsPanel open={false} onClose={() => undefined} mapStyle="minimal" onMapStyleChange={() => undefined} />
       </I18nextProvider>,
     )
     expect(screen.queryByRole('dialog')).toBeNull()

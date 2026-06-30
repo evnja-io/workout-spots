@@ -144,13 +144,6 @@ export function SettingsPanel({ open, onClose, mapStyle, onMapStyleChange }: Set
           <div className="flex rounded-[8px] bg-surface-2 p-[3px]">
             <button
               type="button"
-              className={cx(segBtn, mapStyle === 'light' && segBtnActive)}
-              onClick={() => handleMapStyleSelect('light')}
-            >
-              {t('settings.light')}
-            </button>
-            <button
-              type="button"
               className={cx(segBtn, mapStyle === 'minimal' && segBtnActive)}
               onClick={() => handleMapStyleSelect('minimal')}
               aria-label="Minimal"

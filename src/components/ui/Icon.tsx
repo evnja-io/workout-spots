@@ -39,6 +39,9 @@ export type IconName =
   | 'arrowLeft'
   | 'ticket'
   | 'info'
+  | 'moreVertical'
+  | 'play'
+  | 'poll'
 
 type IconProps = {
   name: IconName
@@ -244,6 +247,21 @@ const paths: Record<IconName, ReactNode> = {
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="16" x2="12" y2="12" />
       <line x1="12" y1="8" x2="12.01" y2="8" />
+    </>
+  ),
+  moreVertical: (
+    <>
+      <circle cx="12" cy="5" r="1.5" />
+      <circle cx="12" cy="12" r="1.5" />
+      <circle cx="12" cy="19" r="1.5" />
+    </>
+  ),
+  play: <polygon points="6 4 20 12 6 20 6 4" />,
+  poll: (
+    <>
+      <line x1="6" y1="20" x2="6" y2="12" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="18" y1="20" x2="18" y2="9" />
     </>
   ),
 }

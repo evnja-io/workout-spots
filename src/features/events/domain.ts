@@ -1,3 +1,5 @@
+import type { PostMediaType, Poll } from '~/features/feed/types'
+
 export type EventStatus = 'draft' | 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
 export type EventVisibility = 'public' | 'private' | 'club_only'
 export type ParticipationType = 'interested' | 'participating'
@@ -72,6 +74,9 @@ export type EventPost = {
   author: EventFeedAuthor
   content: string
   imageUrl: string | null
+  videoUrl: string | null
+  mediaType: PostMediaType | null
+  poll: Poll | null
   createdAt: string
   likeCount: number
   viewerLiked: boolean

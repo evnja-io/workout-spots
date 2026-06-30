@@ -15,7 +15,7 @@ export function getServerPrefs(): Prefs {
 
   const mapStyle = VALID_MAP_STYLES.includes(cookies['mapStyle'] as Prefs['mapStyle'])
     ? (cookies['mapStyle'] as Prefs['mapStyle'])
-    : 'light'
+    : 'minimal'
 
   const lang = VALID_LANGS.includes(cookies['lang'] as Prefs['lang'])
     ? (cookies['lang'] as Prefs['lang'])

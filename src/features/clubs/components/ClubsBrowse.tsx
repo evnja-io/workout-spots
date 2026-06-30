@@ -75,10 +75,11 @@ export function ClubsBrowse({
             {t('clubs.tagline')}
           </p>
         </div>
+        {/* Mobile uses the bottom-nav (+) FAB to create; show this only on desktop. */}
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-hot px-5 py-3 text-[14.5px] font-bold text-white shadow-[0_10px_28px_-8px_rgba(244,55,79,0.8)] transition-[filter,transform] hover:brightness-105 active:translate-y-px"
+          className="hidden shrink-0 items-center gap-2 rounded-full bg-hot px-5 py-3 text-[14.5px] font-bold text-white shadow-[0_10px_28px_-8px_rgba(244,55,79,0.8)] transition-[filter,transform] hover:brightness-105 active:translate-y-px md:inline-flex"
         >
           <Icon name="plus" size={16} />
           {t('clubs.create')}

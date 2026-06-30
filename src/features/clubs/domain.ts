@@ -1,3 +1,5 @@
+import type { PostMediaType, Poll } from '~/features/feed/types'
+
 export type ClubPrivacy = 'public' | 'private'
 export type ClubRole = 'owner' | 'moderator' | 'member'
 export type ClubMemberStatus = 'pending' | 'approved' | 'rejected'
@@ -55,6 +57,9 @@ export type ClubPost = {
   author: ClubFeedAuthor
   content: string
   imageUrl: string | null
+  videoUrl: string | null
+  mediaType: PostMediaType | null
+  poll: Poll | null
   createdAt: string
   likeCount: number
   viewerLiked: boolean

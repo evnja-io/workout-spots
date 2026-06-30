@@ -132,7 +132,7 @@ describe('MapView', () => {
       activeSpotId: null,
       onSelectSpot: selSpy,
       onMapClick: clickSpy,
-      mapStyle: 'light',
+      mapStyle: 'minimal',
       theme: 'light',
     })
 
@@ -164,7 +164,7 @@ describe('MapView', () => {
       spots: [],
       activeSpotId: null,
       onSelectSpot: vi.fn(),
-      mapStyle: 'light',
+      mapStyle: 'minimal',
       theme: 'light',
     })
     // The token-notice should be present immediately (no map init)
@@ -180,7 +180,7 @@ describe('MapView', () => {
       activeSpotId: null,
       onSelectSpot: vi.fn(),
       userLocation: [2.35, 48.85],
-      mapStyle: 'light',
+      mapStyle: 'minimal',
       theme: 'light',
     })
 
@@ -201,7 +201,7 @@ describe('MapView', () => {
       onSelectSpot: vi.fn(),
       userLocation: [2.35, 48.85],
       onRequestLocation: vi.fn(),
-      mapStyle: 'light',
+      mapStyle: 'minimal',
       theme: 'light',
     })
 
@@ -222,7 +222,7 @@ describe('MapView', () => {
       onSelectSpot: vi.fn(),
       userLocation: null,
       onRequestLocation,
-      mapStyle: 'light',
+      mapStyle: 'minimal',
       theme: 'light',
     })
 

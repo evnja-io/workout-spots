@@ -1,67 +1,143 @@
-# Task 3: Test harness (Vitest + RTL + MSW + Mapbox mock)
+### Task 3: `useUserLocation` hook (auto-ask + persist)
 
-Authoritative spec: `docs/superpowers/plans/2026-06-24-workout-spots-discover.md` lines 331–458 (Task 3). Follow it verbatim. Summary below.
+**Files:**
+- Create: `src/features/geolocation/useUserLocation.ts`
+- Test: `src/features/geolocation/useUserLocation.test.tsx`
 
-**Files to create:** `vitest.config.ts`, `src/test/setup.ts`, `src/test/msw/server.ts`, `src/test/msw/handlers.ts`, `src/test/mapbox-mock.ts`, `src/test/sanity.test.ts`. Modify `package.json` (test scripts).
+**Interfaces:**
+- Consumes: `setLocationCookie`, `LngLat` from Task 1.
+- Produces:
+  - `type UserLocationState = { userLocation: LngLat | null; requestLocation: () => void }`
+  - `useUserLocation(): UserLocationState`
 
-**Produces:** `npm test` (vitest run); MSW `server` for HTTP mocks; `mockMapboxGl()` that stubs `mapbox-gl`.
+- [ ] **Step 1: Write the failing test**
 
-## Steps
+Create `src/features/geolocation/useUserLocation.test.tsx`:
 
-1. **Install**
-   ```bash
-   npm i -D vitest @vitest/coverage-v8 jsdom @testing-library/react @testing-library/user-event @testing-library/jest-dom msw
-   ```
+```ts
+import { renderHook, waitFor, act } from '@testing-library/react'
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
+import { useUserLocation } from './useUserLocation'
 
-2. **`vitest.config.ts`**
-   ```ts
-   import { defineConfig } from 'vitest/config'
-   import viteReact from '@vitejs/plugin-react'
-   import tsconfigPaths from 'vite-tsconfig-paths'
+type SuccessCb = (pos: { coords: { longitude: number; latitude: number } }) => void
+type ErrorCb = (err: unknown) => void
 
-   export default defineConfig({
-     plugins: [tsconfigPaths(), viteReact()],
-     test: {
-       environment: 'jsdom',
-       globals: true,
-       setupFiles: ['./src/test/setup.ts'],
-       css: false,
-     },
-   })
-   ```
+function stubGeolocation(impl: (success: SuccessCb, error: ErrorCb) => void) {
+  const getCurrentPosition = vi.fn(impl)
+  vi.stubGlobal('navigator', { geolocation: { getCurrentPosition } })
+  return getCurrentPosition
+}
 
-3. **MSW server + empty handlers**
-   - `src/test/msw/handlers.ts`: `import type { RequestHandler } from 'msw'` then `export const handlers: RequestHandler[] = []`
-   - `src/test/msw/server.ts`: `import { setupServer } from 'msw/node'`; `import { handlers } from './handlers'`; `export const server = setupServer(...handlers)`
+describe('useUserLocation', () => {
+  beforeEach(() => {
+    document.cookie = 'loc=; path=/; max-age=0'
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
 
-4. **`src/test/setup.ts`**
-   ```ts
-   import '@testing-library/jest-dom/vitest'
-   import { afterAll, afterEach, beforeAll } from 'vitest'
-   import { server } from './msw/server'
+  it('auto-asks on mount, stores the position and writes the cookie on success', async () => {
+    const getCurrentPosition = stubGeolocation((success) => {
+      success({ coords: { longitude: 2.352, latitude: 48.857 } })
+    })
 
-   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
-   afterEach(() => server.resetHandlers())
-   afterAll(() => server.close())
-   ```
+    const { result } = renderHook(() => useUserLocation())
 
-5. **`src/test/mapbox-mock.ts`** — `FakeMarker` (setLngLat/addTo/remove → this), `FakeMap` (on/fire event registry, setStyle/flyTo/zoomTo/getZoom→11.5/remove), and `mockMapboxGl()` that `vi.mock('mapbox-gl', …)` exporting `{ default: { Map: FakeMap, Marker: FakeMarker, accessToken: '' }, Map: FakeMap, Marker: FakeMarker }`. Copy verbatim from plan lines 394–433. No `any` — use `unknown` in handler signatures as the plan shows.
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+    await waitFor(() => {
+      expect(result.current.userLocation).toEqual([2.352, 48.857])
+    })
+    expect(document.cookie).toContain('loc=2.35,48.86')
+  })
 
-6. **Sanity test** `src/test/sanity.test.ts`: `test('harness runs', () => expect(1+1).toBe(2))`. Run `npx vitest run src/test/sanity.test.ts` → expect 1 passed.
+  it('stays null and writes no cookie when permission is denied', async () => {
+    stubGeolocation((_success, error) => {
+      error({ code: 1, message: 'denied' })
+    })
 
-7. **Add scripts + commit**
-   ```json
-   "test": "vitest run",
-   "test:watch": "vitest"
-   ```
-   `git add -A && git commit -m "test: add vitest + RTL + MSW + mapbox mock harness"`
+    const { result } = renderHook(() => useUserLocation())
 
-## Global Constraints
-- TypeScript strict; zero `any`. `npm run lint` must still pass clean after this task (the new test files are linted too — `recommendedTypeChecked` applies; if test files need vitest globals types, vitest `globals:true` + adding `"vitest/globals"` to tsconfig `types` or importing from 'vitest' explicitly are both fine — prefer explicit imports to avoid config churn).
-- Branch `feature/workout-spots-discover`. Mocks-first; never create a real `.env`.
-- MSW v2 API (`http`, `HttpResponse`, `setupServer` from `msw/node`). If the installed MSW major differs from v2, consult context7 (resolve `msw`, query "node setupServer v2 handlers") and adapt.
+    await waitFor(() => {
+      expect(result.current.userLocation).toBeNull()
+    })
+    expect(document.cookie).not.toContain('loc=2.')
+  })
 
-## Controller notes
-- If a Bash/MCP call returns "temporarily unavailable" (transient platform classifier outage), retry.
-- Verify before reporting: `npm test` (all green incl. sanity) AND `npm run lint` clean AND `npm run typecheck` clean.
-- Report contract: write `/home/sephi/workout-spots/.superpowers/sdd/task-3-report.md` with Status, commit SHA+message, ACTUAL output of `npm test` + `npm run lint` + `npm run typecheck`, and any deviations. Reply to me with the same. Real command output only — no unverified claims.
+  it('requestLocation re-triggers a position request', async () => {
+    const getCurrentPosition = stubGeolocation((success) => {
+      success({ coords: { longitude: 1, latitude: 2 } })
+    })
+
+    const { result } = renderHook(() => useUserLocation())
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+
+    act(() => {
+      result.current.requestLocation()
+    })
+    expect(getCurrentPosition).toHaveBeenCalledTimes(2)
+  })
+})
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `npx vitest run src/features/geolocation/useUserLocation.test.tsx`
+Expected: FAIL — cannot resolve `./useUserLocation`.
+
+- [ ] **Step 3: Write minimal implementation**
+
+Create `src/features/geolocation/useUserLocation.ts`:
+
+```ts
+import { useCallback, useEffect, useState } from 'react'
+import { setLocationCookie, type LngLat } from './location'
+
+export type UserLocationState = {
+  userLocation: LngLat | null
+  requestLocation: () => void
+}
+
+/**
+ * Asks the browser for the user's location on mount (the native permission
+ * prompt). On success: stores the position and persists it to the `loc` cookie.
+ * On denial/error/timeout: no-op — the map keeps its loader-resolved center.
+ */
+export function useUserLocation(): UserLocationState {
+  const [userLocation, setUserLocation] = useState<LngLat | null>(null)
+
+  const requestLocation = useCallback(() => {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const next: LngLat = [pos.coords.longitude, pos.coords.latitude]
+        setUserLocation(next)
+        setLocationCookie(next[0], next[1])
+      },
+      () => {
+        // denied / unavailable / timeout — keep the existing center.
+      },
+    )
+  }, [])
+
+  useEffect(() => {
+    requestLocation()
+  }, [requestLocation])
+
+  return { userLocation, requestLocation }
+}
+```
+
+- [ ] **Step 4: Run test to verify it passes**
+
+Run: `npx vitest run src/features/geolocation/useUserLocation.test.tsx`
+Expected: PASS (3 cases).
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/features/geolocation/useUserLocation.ts src/features/geolocation/useUserLocation.test.tsx
+git commit -m "feat(geolocation): useUserLocation hook (auto-ask + cookie persist)"
+```
+
+---
+

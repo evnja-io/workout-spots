@@ -4,7 +4,11 @@ import { useTranslation } from 'react-i18next'
 import { Avatar } from '~/components/ui/Avatar'
 import { Icon } from '~/components/ui/Icon'
 import { cx } from '~/components/ui/cx'
-import { cdnImageUrl } from '~/lib/cdn/images'
+import { Lightbox } from '~/components/ui/Lightbox'
+import { Composer } from '~/features/feed/Composer'
+import { PostImage } from '~/features/feed/PostImage'
+import { VideoBlock } from '~/features/feed/VideoBlock'
+import { PollBlock } from '~/features/feed/PollBlock'
 import { useSession } from '~/features/auth/session'
 import type { EventPost } from '../domain'
 import { eventFeedQueryOptions } from '../queries'
@@ -14,6 +18,7 @@ import {
   useDeleteComment,
   useDeletePost,
   useToggleLike,
+  useVotePoll,
 } from '../feedMutations'
 import { timeAgo } from './visuals'
 
@@ -27,11 +32,16 @@ export function EventFeed({ eventId, canCompose }: { eventId: string; canCompose
   const deletePost = useDeletePost(eventId)
   const addComment = useAddComment(eventId)
   const deleteComment = useDeleteComment(eventId)
+  const votePoll = useVotePoll(eventId)
 
   return (
     <div className="flex flex-col gap-4">
       {canCompose ? (
-        <Composer pending={createPost.pending} onSubmit={createPost.submit} />
+        <Composer
+          pending={createPost.pending}
+          placeholder={t('events.composePlaceholder')}
+          onSubmit={createPost.submit}
+        />
       ) : (
         <p className="rounded-lg border border-dashed border-border px-3.5 py-2.5 text-[13px] text-text-3">
           {t('events.feedJoinToPost')}
@@ -55,66 +65,10 @@ export function EventFeed({ eventId, canCompose }: { eventId: string; canCompose
             onDeletePost={() => deletePost.remove(post.id)}
             onAddComment={(content) => addComment.submit(post.id, content)}
             onDeleteComment={(commentId) => deleteComment.remove(post.id, commentId)}
+            onVote={(optionId) => votePoll.vote(post.id, optionId)}
           />
         ))
       )}
-    </div>
-  )
-}
-
-function Composer({
-  pending,
-  onSubmit,
-}: {
-  pending: boolean
-  onSubmit: (content: string, file: File | null) => void
-}) {
-  const { t } = useTranslation()
-  const [content, setContent] = useState('')
-  const [file, setFile] = useState<File | null>(null)
-
-  const submit = () => {
-    const text = content.trim()
-    if (!text) return
-    onSubmit(text, file)
-    setContent('')
-    setFile(null)
-  }
-
-  return (
-    <div className="rounded-[18px] border border-border bg-surface p-3.5">
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder={t('events.composePlaceholder')}
-        rows={3}
-        maxLength={2000}
-        className="w-full resize-none bg-transparent text-[14.5px] text-text outline-none placeholder:text-text-4"
-      />
-      <div className="mt-2 flex items-center justify-between">
-        <label className="inline-flex cursor-pointer items-center gap-1.5 text-[13px] text-text-3 hover:text-text">
-          <Icon name="image" size={16} />
-          {file ? (
-            <span className="max-w-[140px] truncate">{file.name}</span>
-          ) : (
-            t('events.addPhoto')
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          />
-        </label>
-        <button
-          type="button"
-          disabled={pending || content.trim() === ''}
-          onClick={submit}
-          className="rounded-full bg-hot px-4 py-2 text-[13px] font-bold text-white transition-[filter] hover:brightness-105 disabled:opacity-50"
-        >
-          {t('events.post')}
-        </button>
-      </div>
     </div>
   )
 }
@@ -127,6 +81,7 @@ function PostCard({
   onDeletePost,
   onAddComment,
   onDeleteComment,
+  onVote,
 }: {
   post: EventPost
   viewerUserId: string | null
@@ -135,10 +90,12 @@ function PostCard({
   onDeletePost: () => void
   onAddComment: (content: string) => void
   onDeleteComment: (commentId: string) => void
+  onVote: (optionId: string) => void
 }) {
   const { t } = useTranslation()
   const [showComments, setShowComments] = useState(false)
   const [comment, setComment] = useState('')
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const isAuthor = viewerUserId != null && post.author.id === viewerUserId
 
   const submitComment = () => {
@@ -174,11 +131,21 @@ function PostCard({
           {post.content}
         </p>
       )}
-      {post.imageUrl && (
-        <img
-          src={cdnImageUrl(post.imageUrl)}
-          alt=""
-          className="mt-2.5 max-h-80 w-full rounded-lg object-cover"
+      {post.imageUrl && <PostImage url={post.imageUrl} onOpen={() => setLightboxOpen(true)} />}
+      {post.videoUrl && <VideoBlock url={post.videoUrl} />}
+      {post.poll && (
+        <PollBlock
+          poll={post.poll}
+          disabled={post.poll.viewerVotedOptionId != null}
+          onVote={onVote}
+        />
+      )}
+      {lightboxOpen && post.imageUrl && (
+        <Lightbox
+          images={[{ url: post.imageUrl }]}
+          index={0}
+          onClose={() => setLightboxOpen(false)}
+          onNav={() => {}}
         />
       )}
 

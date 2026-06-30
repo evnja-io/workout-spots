@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ActionMenu, type ActionItem } from '~/components/ui/ActionMenu'
 import { Avatar } from '~/components/ui/Avatar'
 import { AvatarStack } from '~/components/ui/AvatarStack'
 import { Icon } from '~/components/ui/Icon'
@@ -50,6 +51,22 @@ export function ClubDetail({
     avatarUrl: m.avatarUrl,
   }))
 
+  // Mobile: secondary/management actions live in the hero "⋮" sheet; the primary
+  // join action (outsiders) is a prominent hero button. Mirrors JoinControl.
+  const menuItems: ActionItem[] = []
+  if (state.canManage) menuItems.push({ icon: 'settings', label: 'Manage club', onClick: onManage })
+  if (state.primaryAction === 'leave')
+    menuItems.push({ icon: 'close', label: 'Leave club', danger: true, onClick: leave })
+  if (state.primaryAction === 'cancel')
+    menuItems.push({ icon: 'close', label: 'Cancel request', danger: true, onClick: leave })
+
+  const heroCta =
+    state.primaryAction === 'join'
+      ? { label: 'Join club', onClick: join }
+      : state.primaryAction === 'request'
+        ? { label: 'Request to join', onClick: join }
+        : null
+
   return (
     <div className="md:pb-8">
       {/* Immersive hero */}
@@ -66,7 +83,7 @@ export function ClubDetail({
         )}
         <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(178deg,rgba(8,3,12,0.4)_0%,rgba(8,3,12,0.05)_30%,rgba(8,3,12,0.55)_72%,rgba(8,3,12,0.9)_100%)]" />
 
-        <div className="relative z-[2] p-4 md:px-7 md:py-[18px]">
+        <div className="relative z-[2] flex items-start justify-between gap-2.5 p-4 md:px-7 md:py-[18px]">
           <button
             type="button"
             onClick={onBack}
@@ -75,6 +92,12 @@ export function ClubDetail({
           >
             <Icon name="chevronL" size={18} />
           </button>
+          <ActionMenu
+            className="md:hidden"
+            triggerLabel="Club options"
+            title={club.name}
+            items={menuItems}
+          />
         </div>
 
         <div className="relative z-[2] mx-auto mt-auto w-full max-w-6xl px-4 pb-6 pt-6 md:px-7">
@@ -111,6 +134,19 @@ export function ClubDetail({
               {t('clubs.spots', { count: club.linkedSpots.length })}
             </span>
           </div>
+
+          {/* Mobile primary CTA — desktop uses the aside join card. */}
+          {heroCta && (
+            <button
+              type="button"
+              onClick={heroCta.onClick}
+              disabled={joinPending}
+              className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-hot px-5 py-3 text-[14px] font-bold text-white shadow-[0_6px_20px_-6px_rgba(244,55,79,0.6)] transition-[filter,transform] hover:brightness-105 active:translate-y-px disabled:opacity-60 md:hidden"
+            >
+              <Icon name="plus" size={16} />
+              {heroCta.label}
+            </button>
+          )}
         </div>
       </div>
 
@@ -173,7 +209,7 @@ export function ClubDetail({
                 {club.linkedSpots.length === 0 ? (
                   <p className="text-[13px] text-text-3">{t('clubs.noLinkedSpots')}</p>
                 ) : (
-                  <div className="grid gap-2.5 md:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
                     {club.linkedSpots.map((s) => (
                       <LinkedSpotRow key={s.id} spot={s} onOpen={() => onOpenSpot(s.id)} />
                     ))}
@@ -194,11 +230,6 @@ export function ClubDetail({
             {joinControl}
           </div>
         </aside>
-      </div>
-
-      {/* Mobile sticky join bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 flex flex-col gap-2 border-t border-border bg-surface/95 p-3 pb-[calc(12px+env(safe-area-inset-bottom))] backdrop-blur-md md:hidden">
-        {joinControl}
       </div>
     </div>
   )
@@ -301,7 +332,7 @@ function LinkedSpotRow({ spot, onOpen }: { spot: ClubLinkedSpot; onOpen: () => v
     <button
       type="button"
       onClick={onOpen}
-      className="flex items-center gap-3 rounded-[12px] border border-border bg-surface p-2.5 text-left transition-colors hover:border-accent hover:bg-surface-2"
+      className="flex min-w-0 items-center gap-3 rounded-[12px] border border-border bg-surface p-2.5 text-left transition-colors hover:border-accent hover:bg-surface-2"
     >
       <div
         className={cx(
