@@ -221,6 +221,27 @@
     "errorTitle": "Something went wrong",
     "errorMessage": "An unexpected error occurred. Please try again."
   },
+  "feed": {
+    "addImage": "Photo",
+    "addVideo": "Video",
+    "addPoll": "Poll",
+    "videoUrlPlaceholder": "Paste a YouTube link",
+    "invalidVideoUrl": "That doesn't look like a YouTube link.",
+    "pollOptionPlaceholder": "Option {{n}}",
+    "addOption": "Add option",
+    "removeOption": "Remove option",
+    "pollDeadline": "Close voting at (optional)",
+    "vote": "Vote",
+    "votes_one": "{{count}} vote",
+    "votes_other": "{{count}} votes",
+    "pollClosed": "Final results",
+    "pollClosesAt": "Closes {{date}}",
+    "youVoted": "Your vote",
+    "playVideo": "Play video",
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next"
+  },
   "auth": {
     "signInTitle": "Sign in",
     "signUpTitle": "Sign up",

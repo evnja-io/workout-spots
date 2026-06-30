@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Icon } from '~/components/ui/Icon'
+import { ActionMenu, type ActionItem } from '~/components/ui/ActionMenu'
+import { Icon, type IconName } from '~/components/ui/Icon'
 import { ImageWithShimmer } from '~/components/ui/ImageWithShimmer'
+import { Lightbox } from '~/components/ui/Lightbox'
 import { cx } from '~/components/ui/cx'
 import { cdnImageUrl } from '~/lib/cdn/images'
 import type {
@@ -94,6 +96,46 @@ export function EventDetail({
 
   const { day, month } = dayParts(event.startsAt, event.timezone)
 
+  // Mobile: secondary actions (manage / cancel / interest) live in the hero "⋮"
+  // sheet; the primary RSVP action is a prominent hero button. Mirrors RSVPControl.
+  const joinable = view === 'participate' || view === 'request' || view === 'waitlist'
+  const menuItems: ActionItem[] = []
+  if (onManage) menuItems.push({ icon: 'settings', label: t('events.manage'), onClick: onManage })
+  if (view === 'going')
+    menuItems.push({ icon: 'close', label: t('events.cancelRsvp'), danger: true, onClick: cancel.cancel })
+  if (view === 'pending')
+    menuItems.push({
+      icon: 'close',
+      label: t('events.withdrawRequest'),
+      danger: true,
+      onClick: cancel.cancel,
+    })
+  if (view === 'on-waitlist')
+    menuItems.push({
+      icon: 'close',
+      label: t('events.leaveWaitlist'),
+      danger: true,
+      onClick: cancel.cancel,
+    })
+  if (joinable)
+    menuItems.push({
+      icon: 'heart',
+      label: interested ? t('events.interested') : t('events.imInterested'),
+      onClick: setInterest.setInterest,
+    })
+
+  const heroCta = joinable
+    ? {
+        label:
+          view === 'request'
+            ? t('events.requestToJoin')
+            : view === 'waitlist'
+              ? t('events.joinWaitlist')
+              : t('events.participate'),
+        icon: (view === 'request' ? 'userPlus' : view === 'waitlist' ? 'clock' : 'check') as IconName,
+      }
+    : null
+
   return (
     <div className="md:pb-8">
       {/* Immersive hero */}
@@ -125,12 +167,18 @@ export function EventDetail({
               <button
                 type="button"
                 onClick={onManage}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-3.5 py-2 text-[13px] font-bold text-white backdrop-blur-sm transition-colors hover:bg-white/25"
+                className="hidden items-center gap-1.5 rounded-full border border-white/20 bg-white/15 px-3.5 py-2 text-[13px] font-bold text-white backdrop-blur-sm transition-colors hover:bg-white/25 md:inline-flex"
               >
                 <Icon name="settings" size={15} />
                 {t('events.manage')}
               </button>
             )}
+            <ActionMenu
+              className="md:hidden"
+              triggerLabel="Event options"
+              title={event.title}
+              items={menuItems}
+            />
           </div>
         </div>
 
@@ -159,11 +207,25 @@ export function EventDetail({
               {t(`events.visibility_${event.visibility}`)}
             </span>
           </div>
-          <div className="mt-5 inline-flex items-center gap-3 rounded-full border border-white/15 bg-black/40 px-4 py-2.5 backdrop-blur-sm">
-            <Icon name="users" size={16} />
-            <span className="text-[13.5px] font-semibold">
-              <b className="font-extrabold">{event.goingCount}</b> {t('events.going')}
-            </span>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-black/40 px-4 py-2.5 backdrop-blur-sm">
+              <Icon name="users" size={16} />
+              <span className="text-[13.5px] font-semibold">
+                <b className="font-extrabold">{event.goingCount}</b> {t('events.going')}
+              </span>
+            </div>
+            {/* Mobile primary CTA — desktop uses the aside RSVP card. */}
+            {heroCta && (
+              <button
+                type="button"
+                onClick={rsvp.rsvp}
+                disabled={pending}
+                className="inline-flex items-center gap-1.5 rounded-full bg-hot px-5 py-3 text-[14px] font-bold text-white shadow-[0_6px_20px_-6px_rgba(244,55,79,0.6)] transition-[filter,transform] hover:brightness-105 active:translate-y-px disabled:opacity-50 md:hidden"
+              >
+                <Icon name={heroCta.icon} size={16} />
+                {heroCta.label}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -252,21 +314,9 @@ export function EventDetail({
         </aside>
       </div>
 
-      {/* Mobile sticky RSVP bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/95 p-3 pb-[calc(12px+env(safe-area-inset-bottom))] backdrop-blur-md md:hidden">
-        <RSVPControl
-          view={view}
-          interested={interested}
-          pending={pending}
-          onPrimary={rsvp.rsvp}
-          onCancel={cancel.cancel}
-          onInterest={setInterest.setInterest}
-        />
-      </div>
-
       {lightbox != null && (
         <Lightbox
-          images={event.images}
+          images={event.images.map((img) => ({ url: img.imageUrl, caption: img.caption }))}
           index={lightbox}
           onClose={() => setLightbox(null)}
           onNav={(d) =>
@@ -474,70 +524,6 @@ function Gallery({ images, onOpen }: { images: EventImage[]; onOpen: (i: number)
           />
         </button>
       ))}
-    </div>
-  )
-}
-
-function Lightbox({
-  images,
-  index,
-  onClose,
-  onNav,
-}: {
-  images: EventImage[]
-  index: number
-  onClose: () => void
-  onNav: (d: number) => void
-}) {
-  const img = images[index]
-  if (!img) return null
-  return (
-    <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/90 p-8"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-    >
-      <button
-        className="absolute right-5 top-5 grid size-11 place-items-center rounded-full bg-white/15 text-white backdrop-blur-sm hover:bg-white/25"
-        onClick={onClose}
-        aria-label="Close"
-      >
-        <Icon name="close" size={20} />
-      </button>
-      {images.length > 1 && (
-        <button
-          className="absolute left-5 grid size-12 place-items-center rounded-full bg-white/15 text-white backdrop-blur-sm hover:bg-white/25"
-          onClick={(e) => {
-            e.stopPropagation()
-            onNav(-1)
-          }}
-          aria-label="Previous"
-        >
-          <Icon name="chevronL" size={24} />
-        </button>
-      )}
-      <img
-        src={cdnImageUrl(img.imageUrl)}
-        alt={img.caption ?? ''}
-        className="max-h-[80vh] max-w-full rounded-[18px] object-contain shadow-[var(--shadow-lg)]"
-        onClick={(e) => e.stopPropagation()}
-      />
-      {images.length > 1 && (
-        <button
-          className="absolute right-5 grid size-12 place-items-center rounded-full bg-white/15 text-white backdrop-blur-sm hover:bg-white/25"
-          onClick={(e) => {
-            e.stopPropagation()
-            onNav(1)
-          }}
-          aria-label="Next"
-        >
-          <Icon name="chevronR" size={24} />
-        </button>
-      )}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[13px] font-bold text-white/85">
-        {index + 1} / {images.length}
-      </div>
     </div>
   )
 }

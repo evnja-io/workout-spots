@@ -221,6 +221,27 @@
     "errorTitle": "Une erreur s'est produite",
     "errorMessage": "Une erreur inattendue s'est produite. Veuillez réessayer."
   },
+  "feed": {
+    "addImage": "Photo",
+    "addVideo": "Vidéo",
+    "addPoll": "Sondage",
+    "videoUrlPlaceholder": "Collez un lien YouTube",
+    "invalidVideoUrl": "Cela ne ressemble pas à un lien YouTube.",
+    "pollOptionPlaceholder": "Option {{n}}",
+    "addOption": "Ajouter une option",
+    "removeOption": "Supprimer l'option",
+    "pollDeadline": "Clôturer le vote le (facultatif)",
+    "vote": "Voter",
+    "votes_one": "{{count}} vote",
+    "votes_other": "{{count}} votes",
+    "pollClosed": "Résultats définitifs",
+    "pollClosesAt": "Clôture le {{date}}",
+    "youVoted": "Votre vote",
+    "playVideo": "Lire la vidéo",
+    "close": "Fermer",
+    "prev": "Précédent",
+    "next": "Suivant"
+  },
   "auth": {
     "signInTitle": "Se connecter",
     "signUpTitle": "Créer un compte",

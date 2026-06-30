@@ -1,83 +1,60 @@
-# Task 4 Report
+# Task 4 Report — MapView: initial-center props, user marker, locate button
 
-**Status: DONE**
+## Status
+COMPLETE — all tests pass, typecheck clean, committed.
 
-**Commit:** `18a9251` — `feat: port global styles and theme/accent helpers`
+## Commit
+`b280a75 feat(spots): map initial-center props, user marker, locate-to-me button`
 
----
-
-## Files Created
-
-- `src/features/theme/theme.ts` — verbatim from plan lines 505–588: types `Theme`, `AccentKey`, `Palette`; `ACCENTS` record (violet/slate/emerald/rose × light/dark); `applyTheme`; `applyAccent`. Zero `any`.
-- `src/features/theme/theme.test.ts` — verbatim from plan lines 477–496.
-
-## `__root.tsx` confirmation
-
-`import '~/styles/global.css'` was already present from Task 1. No changes needed.
-
-## CSS fix
-
-None. `global.css` compiled without errors on first attempt.
-
----
-
-## Verification — Actual Command Output
-
-### 1. `npx vitest run src/features/theme/theme.test.ts`
-
+## Test Command & Output
 ```
- RUN  v4.1.9 /home/sephi/workout-spots
-
- Test Files  1 passed (1)
-      Tests  2 passed (2)
-   Start at  21:08:59
-   Duration  452ms (transform 30ms, setup 56ms, import 11ms, tests 6ms, environment 320ms)
+npx vitest run src/features/spots/MapView.test.tsx
 ```
+Result: **PASS (5) FAIL (0)** — 2 original + 3 new cases.
 
-### 2. `npm run build` (Tailwind v4 compile check)
-
+## Typecheck
 ```
-> vite build
-vite v8.1.0 building client environment for production...
-✓ 132 modules transformed.
-dist/client/assets/index-Dygfy70L.css   25.30 kB │ gzip:   6.21 kB
-dist/client/assets/index-D5-Y8fqR.js   340.21 kB │ gzip: 106.86 kB
-✓ built in 247ms
-vite v8.1.0 building ssr environment for production...
-✓ 43 modules transformed.
-dist/server/server.js   59.49 kB │ gzip: 15.26 kB
-✓ built in 120ms
+npm run typecheck
 ```
-Exit 0. No CSS/PostCSS errors. `@theme inline` + `@layer` syntax valid.
+Result: **clean (exit 0, no errors)**.
 
-### 3. `npm test` (full suite)
+## What Was Done (TDD order)
 
-```
- RUN  v4.1.9 /home/sephi/workout-spots
+### Step 1 – Failing tests appended
+Added the 3 verbatim test cases inside `describe('MapView', ...)` in `MapView.test.tsx`.
 
- Test Files  2 passed (2)
-      Tests  3 passed (3)
-   Start at  21:09:11
-   Duration  477ms
-```
+### Step 2 – Confirmed failure
+Initial run: FAIL (3) — `userLocation`/`onRequestLocation` props rejected, no `wp-user` marker, locate flew to Paris default.
 
-### 4. `npm run lint`
+After PASS (3)/FAIL (2): the `locate button requests location` test passed once `onRequestLocation` was wired up, but the other two were still failing due to mock state accumulation (see Deviations).
 
-```
-> eslint .
-(no output — clean)
-```
+### Step 3 – Implementation
 
-### 5. `npm run typecheck`
+**`src/features/spots/MapView.tsx`** (edits a–h):
+- (a) `const USER_ZOOM = 13` after `DEFAULT_ZOOM`
+- (b) Extended `MapViewProps` with `initialCenter?`, `initialZoom?`, `userLocation?`, `onRequestLocation?`
+- (c) Added those 4 params to destructured signature (`userLocation = null` default)
+- (d) Added `userMarkerRef`, `flewToUserRef`, and `onRequestLocationRef` alongside existing refs
+- (e) Map constructor uses `initialCenter ?? DEFAULT_CENTER` / `initialZoom ?? DEFAULT_ZOOM`
+- (f) Init cleanup adds `userMarkerRef.current = null`
+- (g) Two new effects after `newSpotPosition` effect: user-marker effect (creates/removes `.wp-user` DOM + Marker) and auto-fly-once effect
+- (h) `handleRecenter` flies to `userLocation` if known, else calls `onRequestLocationRef.current?.()` — no longer flies to Paris default
 
-```
-> tsc --noEmit
-(no output — clean)
-```
+**`src/styles/global.css`** — appended `.wp-user`, `.wp-user .dot`, and `[data-theme='dark'] .wp-user .dot` block after the `.wp-pin` dark-mode rule.
 
----
+### Step 4 – All 5 pass
 
-## Notes
+### Step 5 – Committed
 
-- The `vite-tsconfig-paths` plugin deprecation warning appears in build/test output — it is informational only (not an error), present from Task 1's scaffold.
-- No changes to `global.css` were needed.
+## Deviations from Brief
+
+One deviation: added `beforeEach(() => vi.clearAllMocks())` inside the `describe` block, and added `beforeEach` to the vitest import. The brief's tests use `MarkerMock.mock.instances[0]` and `MarkerMock.mock.calls.find()` which assume a clean mock state per test. Without clearing, `instances[0]` in test 4 resolves to test 1's map instance (because the `vi.fn()` mocks accumulate across tests — `clearMocks: true` is not set in `vitest.config.ts`). This is minimal necessary infra for the verbatim test cases to pass, not added functionality.
+
+## Self-Review
+
+- Zero `any` — verified in both implementation and tests.
+- Existing `// eslint-disable-next-line react-hooks/exhaustive-deps` on the init effect retained; `initialCenter`/`initialZoom` are intentionally captured once at mount.
+- `onRequestLocationRef` matches the pattern of other callback refs.
+- User-marker effect mirrors `newSpotMarkerRef` pattern exactly (teardown-first, null-guard, rebuild).
+- `flewToUserRef` is not reset in cleanup, but that's correct — the ref lives with the component instance and fresh mounts start fresh.
+- MapView stays decoupled from the geolocation module — plain `[number, number]` tuples only.

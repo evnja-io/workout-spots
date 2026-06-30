@@ -37,6 +37,13 @@ export function MobileNav({ onCreateSpot, onOpenSettings }: MobileNavProps) {
     else onCreateSpot?.()
   }
 
+  // Context-aware create affordance: show what the (+) will add on the current tab.
+  const create = pathname.startsWith('/clubs')
+    ? { icon: 'users' as const, label: t('clubs.create') }
+    : pathname.startsWith('/events')
+      ? { icon: 'clock' as const, label: t('events.create') }
+      : { icon: 'mappin' as const, label: t('discover.addSpot') }
+
   return (
     <>
       <nav
@@ -66,10 +73,15 @@ export function MobileNav({ onCreateSpot, onOpenSettings }: MobileNavProps) {
             type="button"
             onClick={handleCreate}
             data-testid="mobile-create-fab"
-            aria-label={t('nav.create')}
+            aria-label={create.label}
             className="-mt-5 grid size-12 place-items-center rounded-full bg-accent text-white shadow-[var(--shadow-md)] transition-transform duration-150 active:translate-y-px"
           >
-            <Icon name="plus" size={24} />
+            <span className="relative grid place-items-center">
+              <Icon name={create.icon} size={22} />
+              <span className="absolute -bottom-2 -right-2 grid size-[15px] place-items-center rounded-full bg-white text-accent shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+                <Icon name="plus" size={11} strokeWidth={3} />
+              </span>
+            </span>
           </button>
         </div>
 

@@ -3,6 +3,7 @@ import { getBrowserSupabase } from '~/lib/supabase/browser'
 import { useSession } from '~/features/auth/session'
 import { useAuthGate } from '~/features/auth/useAuthGate'
 import { trackEvent } from '~/features/analytics/gtag'
+import type { CreateMedia } from '~/features/feed/types'
 import type { ClubPost } from './domain'
 import { uploadPostImage } from './photos'
 
@@ -62,29 +63,41 @@ export function useToggleLike(clubId: string) {
   }
 }
 
-/** Create a club post (content + optional image). */
+/** Create a club post (content + at most one media block: image | video | poll). */
 export function useCreatePost(clubId: string) {
   const { userId } = useSession()
   const gate = useAuthGate()
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
-    mutationFn: async ({ content, file }: { content: string; file: File | null }) => {
+    mutationFn: async ({ content, media }: { content: string; media: CreateMedia }) => {
       if (!userId) throw new Error('Not authenticated')
       const sb = getBrowserSupabase()
       const { data, error } = await sb
         .from('club_posts')
-        .insert({ club_id: clubId, author_id: userId, content })
+        .insert({
+          club_id: clubId,
+          author_id: userId,
+          content: content || null,
+          media_type: media?.kind ?? null,
+          video_url: media?.kind === 'video' ? media.url : null,
+          poll_closes_at: media?.kind === 'poll' ? media.closesAt : null,
+        })
         .select('id')
         .single()
       if (error) throw error
-      if (file) {
-        const url = await uploadPostImage(clubId, data.id, file)
+      if (media?.kind === 'image') {
+        const url = await uploadPostImage(clubId, data.id, media.file)
         const { error: updErr } = await sb
           .from('club_posts')
           .update({ image_url: url })
           .eq('id', data.id)
         if (updErr) throw updErr
+      } else if (media?.kind === 'poll') {
+        const { error: optErr } = await sb.from('club_poll_options').insert(
+          media.options.map((label, i) => ({ post_id: data.id, label, position: i })),
+        )
+        if (optErr) throw optErr
       }
     },
     onSuccess: () => trackEvent('club_post_created', { club_id: clubId }),
@@ -92,8 +105,53 @@ export function useCreatePost(clubId: string) {
   })
 
   return {
-    submit: (content: string, file: File | null) => gate(() => mutation.mutate({ content, file })),
+    submit: (content: string, media: CreateMedia) =>
+      gate(() => mutation.mutate({ content, media })),
     pending: mutation.isPending,
+  }
+}
+
+/** Cast a single poll vote (optimistic; the DB unique constraint blocks duplicates). */
+export function useVotePoll(clubId: string) {
+  const { userId } = useSession()
+  const gate = useAuthGate()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn: async ({ postId, optionId }: { postId: string; optionId: string }) => {
+      if (!userId) throw new Error('Not authenticated')
+      const { error } = await getBrowserSupabase()
+        .from('club_poll_votes')
+        .insert({ post_id: postId, option_id: optionId, user_id: userId })
+      if (error) throw error
+    },
+    onMutate: async ({ postId, optionId }) => {
+      await queryClient.cancelQueries(feedFilter(clubId))
+      patchPosts(queryClient, clubId, (posts) =>
+        posts.map((p) =>
+          p.id === postId && p.poll && p.poll.viewerVotedOptionId == null
+            ? {
+                ...p,
+                poll: {
+                  ...p.poll,
+                  totalVotes: p.poll.totalVotes + 1,
+                  viewerVotedOptionId: optionId,
+                  options: p.poll.options.map((o) =>
+                    o.id === optionId ? { ...o, voteCount: o.voteCount + 1 } : o,
+                  ),
+                },
+              }
+            : p,
+        ),
+      )
+    },
+    onError: () => void queryClient.invalidateQueries(feedFilter(clubId)),
+    onSettled: () => void queryClient.invalidateQueries(feedFilter(clubId)),
+  })
+
+  return {
+    vote: (postId: string, optionId: string) =>
+      gate(() => mutation.mutate({ postId, optionId })),
   }
 }
 

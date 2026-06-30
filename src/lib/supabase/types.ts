@@ -89,6 +89,77 @@ export type Database = {
           },
         ]
       }
+      club_poll_options: {
+        Row: {
+          created_at: string | null
+          id: string
+          label: string
+          position: number
+          post_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          label: string
+          position: number
+          post_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          label?: string
+          position?: number
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_poll_options_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "club_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      club_poll_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          option_id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          option_id: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          option_id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_poll_votes_option_post_fkey"
+            columns: ["option_id", "post_id"]
+            isOneToOne: false
+            referencedRelation: "club_poll_options"
+            referencedColumns: ["id", "post_id"]
+          },
+          {
+            foreignKeyName: "club_poll_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       club_post_comments: {
         Row: {
           author_id: string
@@ -171,29 +242,38 @@ export type Database = {
         Row: {
           author_id: string
           club_id: string
-          content: string
+          content: string | null
           created_at: string | null
           id: string
           image_url: string | null
+          media_type: string | null
+          poll_closes_at: string | null
           updated_at: string | null
+          video_url: string | null
         }
         Insert: {
           author_id: string
           club_id: string
-          content: string
+          content?: string | null
           created_at?: string | null
           id?: string
           image_url?: string | null
+          media_type?: string | null
+          poll_closes_at?: string | null
           updated_at?: string | null
+          video_url?: string | null
         }
         Update: {
           author_id?: string
           club_id?: string
-          content?: string
+          content?: string | null
           created_at?: string | null
           id?: string
           image_url?: string | null
+          media_type?: string | null
+          poll_closes_at?: string | null
           updated_at?: string | null
+          video_url?: string | null
         }
         Relationships: [
           {
@@ -571,6 +651,77 @@ export type Database = {
           },
         ]
       }
+      event_poll_options: {
+        Row: {
+          created_at: string | null
+          id: string
+          label: string
+          position: number
+          post_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          label: string
+          position: number
+          post_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          label?: string
+          position?: number
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_poll_options_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "event_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_poll_votes: {
+        Row: {
+          created_at: string | null
+          id: string
+          option_id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          option_id: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          option_id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_poll_votes_option_post_fkey"
+            columns: ["option_id", "post_id"]
+            isOneToOne: false
+            referencedRelation: "event_poll_options"
+            referencedColumns: ["id", "post_id"]
+          },
+          {
+            foreignKeyName: "event_poll_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_post_comments: {
         Row: {
           author_id: string
@@ -652,30 +803,39 @@ export type Database = {
       event_posts: {
         Row: {
           author_id: string
-          content: string
+          content: string | null
           created_at: string | null
           event_id: string
           id: string
           image_url: string | null
+          media_type: string | null
+          poll_closes_at: string | null
           updated_at: string | null
+          video_url: string | null
         }
         Insert: {
           author_id: string
-          content: string
+          content?: string | null
           created_at?: string | null
           event_id: string
           id?: string
           image_url?: string | null
+          media_type?: string | null
+          poll_closes_at?: string | null
           updated_at?: string | null
+          video_url?: string | null
         }
         Update: {
           author_id?: string
-          content?: string
+          content?: string | null
           created_at?: string | null
           event_id?: string
           id?: string
           image_url?: string | null
+          media_type?: string | null
+          poll_closes_at?: string | null
           updated_at?: string | null
+          video_url?: string | null
         }
         Relationships: [
           {
