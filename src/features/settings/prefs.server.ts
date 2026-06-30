@@ -7,7 +7,7 @@ export function getServerPrefs(): Prefs {
 
   const theme = VALID_THEMES.includes(cookies['theme'] as Prefs['theme'])
     ? (cookies['theme'] as Prefs['theme'])
-    : 'light'
+    : 'dark'
 
   const accent = VALID_ACCENTS.includes(cookies['accent'] as Prefs['accent'])
     ? (cookies['accent'] as Prefs['accent'])

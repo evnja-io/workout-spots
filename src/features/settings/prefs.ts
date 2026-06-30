@@ -19,7 +19,7 @@ export const VALID_MAP_STYLES: MapStyle[] = ['minimal', 'satellite']
 export const VALID_LANGS: Locale[] = ['en', 'fr']
 
 const DEFAULT_PREFS: Prefs = {
-  theme: 'light',
+  theme: 'dark',
   accent: 'rose',
   mapStyle: 'minimal',
   lang: 'en',
