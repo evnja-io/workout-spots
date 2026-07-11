@@ -53,10 +53,14 @@ export async function forwardGeocode(
   const data = (await res.json()) as { features: MapboxFeature[] }
   return data.features.map(toResult)
 }
-export async function reverseGeocode(lng: number, lat: number): Promise<GeocodeResult | null> {
+export async function reverseGeocode(
+  lng: number,
+  lat: number,
+  opts: { signal?: AbortSignal } = {},
+): Promise<GeocodeResult | null> {
   const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json`)
   url.searchParams.set('access_token', token())
-  const res = await fetch(url)
+  const res = await fetch(url, { signal: opts.signal })
   if (!res.ok) throw new Error(`Reverse geocoding failed: ${res.status}`)
   const data = (await res.json()) as { features: MapboxFeature[] }
   const f = data.features[0]

@@ -9,6 +9,9 @@ interface MarkerInstance {
   setLngLat: (coords: [number, number]) => MarkerInstance
   addTo: (map: MapInstance) => MarkerInstance
   getElement: () => HTMLElement
+  on: (event: string, cb: () => void) => MarkerInstance
+  fire: (event: string) => void
+  getLngLat: () => { lng: number; lat: number }
   remove: () => void
 }
 
@@ -35,9 +38,20 @@ interface MapInstance {
 // Must use function/class so they can be used as constructors with `new`
 const MarkerMock = vi.fn(function (this: MarkerInstance, opts: { element?: HTMLElement }) {
   // Make the mock instance conform to MarkerInstance
-  this.setLngLat = vi.fn().mockReturnThis()
+  const handlers: Record<string, Array<() => void>> = {}
+  let lngLat = { lng: 0, lat: 0 }
+  this.setLngLat = vi.fn().mockImplementation((coords: [number, number]) => {
+    lngLat = { lng: coords[0], lat: coords[1] }
+    return this
+  })
   this.addTo = vi.fn().mockReturnThis()
   this.getElement = () => opts.element ?? document.createElement('div')
+  this.on = (e: string, cb: () => void) => {
+    ;(handlers[e] ??= []).push(cb)
+    return this
+  }
+  this.fire = (e: string) => handlers[e]?.forEach((h) => h())
+  this.getLngLat = () => lngLat
   this.remove = vi.fn()
   // Attach element reference so tests can inspect it
   ;(this as MarkerInstance & { _opts: { element?: HTMLElement } })._opts = opts
@@ -212,6 +226,70 @@ describe('MapView', () => {
     expect(mapInstance.flyTo).toHaveBeenCalledWith(
       expect.objectContaining({ center: [2.35, 48.85] }),
     )
+  })
+
+  it('makes the new-spot marker draggable and reports dragend position', async () => {
+    const onNewSpotDragEnd = vi.fn()
+    renderMapView({
+      spots: [],
+      activeSpotId: null,
+      onSelectSpot: vi.fn(),
+      newSpotPosition: { lng: 2.38, lat: 48.87 },
+      newSpotDraggable: true,
+      onNewSpotDragEnd,
+      mapStyle: 'minimal',
+      theme: 'light',
+    })
+
+    await waitFor(() => expect(MarkerMock).toHaveBeenCalled())
+    const idx = MarkerMock.mock.calls.findIndex((c) =>
+      (c[0] as { element?: HTMLElement })?.element?.className.includes('wp-pin'),
+    )
+    expect(idx).toBeGreaterThanOrEqual(0)
+    expect((MarkerMock.mock.calls[idx]?.[0] as { draggable?: boolean }).draggable).toBe(true)
+
+    // Drag the pin: dragend reports the marker's current lng/lat
+    const marker = MarkerMock.mock.instances[idx] as unknown as MarkerInstance
+    marker.fire('dragend')
+    expect(onNewSpotDragEnd).toHaveBeenCalledWith({ lng: 2.38, lat: 48.87 })
+  })
+
+  it('creates a non-draggable new-spot marker by default', async () => {
+    renderMapView({
+      spots: [],
+      activeSpotId: null,
+      onSelectSpot: vi.fn(),
+      newSpotPosition: { lng: 2.38, lat: 48.87 },
+      mapStyle: 'minimal',
+      theme: 'light',
+    })
+
+    await waitFor(() => expect(MarkerMock).toHaveBeenCalled())
+    const call = MarkerMock.mock.calls.find((c) =>
+      (c[0] as { element?: HTMLElement })?.element?.className.includes('wp-pin'),
+    )
+    expect((call?.[0] as { draggable?: boolean }).draggable).toBe(false)
+  })
+
+  it('flies to flyToLocation without dropping a search marker', async () => {
+    renderMapView({
+      spots: [],
+      activeSpotId: null,
+      onSelectSpot: vi.fn(),
+      flyToLocation: { center: [1.1, 2.2], zoom: 16 },
+      mapStyle: 'minimal',
+      theme: 'light',
+    })
+
+    await waitFor(() => expect(MapMock).toHaveBeenCalled())
+    const mapInstance = MapMock.mock.instances[0] as unknown as MapInstance
+    await waitFor(() =>
+      expect(mapInstance.flyTo).toHaveBeenCalledWith({ center: [1.1, 2.2], zoom: 16 }),
+    )
+    const searchMarkerCall = MarkerMock.mock.calls.find((c) =>
+      (c[0] as { element?: HTMLElement })?.element?.className.includes('wp-search'),
+    )
+    expect(searchMarkerCall).toBeUndefined()
   })
 
   it('locate button requests location when user is not known', async () => {

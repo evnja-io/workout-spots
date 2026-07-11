@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { MapView } from '~/features/spots/MapView'
 import { reverseGeocode } from '~/lib/mapbox/geocoding'
 import { AddressAutocomplete } from '../AddressAutocomplete'
+import { Button } from '~/components/ui/Button'
+import { Icon } from '~/components/ui/Icon'
 import { FieldLabel, FieldHint } from '~/components/ui/Field'
 import type { AddSpotInput } from '../schema'
 import type { MapStyle } from '~/lib/mapbox/map'
@@ -12,9 +14,17 @@ interface LocationStepProps {
   onChange: (patch: Partial<AddSpotInput>) => void
   mapStyle: MapStyle
   readOnly?: boolean
+  /** Enters pick-on-main-map mode (create flow only — the wizard hides while picking). */
+  onPickOnMap?: () => void
 }
 
-export function LocationStep({ values, onChange, mapStyle, readOnly }: LocationStepProps) {
+export function LocationStep({
+  values,
+  onChange,
+  mapStyle,
+  readOnly,
+  onPickOnMap,
+}: LocationStepProps) {
   const { t } = useTranslation()
 
   async function handleMapClick(pos: { lng: number; lat: number }) {
@@ -54,6 +64,18 @@ export function LocationStep({ values, onChange, mapStyle, readOnly }: LocationS
           <>
             <AddressAutocomplete value={values.address} onSelect={handleSelect} />
             <FieldHint>{t('addSpot.addressHint')}</FieldHint>
+            {onPickOnMap && (
+              <Button
+                variant="secondary"
+                type="button"
+                className="mt-2"
+                data-testid="pick-on-map-btn"
+                onClick={onPickOnMap}
+              >
+                <Icon name="mappin" size={14} />
+                {t('addSpot.pickOnMap')}
+              </Button>
+            )}
           </>
         )}
         {readOnly && (

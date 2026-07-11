@@ -373,7 +373,12 @@
     "publish": "Publish spot",
     "publishing": "Publishing…",
     "progress": "Step progress",
-    "suggestions": "Address suggestions"
+    "suggestions": "Address suggestions",
+    "pickOnMap": "Pick on map",
+    "pickHint": "Tap the map to place the pin",
+    "pickLocating": "Finding address…",
+    "pickNoAddress": "No address found — you can still confirm the position.",
+    "pickConfirm": "Confirm location"
   },
   "discover": {
     "title": "Discover",

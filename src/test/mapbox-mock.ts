@@ -14,6 +14,12 @@ export class FakeMarker {
   getElement() {
     return this.element
   }
+  on() {
+    return this
+  }
+  getLngLat() {
+    return { lng: 0, lat: 0 }
+  }
   remove() {
     return this
   }

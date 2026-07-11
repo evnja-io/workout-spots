@@ -24,6 +24,8 @@ interface MapboxMarker {
   setLngLat: (coords: [number, number]) => MapboxMarker
   addTo: (map: MapboxMap) => MapboxMarker
   getElement: () => HTMLElement
+  on: (event: string, cb: () => void) => MapboxMarker
+  getLngLat: () => { lng: number; lat: number }
   remove: () => void
 }
 
@@ -67,6 +69,11 @@ export interface MapViewProps {
   onBoundsChange?: (bounds: Bounds) => void
   addMode?: boolean
   newSpotPosition?: { lng: number; lat: number } | null
+  /** Make the new-spot pin draggable (map-pick mode); dragend reports the new position. */
+  newSpotDraggable?: boolean
+  onNewSpotDragEnd?: (pos: { lng: number; lat: number }) => void
+  /** Imperative fly request — pass a fresh object to (re)trigger. Unlike searchLocation, drops no marker. */
+  flyToLocation?: { center: [number, number]; zoom?: number } | null
   mapStyle: MapStyle
   onChange?: (s: MapStyle) => void
   theme: Theme
@@ -85,6 +92,9 @@ export function MapView({
   onBoundsChange,
   addMode = false,
   newSpotPosition = null,
+  newSpotDraggable = false,
+  onNewSpotDragEnd,
+  flyToLocation = null,
   mapStyle,
   onChange,
   theme,
@@ -124,6 +134,8 @@ export function MapView({
   onBoundsChangeRef.current = onBoundsChange
   const onRequestLocationRef = useRef(onRequestLocation)
   onRequestLocationRef.current = onRequestLocation
+  const onNewSpotDragEndRef = useRef(onNewSpotDragEnd)
+  onNewSpotDragEndRef.current = onNewSpotDragEnd
 
   // ── Init effect (mount, client-only, token required) ─────────────────────
   useEffect(() => {
@@ -258,10 +270,14 @@ export function MapView({
     const dot = document.createElement('div')
     dot.className = 'dot'
     el.appendChild(dot)
-    newSpotMarkerRef.current = new mapboxgl.Marker({ element: el })
+    const marker = new mapboxgl.Marker({ element: el, draggable: newSpotDraggable })
       .setLngLat([newSpotPosition.lng, newSpotPosition.lat])
       .addTo(map)
-  }, [newSpotPosition, mapReady])
+    if (newSpotDraggable) {
+      marker.on('dragend', () => onNewSpotDragEndRef.current?.(marker.getLngLat()))
+    }
+    newSpotMarkerRef.current = marker
+  }, [newSpotPosition, newSpotDraggable, mapReady])
 
   // ── "You are here" marker — isolated from the spot-pin layer ───────────────
   useEffect(() => {
@@ -303,6 +319,13 @@ export function MapView({
       map.flyTo({ center, zoom: SEARCH_ZOOM })
     }
   }, [searchLocation, mapReady])
+
+  // ── Imperative fly-to (map-pick mode) — no marker, just move the camera ────
+  useEffect(() => {
+    const map = mapRef.current
+    if (!mapReady || !map || !flyToLocation) return
+    map.flyTo({ center: flyToLocation.center, zoom: flyToLocation.zoom })
+  }, [flyToLocation, mapReady])
 
   // ── Searched-location marker — distinct from spot pins and the user marker ──
   useEffect(() => {

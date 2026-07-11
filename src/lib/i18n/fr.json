@@ -373,7 +373,12 @@
     "publish": "Publier le spot",
     "publishing": "Publication…",
     "progress": "Progression",
-    "suggestions": "Suggestions d'adresse"
+    "suggestions": "Suggestions d'adresse",
+    "pickOnMap": "Choisir sur la carte",
+    "pickHint": "Touchez la carte pour placer l'épingle",
+    "pickLocating": "Recherche de l'adresse…",
+    "pickNoAddress": "Aucune adresse trouvée — vous pouvez quand même confirmer la position.",
+    "pickConfirm": "Confirmer l'emplacement"
   },
   "discover": {
     "title": "Découvrir",

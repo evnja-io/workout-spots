@@ -13,6 +13,8 @@ import { equipmentsQueryOptions, disciplinesQueryOptions } from '~/features/taxo
 import { getPrefs } from '~/features/settings/prefs'
 import { SettingsPanel } from '~/features/settings/SettingsPanel'
 import { AddSpotWizard } from '~/features/add-spot/AddSpotWizard'
+import { MapPickBar, type MapPickResult } from '~/features/add-spot/MapPickBar'
+import type { AddSpotInput } from '~/features/add-spot/schema'
 import { useTranslation } from 'react-i18next'
 import type { MapStyle } from '~/lib/mapbox/map'
 import { ErrorState } from '~/components/ErrorState'
@@ -96,11 +98,50 @@ function SpotsLayout() {
   // The map's moveend then reloads spots for the new viewport via onBoundsChange.
   const [searchLocation, setSearchLocation] = useState<SearchLocation | null>(null)
 
+  // ── Map-pick mode: the add-spot wizard hides (draft preserved) while the user
+  // places the new-spot pin on the main map. `pendingPick` carries the confirmed
+  // position + reverse-geocoded address back into the wizard's draft.
+  const [mapPick, setMapPick] = useState<{
+    pos: { lng: number; lat: number } | null
+    flyTo: { center: [number, number]; zoom?: number } | null
+  } | null>(null)
+  const [pendingPick, setPendingPick] = useState<Partial<AddSpotInput> | null>(null)
+
+  function startMapPick(current: { lng: number; lat: number } | null) {
+    setListSheetOpen(false)
+    setMapPick({
+      pos: current,
+      // Fresh object each time so re-entering pick mode refires the fly effect.
+      flyTo: current ? { center: [current.lng, current.lat], zoom: 16 } : null,
+    })
+  }
+
+  function handlePickPosition(pos: { lng: number; lat: number }) {
+    setMapPick((p) => (p ? { ...p, pos } : p))
+  }
+
+  function handlePickConfirm({ position, geo }: MapPickResult) {
+    setPendingPick({
+      position,
+      ...(geo
+        ? {
+            address: geo.address || geo.placeName,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country,
+          }
+        : {}),
+    })
+    setMapPick(null)
+  }
+
   // Get active spotId from child route params (non-strict)
   const params = useParams({ strict: false })
   const activeSpotId = params.spotId ?? null
 
   function handleSelectSpot(id: string) {
+    // Spot-pin clicks bypass the map click handler — swallow them while picking.
+    if (mapPick) return
     setListSheetOpen(false)
     void navigate({ to: '/spots/$spotId', params: { spotId: id }, search: (prev) => prev })
   }
@@ -139,41 +180,62 @@ function SpotsLayout() {
           searchLocation={searchLocation}
           userLocation={userLocation}
           onRequestLocation={requestLocation}
+          addMode={!!mapPick}
+          onMapClick={mapPick ? handlePickPosition : undefined}
+          newSpotPosition={mapPick?.pos ?? null}
+          newSpotDraggable={!!mapPick}
+          onNewSpotDragEnd={handlePickPosition}
+          flyToLocation={mapPick?.flyTo ?? null}
           mapStyle={mapStyle}
           onChange={setMapStyle}
           theme="light"
         />
         {/* Add-spot button — floating top-right of the map (desktop; mobile uses the MobileNav FAB) */}
-        <div className="pointer-events-auto absolute top-[14px] right-[14px] z-[3] hidden md:block">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-[9px] text-[13px] font-medium text-white shadow-[var(--shadow-md)] transition-[background-color,transform] duration-150 hover:bg-accent-2 active:translate-y-px"
-            data-testid="add-spot-btn"
-            onClick={() => setAddSpotOpen(true)}
-          >
-            + {t('discover.addSpot')}
-          </button>
-        </div>
+        {!mapPick && (
+          <div className="pointer-events-auto absolute top-[14px] right-[14px] z-[3] hidden md:block">
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-[9px] text-[13px] font-medium text-white shadow-[var(--shadow-md)] transition-[background-color,transform] duration-150 hover:bg-accent-2 active:translate-y-px"
+              data-testid="add-spot-btn"
+              onClick={() => setAddSpotOpen(true)}
+            >
+              + {t('discover.addSpot')}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Mobile floating List pill — opens the Discover list sheet. Fixed (like
           the bottom nav) so it shares the visual-viewport anchor and clears the
           bar on iOS Safari; bottom-left, clear of the map controls and FAB. */}
-      <button
-        type="button"
-        onClick={() => setListSheetOpen(true)}
-        data-testid="map-list-pill"
-        className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 z-40 inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-medium text-text shadow-[var(--shadow-md)] md:hidden"
-      >
-        <Icon name="list" size={16} />
-        {t('discover.title')}
-      </button>
+      {!mapPick && (
+        <button
+          type="button"
+          onClick={() => setListSheetOpen(true)}
+          data-testid="map-list-pill"
+          className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 z-40 inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-[13px] font-medium text-text shadow-[var(--shadow-md)] md:hidden"
+        >
+          <Icon name="list" size={16} />
+          {t('discover.title')}
+        </button>
+      )}
 
-      {/* Mobile bottom navigation (hidden on md+) */}
-      <MobileNav
-        onCreateSpot={() => setAddSpotOpen(true)}
-        onOpenSettings={() => setSettingsOpen(true)}
-      />
+      {/* Mobile bottom navigation (hidden on md+, and while picking a location) */}
+      {!mapPick && (
+        <MobileNav
+          onCreateSpot={() => setAddSpotOpen(true)}
+          onOpenSettings={() => setSettingsOpen(true)}
+        />
+      )}
+
+      {/* Map-pick confirm bar — shown while placing the new-spot pin */}
+      {mapPick && (
+        <MapPickBar
+          position={mapPick.pos}
+          onConfirm={handlePickConfirm}
+          onCancel={() => setMapPick(null)}
+        />
+      )}
 
       {/* Mobile list/filters sheet — hosts the same Sidebar shown on desktop */}
       <Sheet open={listSheetOpen} onClose={() => setListSheetOpen(false)}>
@@ -195,7 +257,14 @@ function SpotsLayout() {
         mapStyle={mapStyle}
         onMapStyleChange={setMapStyle}
       />
-      <AddSpotWizard open={addSpotOpen} onClose={() => setAddSpotOpen(false)} />
+      <AddSpotWizard
+        open={addSpotOpen}
+        onClose={() => setAddSpotOpen(false)}
+        hidden={mapPick !== null}
+        onPickOnMap={startMapPick}
+        pendingPick={pendingPick}
+        onPendingPickApplied={() => setPendingPick(null)}
+      />
       <Outlet />
     </div>
   )

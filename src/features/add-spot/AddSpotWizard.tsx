@@ -1,4 +1,4 @@
-import { useState, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ResponsiveOverlay } from '~/components/ui/ResponsiveOverlay'
 import { Button } from '~/components/ui/Button'
@@ -43,6 +43,13 @@ interface AddSpotWizardProps {
   initialValues?: AddSpotInput
   initialImages?: SpotImage[]
   onSaved?: () => void
+  /** Visually hide the wizard while keeping its draft state (map-pick mode). */
+  hidden?: boolean
+  /** Enter pick-on-main-map mode; receives the draft's position, or null for a fresh draft. */
+  onPickOnMap?: (current: { lng: number; lat: number } | null) => void
+  /** Values returned from a confirmed map pick, applied to the draft once. */
+  pendingPick?: Partial<AddSpotInput> | null
+  onPendingPickApplied?: () => void
 }
 
 export function AddSpotWizard({
@@ -53,6 +60,10 @@ export function AddSpotWizard({
   initialValues,
   initialImages,
   onSaved,
+  hidden = false,
+  onPickOnMap,
+  pendingPick = null,
+  onPendingPickApplied,
 }: AddSpotWizardProps) {
   const { t } = useTranslation()
   const [step, setStep] = useState(0)
@@ -71,6 +82,14 @@ export function AddSpotWizard({
   function patch(p: Partial<AddSpotInput>) {
     setValues((prev) => ({ ...prev, ...p }))
   }
+
+  // Apply a confirmed map pick to the draft, exactly once per pick.
+  useEffect(() => {
+    if (!pendingPick) return
+    setValues((prev) => ({ ...prev, ...pendingPick }))
+    onPendingPickApplied?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingPick])
 
   function handleClose() {
     onClose()
@@ -140,8 +159,11 @@ export function AddSpotWizard({
   const parsedForReview =
     step === 3 ? addSpotSchema.safeParse(values) : null
 
+  // A fresh draft carries the EMPTY {0,0} sentinel — treat it as "no position yet".
+  const hasRealPosition = values.position.lng !== 0 || values.position.lat !== 0
+
   return (
-    <ResponsiveOverlay open={open} onClose={handleClose} labelledBy="add-spot-title">
+    <ResponsiveOverlay open={open && !hidden} onClose={handleClose} labelledBy="add-spot-title">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-[22px] py-[18px]">
         <h2 id="add-spot-title" className="m-0 text-[17px] font-semibold tracking-[-0.01em]">
@@ -160,6 +182,11 @@ export function AddSpotWizard({
             onChange={patch}
             mapStyle={mapStyle}
             readOnly={mode === 'edit'}
+            onPickOnMap={
+              mode === 'create' && onPickOnMap
+                ? () => onPickOnMap(hasRealPosition ? values.position : null)
+                : undefined
+            }
           />
         )}
         {step === 1 && (
