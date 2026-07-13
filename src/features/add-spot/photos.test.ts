@@ -66,8 +66,8 @@ describe('validateImage', () => {
     }
   })
 
-  it('accepts a typical iPhone-sized photo (~12MB)', () => {
-    const iphonePhoto = new Uint8Array(12 * 1024 * 1024)
+  it('accepts a large iPhone photo (~40MB)', () => {
+    const iphonePhoto = new Uint8Array(40 * 1024 * 1024)
     const file = new File([iphonePhoto], 'IMG_4821.jpg', { type: 'image/jpeg' })
     const result = validateImage(file)
     expect(result.ok).toBe(true)
