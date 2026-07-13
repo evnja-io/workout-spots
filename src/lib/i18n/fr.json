@@ -301,8 +301,8 @@
     "menuItem": "Profil",
     "nicknameLabel": "Pseudo",
     "changeAvatar": "Changer la photo",
-    "avatarHint": "JPG, PNG, WebP ou GIF, jusqu'à 5 Mo.",
-    "avatarInvalid": "Choisissez une image de moins de 5 Mo.",
+    "avatarHint": "JPG, PNG, WebP ou GIF, jusqu'à 25 Mo.",
+    "avatarInvalid": "Choisissez une image de moins de 25 Mo.",
     "saved": "Profil enregistré.",
     "saveError": "Impossible d'enregistrer votre profil. Veuillez réessayer.",
     "communications": {

@@ -301,8 +301,8 @@
     "menuItem": "Profile",
     "nicknameLabel": "Nickname",
     "changeAvatar": "Change photo",
-    "avatarHint": "JPG, PNG, WebP or GIF, up to 5 MB.",
-    "avatarInvalid": "Pick an image under 5 MB.",
+    "avatarHint": "JPG, PNG, WebP or GIF, up to 25 MB.",
+    "avatarInvalid": "Pick an image under 25 MB.",
     "saved": "Profile saved.",
     "saveError": "Couldn't save your profile. Please try again.",
     "communications": {

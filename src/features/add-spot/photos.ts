@@ -14,7 +14,9 @@ export const ALLOWED_IMAGE_MIMES = [
   'image/tiff',
 ] as const
 
-export const MAX_IMAGE_BYTES = 5 * 1024 * 1024
+// 25MB: modern iPhone photos (48MP HEIC→JPEG) commonly run 8–20MB; must stay
+// under the Supabase project-wide upload cap (50MB default — no per-bucket limit is set).
+export const MAX_IMAGE_BYTES = 25 * 1024 * 1024
 export const MAX_IMAGES = 10
 
 // ── validateImage ─────────────────────────────────────────────────────────────
